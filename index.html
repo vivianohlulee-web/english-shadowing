@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日英语跟读 — For those feeling behind in life</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg2: #f5f5f5;
+      --border: #e0e0e0;
+      --border2: #d0d0d0;
+      --text: #111111;
+      --text2: #555555;
+      --text3: #999999;
+      --green: #1D9E75;
+      --green-light: #E1F5EE;
+      --green-dark: #0F6E56;
+      --green-border: #5DCAA5;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; }
+    .container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+    header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+    .logo { font-size: 15px; font-weight: 600; color: var(--green); }
+    .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text2); text-decoration: none; padding: 5px 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; cursor: pointer; }
+    .back-btn:hover { background: var(--bg2); }
+    .video-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+    .video-meta { font-size: 13px; color: var(--text3); margin-bottom: 1.25rem; }
+    .video-box { position: relative; padding-bottom: 56.25%; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 1.25rem; }
+    .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .stat { background: var(--bg2); border-radius: var(--radius-sm); padding: .65rem 1rem; text-align: center; }
+    .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+    .stat-val { font-size: 20px; font-weight: 500; }
+    .prog-wrap { background: var(--bg2); border-radius: 99px; height: 5px; margin-bottom: 1.25rem; overflow: hidden; }
+    .prog-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .3s; }
+    .sec-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: .6rem; }
+    .mode-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 1.25rem; }
+    .mode-btn { padding: 8px 4px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: var(--bg); font-size: 12px; color: var(--text2); cursor: pointer; text-align: center; transition: all .15s; line-height: 1.3; }
+    .mode-btn i { display: block; font-size: 16px; margin-bottom: 3px; }
+    .mode-btn.sel { background: var(--green-light); border-color: var(--green-border); color: var(--green-dark); font-weight: 500; }
+    .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding: 10px 14px; background: var(--bg2); border-radius: var(--radius-sm); }
+    .toggle-label { font-size: 13px; color: var(--text2); flex: 1; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider-tog { position: absolute; inset: 0; background: var(--border2); border-radius: 99px; cursor: pointer; transition: .2s; }
+    .slider-tog:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px; background: #fff; border-radius: 50%; transition: .2s; }
+    .toggle input:checked + .slider-tog { background: var(--green); }
+    .toggle input:checked + .slider-tog:before { transform: translateX(16px); }
+    .chunk-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1.25rem; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+    .chunk { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: var(--bg); cursor: pointer; transition: background .15s, border-color .15s; }
+    .chunk:hover { background: var(--bg2); border-color: var(--border2); }
+    .chunk.active { background: var(--green-light); border-color: var(--green-border); }
+    .chunk.done { opacity: .45; }
+    .chunk-num { font-size: 11px; color: var(--text3); min-width: 20px; padding-top: 2px; }
+    .chunk-text { font-size: 14px; color: var(--text); line-height: 1.5; flex: 1; }
+    .chunk-cn { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+    .chunk.active .chunk-text { color: var(--green-dark); font-weight: 500; }
+    .controls { display: flex; align-items: center; gap: 8px; margin-bottom: .5rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: transparent; color: var(--text); font-size: 13px; cursor: pointer; transition: background .15s; white-space: nowrap; }
+    .btn:hover { background: var(--bg2); }
+    .btn.primary { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn.primary:hover { background: var(--green-dark); }
+    .spacer { flex: 1; }
+    .hint { font-size: 11px; color: var(--text3); text-align: center; padding: 4px 0; }
+    .blind-screen { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; background: var(--bg2); border-radius: var(--radius); border: 0.5px solid var(--border); margin-bottom: 1.25rem; text-align: center; gap: 12px; }
+    .blind-screen.show { display: flex; }
+    .blind-title { font-size: 15px; font-weight: 500; }
+    .blind-sub { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .blind-controls { display: flex; gap: 8px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">每日英语跟读</div>
+  </header>
+
+  <div class="video-title">For those feeling behind in life</div>
+  <div class="video-meta">Life Of Riza · 口语跟读 · 84句</div>
+
+  <div class="video-box">
+    <iframe id="yt" src="https://www.youtube.com/embed/4M6Ykqw26TI?enablejsapi=1" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-label">总句数</div><div class="stat-val" id="s-total">84</div></div>
+    <div class="stat"><div class="stat-label">已完成</div><div class="stat-val" id="s-done" style="color:var(--green)">0</div></div>
+    <div class="stat"><div class="stat-label">当前</div><div class="stat-val" id="s-cur">1</div></div>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+
+  <div class="sec-label">练习模式</div>
+  <div class="mode-grid">
+    <div class="mode-btn sel" id="m-normal" onclick="setMode('normal')"><i class="ti ti-player-play"></i>顺序跟读</div>
+    <div class="mode-btn" id="m-loop" onclick="setMode('loop')"><i class="ti ti-repeat"></i>单句循环</div>
+    <div class="mode-btn" id="m-hide" onclick="setMode('hide')"><i class="ti ti-eye-off"></i>隐藏文本</div>
+    <div class="mode-btn" id="m-blind" onclick="setMode('blind')"><i class="ti ti-ear-off"></i>盲听模式</div>
+  </div>
+
+  <div class="toggle-row" id="autopause-row">
+    <span class="toggle-label"><i class="ti ti-player-pause" style="font-size:14px;vertical-align:-2px;margin-right:6px"></i>单句播放完自动暂停</span>
+    <label class="toggle"><input type="checkbox" id="autopause-toggle" onchange="autoPause=this.checked"><span class="slider-tog"></span></label>
+  </div>
+
+  <div class="blind-screen" id="blind-screen">
+    <i class="ti ti-ear" style="font-size:32px;color:var(--green)"></i>
+    <div class="blind-title">盲听模式</div>
+    <div class="blind-sub">字幕已隐藏，视频从头播放<br>专注用耳朵听，完成后切换其他模式对照原文</div>
+    <div class="blind-controls">
+      <button class="btn primary" onclick="blindPlay()"><i class="ti ti-player-play"></i>从头播放</button>
+      <button class="btn" onclick="setMode('normal')"><i class="ti ti-list"></i>查看字幕</button>
+    </div>
+  </div>
+
+  <div id="normal-area">
+    <div class="sec-label">意群列表</div>
+    <div class="chunk-list" id="chunk-list"></div>
+    <div class="controls">
+      <button class="btn" onclick="prev()"><i class="ti ti-arrow-left"></i>上一句</button>
+      <button class="btn primary" onclick="toggleMark()"><i class="ti ti-check"></i>标记完成</button>
+      <div class="spacer"></div>
+      <button class="btn" onclick="next()">下一句<i class="ti ti-arrow-right"></i></button>
+    </div>
+    <div class="hint">点击句子跳转 · 标记完成后自动前进</div>
+  </div>
+</div>
+
+<script>
+const chunks=[
+  {text:"Somewhere between childhood and now,",cn:"在童年与现在之间的某个时刻，",t:5},
+  {text:"we learned how to measure our lives and milestones.",cn:"我们学会了用里程碑来衡量自己的人生。",t:7},
+  {text:"First day of school, last day of school,",cn:"开学第一天、毕业最后一天、",t:10},
+  {text:"first job, first promotion,",cn:"第一份工作、第一次晋升、",t:12},
+  {text:"marriage, house, kids — you know the list.",cn:"结婚、买房、生孩子——你懂的。",t:14},
+  {text:"And it can feel really overwhelming",cn:"而当我们没有按时完成这些事时，",t:21},
+  {text:"when we're not ticking those boxes when we're supposed to.",cn:"会感到非常沮丧和压迫感。",t:22},
+  {text:"It can feel like everyone is moving forward",cn:"感觉好像每个人都在向前走，",t:25},
+  {text:"and we're just falling behind.",cn:"而我们却在落后。",t:28},
+  {text:"Recently, I've been thinking a lot",cn:"最近，我一直在大量思考",t:60},
+  {text:"about how we define success,",cn:"关于我们如何定义成功，",t:62},
+  {text:"and what that looks like now",cn:"以及现在的成功是什么样的，",t:65},
+  {text:"versus what I thought it would look like a couple years ago.",cn:"与几年前我所认为的相比。",t:67},
+  {text:"And it made me realize",cn:"这让我意识到，",t:69},
+  {text:"that this is something I should probably revisit every so often,",cn:"我应该时不时地重新审视这个问题，",t:71},
+  {text:"because as life changes,",cn:"因为随着生活的变化，",t:73},
+  {text:"the way we measure it sort of has to change too.",cn:"我们衡量它的方式也必须随之改变。",t:76},
+  {text:"Love this train of thought —",cn:"这个思路让我很有感触——",t:125},
+  {text:"it first happened when I was thinking",cn:"最初是在我思考",t:127},
+  {text:"of ways I had measured progress throughout my life.",cn:"我一生中如何衡量进步时产生的。",t:129},
+  {text:"When I was a kid, I did sports.",cn:"我小时候做运动。",t:132},
+  {text:"I would measure it by medals",cn:"我用奖牌来衡量，",t:134},
+  {text:"or moving up in lessons.",cn:"或者升到更高的级别。",t:136},
+  {text:"But after graduating,",cn:"但毕业之后，",t:138},
+  {text:"I stepped away from competing,",cn:"我退出了比赛，",t:140},
+  {text:"and I was at a sudden loss",cn:"突然间我完全不明白",t:141},
+  {text:"as to why I felt the way that I did.",cn:"为什么自己会有那样的感觉。",t:143},
+  {text:"And at the time, I didn't realize",cn:"当时我并没有意识到，",t:145},
+  {text:"that I had lost the main indicator",cn:"我已经失去了主要的参照物，",t:147},
+  {text:"of my measure of progress and subsequently success.",cn:"失去了衡量进步乃至成功的标准。",t:150},
+  {text:"It got me thinking —",cn:"这让我想到——",t:155},
+  {text:"maybe all of us have these markers",cn:"也许我们每个人都有这些参照物，",t:157},
+  {text:"we lean on without even noticing,",cn:"我们在不知不觉中依赖着它们，",t:159},
+  {text:"and when they disappear,",cn:"而当它们消失时，",t:162},
+  {text:"it can feel like the ground has shifted beneath us.",cn:"会感觉脚下的土地发生了移动。",t:163},
+  {text:"But realizing this allowed me to look at things differently",cn:"但意识到这一点后，我得以用不同的视角看待事物，",t:168},
+  {text:"and reevaluate what progress and success look like",cn:"并重新评估进步和成功",t:171},
+  {text:"now in relevance to my life.",cn:"在我现在生活中意味着什么。",t:173},
+  {text:"Currently, if you keep measuring your current life",cn:"如果你继续用旧定义衡量现在的生活，",t:176},
+  {text:"with a definition you picked up at 16 or 21,",cn:"那个你在16岁或21岁时形成的定义，",t:180},
+  {text:"it's going to feel like you're falling behind",cn:"你会感觉自己在落后，",t:182},
+  {text:"even when you're not.",cn:"即使你并没有。",t:185},
+  {text:"So when things start to feel off,",cn:"所以当事情开始感觉不对劲时，",t:189},
+  {text:"it's easy to assume something's wrong",cn:"很容易就认定出了问题，",t:191},
+  {text:"without realizing the definition you're using",cn:"却没意识到你使用的定义",t:193},
+  {text:"might just be outdated.",cn:"可能只是过时了。",t:195},
+  {text:"Oftentimes, we feel behind",cn:"很多时候，我们感到落后，",t:211},
+  {text:"because we're not where we think we should be at this point in time,",cn:"是因为我们没有达到我们认为应该达到的水平，",t:212},
+  {text:"but what we don't see is that",cn:"但我们没看到的是，",t:215},
+  {text:"where we're at now is preparing us for what's ahead.",cn:"我们现在所处的位置正在为未来做准备。",t:218},
+  {text:"Making your own way in the world is exciting.",cn:"在世界上走出自己的道路是令人兴奋的。",t:222},
+  {text:"You know what you want and you're going for it.",cn:"你知道自己想要什么，并且正在努力争取。",t:225},
+  {text:"But when everyone around you seems to be following a clear-cut path,",cn:"但当周围的人都在遵循清晰的道路时，",t:228},
+  {text:"it's really hard not to wonder",cn:"你很难不去怀疑，",t:229},
+  {text:"if you are the one doing something wrong.",cn:"是不是自己做错了什么。",t:232},
+  {text:"I remember in the early years of pursuing YouTube,",cn:"我记得在刚开始做YouTube的时候，",t:240},
+  {text:"I was always wondering why it just wasn't happening for me yet.",cn:"我总是纳闷为什么我还没成功。",t:244},
+  {text:"It was frustrating.",cn:"真令人沮丧。",t:248},
+  {text:"And to add to my already growing doubt,",cn:"更加剧了我日益增长的疑虑的是，",t:248},
+  {text:"I had friends that were already moving on",cn:"我的一些朋友已经开始了",t:251},
+  {text:"with the next chapter of their life.",cn:"人生的新篇章。",t:254},
+  {text:"It felt like everyone knew their path,",cn:"感觉每个人都知道自己的路，",t:256},
+  {text:"and I was still trying to find my way,",cn:"而我还在摸索自己的方向，",t:257},
+  {text:"but there was something in me that wanted to stay the course.",cn:"但我内心深处却想坚持下去。",t:260},
+  {text:"And so I pursued the path.",cn:"于是我便踏上了这条道路。",t:263},
+  {text:"And looking back now,",cn:"现在回想起来，",t:267},
+  {text:"everything I learned along the way was so necessary",cn:"我一路走来学到的一切都非常必要，",t:270},
+  {text:"and contributed in some form to what I do today,",cn:"并以某种形式对今天的我做出了贡献，",t:271},
+  {text:"even if it felt like a detour at the time.",cn:"即使当时感觉像是走了一条弯路。",t:275},
+  {text:"The more I think about it,",cn:"我越想越觉得，",t:288},
+  {text:"the more I think that 8 billion people",cn:"80亿人",t:290},
+  {text:"can't be on the same path, right?",cn:"不可能走同一条路，对吧？",t:292},
+  {text:"Like how would that work?",cn:"那具体该怎么操作呢？",t:294},
+  {text:"We're all different.",cn:"我们每个人都不一样。",t:296},
+  {text:"We can't all like the same things",cn:"我们不可能都喜欢同样的东西，",t:296},
+  {text:"or hit the same milestones at the same time.",cn:"也不可能同时达到同样的里程碑。",t:298},
+  {text:"Some get married young, some never want to at all.",cn:"有些人早早结婚，有些人则根本不想结婚。",t:301},
+  {text:"Others become nomads and call the road home.",cn:"另一些人则成为游牧民族，把道路当作自己的家。",t:304},
+  {text:"Some are happy building a quiet life.",cn:"有些人乐于过平静的生活。",t:306},
+  {text:"You're allowed to choose your own adventure,",cn:"你可以选择自己的冒险之路，",t:308},
+  {text:"not just once, but over and over again.",cn:"而且不止一次，可以一次又一次。",t:311},
+  {text:"I find that we often feel behind",cn:"我发现我们常常感到落后，",t:346},
+  {text:"because we have this idea of how something should have been,",cn:"是因为我们对某件事应该如何发展抱有某种想法，",t:348},
+  {text:"but seldom does it happen like that.",cn:"但事情很少会按照我们预想的那样发展。",t:353},
+  {text:"And I think that's where a lot of the doubt comes from —",cn:"我认为很多疑虑都源于此——",t:357},
+  {text:"not knowing whether we're stuck",cn:"不知道自己是陷入了困境，",t:360},
+  {text:"or just standing at the edge of a new idea",cn:"还是正站在一个新认知的边缘，",t:362},
+  {text:"of what success looks like.",cn:"关于成功是什么样的。",t:364},
+];
+
+let cur=0, mode='normal', done=new Set(), autoPause=false;
+const listEl=document.getElementById('chunk-list');
+const progEl=document.getElementById('prog');
+const normalArea=document.getElementById('normal-area');
+const blindScreen=document.getElementById('blind-screen');
+const autopauseRow=document.getElementById('autopause-row');
+document.getElementById('s-total').textContent=chunks.length;
+
+function render(){
+  if(mode==='blind'){
+    normalArea.style.display='none';
+    blindScreen.classList.add('show');
+    autopauseRow.style.display='none';
+    return;
+  }
+  normalArea.style.display='block';
+  blindScreen.classList.remove('show');
+  autopauseRow.style.display='flex';
+  listEl.innerHTML='';
+  chunks.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='chunk'+(i===cur?' active':'')+(done.has(i)?' done':'');
+    const textHtml=(mode==='hide'&&i===cur)
+      ?`<div class="chunk-text" style="color:var(--green-dark);font-weight:500">▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓</div>`
+      :`<div class="chunk-text" style="${i===cur?'color:var(--green-dark);font-weight:500':''}">${c.text}</div>`;
+    div.innerHTML=`<span class="chunk-num">${i+1}</span><div>${textHtml}<div class="chunk-cn">${c.cn}</div></div>`;
+    div.onclick=()=>jumpTo(i);
+    listEl.appendChild(div);
+  });
+  const activeEl=listEl.children[cur];
+  if(activeEl) activeEl.scrollIntoView({block:'nearest',behavior:'smooth'});
+  progEl.style.width=Math.round(done.size/chunks.length*100)+'%';
+  document.getElementById('s-done').textContent=done.size;
+  document.getElementById('s-cur').textContent=cur+1;
+}
+
+let pauseTimer=null;
+function seekVideo(t,autoplay){
+  document.getElementById('yt').src=`https://www.youtube.com/embed/4M6Ykqw26TI?enablejsapi=1${autoplay?'&autoplay=1':''}&start=${t}`;
+  if(autoPause){ clearTimeout(pauseTimer); const next=chunks[cur+1]; if(next){ const dur=(next.t-chunks[cur].t)*1000-200; if(dur>500) pauseTimer=setTimeout(()=>{ const el=document.getElementById('yt'); el.src=el.src; },dur); } }
+}
+function blindPlay(){ document.getElementById('yt').src='https://www.youtube.com/embed/4M6Ykqw26TI?enablejsapi=1&autoplay=1&start=0'; }
+function jumpTo(i){ cur=i; render(); seekVideo(chunks[i].t,true); }
+function next(){ if(cur<chunks.length-1){ cur++; render(); seekVideo(chunks[cur].t,true); } }
+function prev(){ if(cur>0){ cur--; render(); seekVideo(chunks[cur].t,true); } }
+function toggleMark(){ if(done.has(cur)) done.delete(cur); else done.add(cur); render(); if(mode==='normal'&&cur<chunks.length-1) setTimeout(next,300); }
+function setMode(m){ mode=m; document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('sel')); document.getElementById('m-'+m).classList.add('sel'); render(); }
+render();
+</script>
+</body>
+</html>
