@@ -10,15 +10,21 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --ink:#1a1a1a;--ink2:#555;--ink3:#999;
-  --paper:#faf9f6;--paper2:#f0ede6;--paper3:#e8e3d8;
-  --gold:#c8952a;--gold-l:#fdf3dc;--gold-d:#9a6f1a;
-  --teal:#1a7a6e;--teal-l:#e8f5f3;--teal-d:#115a50;
+  --paper:#faf9f6;--paper2:#f5f3f0;--paper3:#ede9e2;
+  /* 主色：浅蓝 */
+  --gold:#5b9bd5;--gold-l:#e8f2fb;--gold-d:#3a78b5;
+  /* 强调色：浅粉 */
+  --teal:#d4607a;--teal-l:#fdeef2;--teal-d:#b04060;
+  /* 录音危险色 */
   --red:#c0392b;--red-l:#fdecea;
   --border:#ddd8ce;--border2:#ccc5b8;
-  --r:8px;--rs:5px;
+  --r:8px;--rs:20px;
   --font-body:'Noto Serif SC',serif;
   --font-mono:'DM Mono',monospace;
   --shadow:0 2px 12px rgba(0,0,0,.08);
+  /* pill按钮专属 */
+  --btn-blue-bg:#d6eaf8;--btn-blue-text:#1f6ba5;--btn-blue-bd:#a8d1f0;
+  --btn-pink-bg:#fde0e8;--btn-pink-text:#b03060;--btn-pink-bd:#f5b0c5;
 }
 html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--font-body)}
 
@@ -39,24 +45,24 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 
 /* ── VIDEO CONTROLS ── */
 .vid-controls{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.vc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--paper);color:var(--ink);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s;white-space:nowrap}
-.vc-btn:hover{background:var(--paper3)}
-.vc-btn.active{background:var(--gold);border-color:var(--gold-d);color:#fff}
-.vc-btn.play-btn{background:var(--teal);border-color:var(--teal-d);color:#fff;font-size:14px;padding:5px 12px}
-.vc-btn.play-btn:hover{background:var(--teal-d)}
+.vc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
+.vc-btn:hover{filter:brightness(.95)}
+.vc-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
+.vc-btn.play-btn{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text);font-size:14px;padding:5px 16px}
+.vc-btn.play-btn:hover{filter:brightness(.93)}
 .vc-sep{flex:1}
 
 /* ── SUBTITLE DISPLAY ── */
 .sub-lang-bar{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0}
 .sub-lang-label{font-size:11px;color:var(--ink3)}
-.sub-lang-btn{padding:3px 10px;border-radius:99px;border:1px solid var(--border2);background:var(--paper2);color:var(--ink2);font-size:11px;cursor:pointer;transition:all .15s}
-.sub-lang-btn.active{background:var(--teal);border-color:var(--teal-d);color:#fff}
+.sub-lang-btn{padding:3px 12px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
+.sub-lang-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
 
 /* ── MODE TABS ── */
 .mode-tabs{display:flex;gap:4px;padding:8px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{padding:5px 14px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--paper);color:var(--ink2);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s}
-.tab:hover{background:var(--paper3)}
-.tab.active{background:var(--gold);border-color:var(--gold-d);color:#fff;font-weight:600}
+.tab{padding:5px 16px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s;font-weight:500}
+.tab:hover{filter:brightness(.95)}
+.tab.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text);font-weight:600}
 
 /* ── SUBTITLE SCROLL AREA ── */
 .sub-area{flex:1;overflow-y:auto;padding:0}
@@ -71,7 +77,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 
 /* word highlight */
 .word{display:inline;transition:background .1s}
-.word.lit{background:var(--gold);color:#fff;border-radius:2px;padding:0 2px}
+.word.lit{background:var(--btn-pink-bg);color:var(--btn-pink-text);border-radius:2px;padding:0 2px}
 
 /* ── MODE PANELS ── */
 .mode-panel{flex:1;overflow-y:auto;padding:14px 18px;display:none}
@@ -79,18 +85,18 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 
 /* 跟读子模式 */
 .sub-mode-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.sm-btn{padding:5px 14px;border-radius:99px;border:1px solid var(--border2);background:var(--paper2);color:var(--ink2);font-size:12px;cursor:pointer;transition:all .15s}
-.sm-btn.active{background:var(--teal);border-color:var(--teal-d);color:#fff}
+.sm-btn{padding:5px 16px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
+.sm-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
 
 /* 单句跟读卡片 */
 .shadowing-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
 .sc-en{font-size:15px;font-family:var(--font-mono);line-height:1.7;margin-bottom:6px}
 .sc-cn{font-size:12px;color:var(--ink2);margin-bottom:12px}
 .sc-controls{display:flex;gap:6px;flex-wrap:wrap}
-.sc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--paper2);color:var(--ink);font-size:12px;cursor:pointer;transition:all .15s}
-.sc-btn:hover{background:var(--paper3)}
-.sc-btn.primary{background:var(--teal);border-color:var(--teal-d);color:#fff}
-.sc-btn.danger{background:var(--red);border-color:#a93226;color:#fff}
+.sc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
+.sc-btn:hover{filter:brightness(.95)}
+.sc-btn.primary{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
+.sc-btn.danger{background:var(--red-l);border-color:#e88;color:var(--red)}
 .rec-status{font-size:11px;color:var(--ink3);align-self:center;margin-left:4px}
 
 /* 连续/限时跟读 */
@@ -138,7 +144,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 .toggle input{opacity:0;width:0;height:0}
 .tsl{position:absolute;inset:0;background:var(--border2);border-radius:99px;cursor:pointer;transition:.2s}
 .tsl:before{content:'';position:absolute;width:14px;height:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.tsl{background:var(--teal)}
+.toggle input:checked+.tsl{background:var(--btn-pink-text)}
 .toggle input:checked+.tsl:before{transform:translateX(16px)}
 
 /* ── MOBILE ── */
@@ -212,6 +218,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
   <!-- RIGHT: mode tabs + mode panels -->
   <div class="right-panel">
     <div class="mode-tabs">
+      <button class="tab" id="tab-subtitle" onclick="toggleRightSubtitle()" title="显示/隐藏左侧字幕区域">字幕</button>
       <button class="tab active" id="tab-shadow" onclick="setModeTab('shadow')">跟读</button>
       <button class="tab" id="tab-dictate" onclick="setModeTab('dictate')">听写</button>
       <button class="tab" id="tab-fill" onclick="setModeTab('fill')">挖空</button>
@@ -351,7 +358,7 @@ const complexWords=['measure','milestones','overwhelming','promotion','pursuing'
 
 // ── STATE ──
 let cur=0, player=null, isBlind=false, autoPause=false;
-let subLang='en'; // 'en' | 'bi' | 'hide'
+let subLang='en'; // 'en' | 'bi'
 let modeTab='shadow'; // shadow|dictate|fill|note
 let shadowMode='single'; // single|cont|timed
 let dictateMode='cn'; // cn|none
@@ -361,6 +368,9 @@ let timedTimer=null, timedActive=false;
 let notes={};
 let playing=false;
 let recState={}; // {idx: 'idle'|'recording'}
+let recMediaRecorders={}; // store MediaRecorder per chunk
+let recAudioBlobs={}; // store recorded audio blobs
+let rightSubVisible=true; // 字幕按钮状态
 
 // ── YOUTUBE API ──
 window.onYouTubeIframeAPIReady=function(){
@@ -382,9 +392,17 @@ function startSync(){
     const t=player.getCurrentTime();
     const idx=getChunkAt(t);
     if(idx!==cur){ cur=idx; onCurChange(t); }
+    // 需求2: 单句播放完暂停开关只属于盲听模式
     if(isBlind && autoPause && chunks[idx+1]){
       const rem=chunks[idx+1].t-t;
       if(rem<0.35&&rem>-0.5) player.pauseVideo();
+    }
+    // 需求5&6: 听写/挖空模式单句播放完自动暂停
+    if((modeTab==='dictate'||modeTab==='fill') && !isBlind){
+      if(chunks[idx+1]){
+        const rem=chunks[idx+1].t-t;
+        if(rem<0.35&&rem>-0.5) player.pauseVideo();
+      }
     }
   },250);
 }
@@ -451,6 +469,14 @@ function toggleSubLang(){
   document.getElementById('btn-sub').classList.toggle('active',subLang==='bi');
 }
 
+// 需求3: 右边字幕按钮（仅切换左侧字幕列表显示，电脑版视频下不放字幕）
+function toggleRightSubtitle(){
+  rightSubVisible=!rightSubVisible;
+  document.getElementById('tab-subtitle').classList.toggle('active',rightSubVisible);
+  document.getElementById('sub-lang-bar').style.display=rightSubVisible&&!isBlind?'flex':'none';
+  document.getElementById('sub-area').style.display=rightSubVisible&&!isBlind?'block':'none';
+}
+
 // ── BLIND ──
 function toggleBlind(){
   isBlind=!isBlind;
@@ -489,64 +515,148 @@ function setShadowMode(m){
 function renderShadow(){
   const c=document.getElementById('shadow-content');
   if(shadowMode==='single'){
+    // 需求4: 单句跟读 - 录用户声音，回放用户录音；点击播放只播该句，播完自动停
     c.innerHTML=chunks.map((ch,i)=>`
       <div class="shadowing-card" id="sc-${i}" style="${i===cur?'border-color:var(--gold)':''}">
         <div class="sc-en">${ch.text}</div>
         <div class="sc-cn">${ch.cn}</div>
         <div class="sc-controls">
-          <button class="sc-btn primary" onclick="seekTo(${i},true)">▶ 播放</button>
+          <button class="sc-btn primary" onclick="playSingleChunk(${i})">▶ 播放</button>
           <button class="sc-btn" id="rec-${i}" onclick="toggleRec(${i})">🎙 录音</button>
-          <button class="sc-btn" onclick="seekTo(${i},true)">↺ 回放</button>
+          <button class="sc-btn" id="pb-${i}" onclick="playbackRec(${i})" style="display:none">↺ 回放</button>
           <span class="rec-status" id="rs-${i}"></span>
         </div>
       </div>`).join('');
-    // scroll to cur
     setTimeout(()=>{ const el=document.getElementById('sc-'+cur); if(el) el.scrollIntoView({block:'nearest',behavior:'smooth'}); },50);
   } else if(shadowMode==='cont'){
+    // 需求4: 连续跟读 - 隐藏字幕（用长条遮住），自动切分句
     const ch=chunks[cur];
     c.innerHTML=`
       <div class="continuous-card">
-        <div class="sc-en" style="font-size:16px;line-height:1.8">${ch.text}</div>
-        <div class="sc-cn" style="font-size:12px;color:var(--ink3);margin-top:4px">${cur+1} / ${chunks.length}</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">${cur+1} / ${chunks.length}</div>
+        <div style="position:relative;display:inline-block;width:100%">
+          <div class="sc-en" style="font-size:16px;line-height:1.8;filter:blur(0)">${ch.text}</div>
+          <div style="position:absolute;left:0;bottom:0;width:100%;height:22px;background:var(--paper2);border-radius:4px;pointer-events:none"></div>
+        </div>
         <div class="cc-nav">
           <button class="sc-btn" onclick="go(-1)">← 上一句</button>
-          <button class="sc-btn primary" id="cont-play" onclick="contPlay()">▶ 继续</button>
+          <button class="sc-btn primary" id="cont-play" onclick="playSingleChunk(cur)">▶ 播放</button>
           <button class="sc-btn" onclick="go(1)">下一句 →</button>
         </div>
       </div>`;
   } else {
+    // 需求4: 限时跟读 - 隐藏字幕+遮条，播完"滴"一声，倒计时进度条(+3s)，结束后继续
     const ch=chunks[cur];
     c.innerHTML=`
       <div class="continuous-card">
-        <div class="sc-en" style="font-size:16px;line-height:1.8">${ch.text}</div>
-        <div class="sc-cn" style="font-size:12px;color:var(--ink3);margin-top:4px">${cur+1} / ${chunks.length}</div>
-        <div class="countdown-bar show" id="cd-bar"><div class="countdown-fill" id="cd-fill" style="width:100%"></div></div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">${cur+1} / ${chunks.length}</div>
+        <div style="position:relative;display:inline-block;width:100%">
+          <div class="sc-en" style="font-size:16px;line-height:1.8">${ch.text}</div>
+          <div style="position:absolute;left:0;bottom:0;width:100%;height:22px;background:var(--paper2);border-radius:4px;pointer-events:none"></div>
+        </div>
+        <div class="countdown-bar show" id="cd-bar"><div class="countdown-fill" id="cd-fill" style="width:0%"></div></div>
+        <div id="timed-status" style="font-size:12px;color:var(--ink3);margin-top:6px;text-align:center">等待播放...</div>
         <div class="cc-nav">
           <button class="sc-btn" onclick="go(-1)">← 上一句</button>
-          <button class="sc-btn primary" onclick="seekTo(cur,true)">▶ 播放</button>
+          <button class="sc-btn primary" id="timed-start-btn" onclick="startTimedChunk()">▶ 开始</button>
           <button class="sc-btn" onclick="go(1)">下一句 →</button>
         </div>
       </div>`;
   }
 }
 
-function contPlay(){ seekTo(cur,true); }
+// 需求4: 单句播放 - 只播该句，播完自动停
+function playSingleChunk(i){
+  if(!player) return;
+  cur=i;
+  player.seekTo(chunks[i].t,true);
+  player.playVideo();
+  // 计算该句时长，播完后暂停
+  const dur=(chunks[i+1]?chunks[i+1].t:chunks[i].t+5)-chunks[i].t;
+  clearTimeout(window._singlePauseTimer);
+  window._singlePauseTimer=setTimeout(()=>{ if(player) player.pauseVideo(); },dur*1000-100);
+}
+
+// 需求4: 限时跟读 - 播完当前句→滴声→倒计时进度条(句长+3s)→继续下句
+let timedChunkTimer=null;
+function startTimedChunk(){
+  if(!player) return;
+  const statusEl=document.getElementById('timed-status');
+  const fillEl=document.getElementById('cd-fill');
+  const btn=document.getElementById('timed-start-btn');
+  if(btn) btn.disabled=true;
+  const sentDur=(chunks[cur+1]?chunks[cur+1].t:chunks[cur].t+5)-chunks[cur].t;
+  const countdownDur=sentDur+3; // 比原句长3秒
+  statusEl&&(statusEl.textContent='播放中...');
+  player.seekTo(chunks[cur].t,true);
+  player.playVideo();
+  clearTimeout(timedChunkTimer);
+  timedChunkTimer=setTimeout(()=>{
+    if(player) player.pauseVideo();
+    // 滴声
+    try{
+      const ctx=new (window.AudioContext||window.webkitAudioContext)();
+      const osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=880;
+      osc.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.15);
+    }catch(e){}
+    if(statusEl) statusEl.textContent='跟读中，请开口...';
+    // 倒计时进度条
+    if(fillEl){ fillEl.style.transition='none';fillEl.style.width='100%';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        fillEl.style.transition='width '+countdownDur+'s linear';
+        fillEl.style.width='0%';
+      }));
+    }
+    timedChunkTimer=setTimeout(()=>{
+      if(statusEl) statusEl.textContent='继续下一句';
+      if(cur+1<chunks.length){ go(1); }
+      else{ if(statusEl) statusEl.textContent='全文完成 🎉'; }
+    },countdownDur*1000);
+  },sentDur*1000);
+}
 
 let recStreams={};
 function toggleRec(i){
   const btn=document.getElementById('rec-'+i);
   const rs=document.getElementById('rs-'+i);
+  const pbBtn=document.getElementById('pb-'+i);
   if(recState[i]==='recording'){
+    // 停止录音
     recState[i]='idle';
-    btn.textContent='🎙 录音';
-    rs.textContent='录音已停止';
-    if(recStreams[i]){ recStreams[i].getTracks().forEach(t=>t.stop()); delete recStreams[i]; }
+    btn.textContent='🎙 录音';btn.classList.remove('danger');
+    rs.textContent='录音已保存 ✓';
+    if(recStreams[i]){
+      recStreams[i].recorder&&recStreams[i].recorder.stop();
+    }
   } else {
     recState[i]='recording';
-    btn.textContent='⏹ 停止';
+    btn.textContent='⏹ 停止';btn.classList.add('danger');
     rs.textContent='录音中...';
-    navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{ recStreams[i]=s; }).catch(()=>{ rs.textContent='无麦克风权限'; recState[i]='idle'; btn.textContent='🎙 录音'; });
+    navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+      const recorder=new MediaRecorder(stream);
+      const chunks2=[];
+      recorder.ondataavailable=e=>chunks2.push(e.data);
+      recorder.onstop=()=>{
+        recAudioBlobs[i]=new Blob(chunks2,{type:'audio/webm'});
+        stream.getTracks().forEach(t=>t.stop());
+        if(pbBtn) pbBtn.style.display='inline-flex';
+        rs.textContent='录音已保存 ✓';
+      };
+      recorder.start();
+      recStreams[i]={recorder,stream};
+    }).catch(()=>{ rs.textContent='无麦克风权限'; recState[i]='idle'; btn.textContent='🎙 录音';btn.classList.remove('danger'); });
   }
+}
+
+// 需求4: 回放用户自己的录音
+function playbackRec(i){
+  const rs=document.getElementById('rs-'+i);
+  if(!recAudioBlobs[i]){ rs.textContent='尚无录音'; return; }
+  const url=URL.createObjectURL(recAudioBlobs[i]);
+  const audio=new Audio(url);
+  rs.textContent='回放中...';
+  audio.play();
+  audio.onended=()=>{ rs.textContent='回放结束'; URL.revokeObjectURL(url); };
 }
 
 // ── DICTATE MODE ──
@@ -562,7 +672,7 @@ function renderDictate(){
     <div class="dictation-card">
       <div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
       ${dictateMode==='cn'?`<div class="dc-prompt">${ch.cn}</div>`:'<div class="dc-prompt" style="color:var(--ink3);font-style:italic">（无提示，凭耳朵作答）</div>'}
-      <button class="sc-btn primary" style="margin-bottom:8px;font-size:12px" onclick="seekTo(${i},true)">▶ 播放</button>
+      <button class="sc-btn primary" style="margin-bottom:8px;font-size:12px" onclick="playSingleChunk(${i})">▶ 播放（单句）</button>
       <div class="dc-input-row">
         <input class="dc-input" id="di-${i}" placeholder="输入你听到的英文..." onkeydown="if(event.key==='Enter')checkDictate(${i})">
         <button class="sc-btn primary" onclick="checkDictate(${i})">检查</button>
@@ -581,11 +691,21 @@ function setFillMode(m){
   document.getElementById('fm-none').classList.toggle('active',m==='none');
   renderFill();
 }
-function getFilledText(text){
-  return text.split(' ').map(w=>{
-    const clean=w.replace(/[^a-zA-Z']/g,'').toLowerCase();
-    if(complexWords.includes(clean)){
-      return `<span class="blank" id="bl-${w}-${Math.random().toString(36).slice(2,6)}" data-word="${w}">${'_'.repeat(w.length)}</span>`;
+function getFilledText(text, sentIdx){
+  const words=text.split(' ');
+  const blankable=words.map((w,i)=>({w,i,clean:w.replace(/[^a-zA-Z']/g,'').toLowerCase()}))
+    .filter(o=>complexWords.includes(o.clean));
+  // 需求6: 每句至少挖一个词；若没有complexWord则取最长词
+  let toBlank=new Set(blankable.map(o=>o.i));
+  if(toBlank.size===0){
+    let best=0,bestLen=0;
+    words.forEach((w,i)=>{ const cl=w.replace(/[^a-zA-Z]/g,''); if(cl.length>bestLen){bestLen=cl.length;best=i;} });
+    toBlank.add(best);
+  }
+  return words.map((w,wi)=>{
+    if(toBlank.has(wi)){
+      const uid=`${sentIdx}_${wi}`;
+      return `<span class="blank" id="bl-${uid}" data-word="${w}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
     }
     return w;
   }).join(' ');
@@ -593,13 +713,21 @@ function getFilledText(text){
 function renderFill(){
   const c=document.getElementById('fill-content');
   c.innerHTML=chunks.map((ch,i)=>{
-    const filled=getFilledText(ch.text);
+    const filled=getFilledText(ch.text,i);
+    // 收集该句挖空的词
+    const words=ch.text.split(' ');
+    const blankedWords=words.filter((w,wi)=>{
+      const clean=w.replace(/[^a-zA-Z']/g,'').toLowerCase();
+      if(complexWords.includes(clean)) return true;
+      return false;
+    });
+    const hint=blankedWords.length>0?blankedWords.join(', '):(()=>{let best='',bl=0;words.forEach(w=>{const cl=w.replace(/[^a-zA-Z]/g,'');if(cl.length>bl){bl=cl.length;best=w;}});return best;})();
     return `
     <div class="dictation-card">
       <div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
       ${fillMode==='cn'?`<div class="dc-prompt">${ch.cn}</div>`:''}
+      <button class="sc-btn primary" style="font-size:12px;margin-bottom:8px" onclick="playSingleChunk(${i})">▶ 播放（单句）</button>
       <div class="chunk-en" style="font-size:14px;line-height:1.9;margin-bottom:8px">${filled}</div>
-      <button class="sc-btn primary" style="font-size:12px;margin-bottom:8px" onclick="seekTo(${i},true)">▶ 播放</button>
       <div class="dc-input-row">
         <input class="dc-input" id="fi-${i}" placeholder="输入缺失单词（逗号分隔）..." onkeydown="if(event.key==='Enter')checkFill(${i})">
         <button class="sc-btn primary" onclick="checkFill(${i})">检查</button>
@@ -609,8 +737,9 @@ function renderFill(){
   }).join('');
 }
 function checkFill(i){
-  document.getElementById('fa-'+i).classList.add('show');
-  document.querySelectorAll('.blank').forEach(b=>b.classList.add('revealed'));
+  const ansEl=document.getElementById('fa-'+i);
+  ansEl.classList.add('show');
+  document.querySelectorAll(`[id^="bl-${i}_"]`).forEach(b=>b.classList.add('revealed'));
 }
 
 // ── NOTE MODE ──
