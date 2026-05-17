@@ -11,61 +11,54 @@
 :root{
   --ink:#1a1a1a;--ink2:#555;--ink3:#999;
   --paper:#faf9f6;--paper2:#f5f3f0;--paper3:#ede9e2;
-  /* 主色：浅蓝 */
   --gold:#5b9bd5;--gold-l:#e8f2fb;--gold-d:#3a78b5;
-  /* 强调色：浅粉 */
   --teal:#d4607a;--teal-l:#fdeef2;--teal-d:#b04060;
-  /* 录音危险色 */
   --red:#c0392b;--red-l:#fdecea;
   --border:#ddd8ce;--border2:#ccc5b8;
   --r:8px;--rs:20px;
   --font-body:'Noto Serif SC',serif;
   --font-mono:'DM Mono',monospace;
   --shadow:0 2px 12px rgba(0,0,0,.08);
-  /* pill按钮专属 */
   --btn-blue-bg:#d6eaf8;--btn-blue-text:#1f6ba5;--btn-blue-bd:#a8d1f0;
   --btn-pink-bg:#fde0e8;--btn-pink-text:#b03060;--btn-pink-bd:#f5b0c5;
 }
 html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--font-body)}
 
-/* ── HEADER ── */
 .header{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--paper)}
 .logo{font-size:15px;font-weight:600;color:var(--teal);letter-spacing:.02em}
 .vtitle{font-size:13px;color:var(--ink2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vmeta{font-size:11px;color:var(--ink3);white-space:nowrap}
 
-/* ── LAYOUT ── */
 .layout{display:grid;grid-template-columns:1fr 1fr;height:calc(100vh - 49px);overflow:hidden}
 .left-panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
 .right-panel{display:flex;flex-direction:column;overflow:hidden}
 
-/* ── VIDEO ── */
 .video-wrap{position:relative;padding-bottom:56.25%;background:#111;flex-shrink:0}
 .video-wrap iframe,.video-wrap #yt-player{position:absolute;top:0;left:0;width:100%;height:100%}
 
-/* ── VIDEO CONTROLS ── */
 .vid-controls{display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .vc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
 .vc-btn:hover{filter:brightness(.95)}
 .vc-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
 .vc-btn.play-btn{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text);font-size:14px;padding:5px 16px}
 .vc-btn.play-btn:hover{filter:brightness(.93)}
-.vc-sep{flex:1}
 
-/* ── SUBTITLE DISPLAY ── */
-.sub-lang-bar{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0}
-.sub-lang-label{font-size:11px;color:var(--ink3)}
-.sub-lang-btn{padding:3px 12px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
-.sub-lang-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
-
-/* ── MODE TABS ── */
+/* MODE TABS (right panel) */
 .mode-tabs{display:flex;gap:4px;padding:8px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0}
 .tab{padding:5px 16px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;font-family:var(--font-body);cursor:pointer;transition:all .15s;font-weight:500}
 .tab:hover{filter:brightness(.95)}
 .tab.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text);font-weight:600}
 
-/* ── SUBTITLE SCROLL AREA ── */
-.sub-area{flex:1;overflow-y:auto;padding:0}
+/* RIGHT PANEL VIEWS */
+.right-view{flex:1;overflow:hidden;display:none;flex-direction:column}
+.right-view.show{display:flex}
+
+/* SUBTITLE VIEW (right panel) */
+.sub-lang-bar{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0}
+.sub-lang-label{font-size:11px;color:var(--ink3)}
+.sub-lang-btn{padding:3px 12px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
+.sub-lang-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
+.sub-area{flex:1;overflow-y:auto}
 .sub-chunk{padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative}
 .sub-chunk:hover{background:var(--paper2)}
 .sub-chunk.active{background:var(--gold-l);border-left:3px solid var(--gold)}
@@ -75,39 +68,47 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 .chunk-cn{font-size:12px;color:var(--ink2);margin-top:3px;line-height:1.5}
 .sub-chunk.active .chunk-en{color:var(--gold-d);font-weight:500}
 
-/* word highlight */
-.word{display:inline;transition:background .1s}
-.word.lit{background:var(--btn-pink-bg);color:var(--btn-pink-text);border-radius:2px;padding:0 2px}
-
-/* ── MODE PANELS ── */
-.mode-panel{flex:1;overflow-y:auto;padding:14px 18px;display:none}
-.mode-panel.show{display:block}
-
-/* 跟读子模式 */
-.sub-mode-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+/* SHADOW VIEW */
+.shadow-view-inner{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.sub-mode-row{display:flex;gap:6px;padding:10px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
 .sm-btn{padding:5px 16px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
 .sm-btn.active{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
 
-/* 单句跟读卡片 */
+/* shadow sub-panels */
+.sm-panel{flex:1;overflow-y:auto;padding:14px 18px;display:none}
+.sm-panel.show{display:block}
+
+/* 单句跟读 */
 .shadowing-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
 .sc-en{font-size:15px;font-family:var(--font-mono);line-height:1.7;margin-bottom:6px}
 .sc-cn{font-size:12px;color:var(--ink2);margin-bottom:12px}
-.sc-controls{display:flex;gap:6px;flex-wrap:wrap}
+.sc-controls{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .sc-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:99px;border:1px solid var(--btn-blue-bd);background:var(--btn-blue-bg);color:var(--btn-blue-text);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
 .sc-btn:hover{filter:brightness(.95)}
 .sc-btn.primary{background:var(--btn-pink-bg);border-color:var(--btn-pink-bd);color:var(--btn-pink-text)}
 .sc-btn.danger{background:var(--red-l);border-color:#e88;color:var(--red)}
 .rec-status{font-size:11px;color:var(--ink3);align-self:center;margin-left:4px}
 
-/* 连续/限时跟读 */
-.continuous-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:16px}
-.cc-nav{display:flex;align-items:center;gap:10px;margin-top:12px}
-.cc-info{font-size:12px;color:var(--ink3);flex:1;text-align:center}
-.countdown-bar{height:4px;background:var(--border);border-radius:99px;margin-top:10px;overflow:hidden;display:none}
+/* 连续/限时跟读 - scroll list style */
+.shadow-list-area{flex:1;overflow-y:auto}
+.shadow-row{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px;position:relative}
+.shadow-row.active{background:var(--gold-l);border-left:3px solid var(--gold)}
+.shadow-row-hidden{font-size:14px;font-family:var(--font-mono);color:var(--ink3);letter-spacing:1px}
+.shadow-row-label{font-size:11px;font-family:var(--font-mono);color:var(--gold-d);font-weight:500}
+
+/* 限时倒计时条 */
+.countdown-bar{height:4px;background:var(--border);border-radius:99px;margin-top:6px;overflow:hidden;display:none}
 .countdown-fill{height:100%;background:var(--gold);border-radius:99px;transition:width .1s linear}
 .countdown-bar.show{display:block}
+.timed-status-text{font-size:11px;color:var(--ink3);margin-top:4px}
 
-/* 听写/挖空 输入 */
+/* 连续/限时底部控制条 */
+.cont-controls{padding:10px 14px;border-top:1px solid var(--border);background:var(--paper2);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cont-info{font-size:12px;color:var(--ink3);flex:1;text-align:center}
+
+/* 听写/挖空 */
+.mode-panel{flex:1;overflow-y:auto;padding:14px 18px;display:none}
+.mode-panel.show{display:block}
 .dictation-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
 .dc-prompt{font-size:13px;color:var(--ink2);margin-bottom:8px;line-height:1.6}
 .dc-input-row{display:flex;gap:6px;align-items:center}
@@ -126,20 +127,13 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 .note-input:focus{border-color:var(--teal);background:#fff}
 .note-saved{font-size:11px;color:var(--teal);margin-top:4px;display:none}
 
-/* progress */
-.prog-bar{height:3px;background:var(--border);position:relative;flex-shrink:0}
-.prog-fill2{height:100%;background:var(--gold);transition:width .3s}
-
-/* ── BLIND overlay ── */
-.blind-overlay{display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:12px;flex:1}
-.blind-overlay.show{display:flex}
+/* BLIND overlay inside right panel */
+.blind-panel{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:14px}
+.blind-panel.show{display:flex}
 .blind-icon{font-size:36px}
 .blind-t{font-size:15px;font-weight:600;color:var(--ink)}
 .blind-s{font-size:13px;color:var(--ink2);line-height:1.7}
-.blind-cur{background:var(--paper2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;margin-top:4px;font-size:14px;font-family:var(--font-mono);color:var(--teal-d);display:none}
-.blind-cur.show{display:block}
-.blind-cur-cn{font-size:12px;color:var(--ink2);margin-top:4px}
-.autopause-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--rs);margin-top:8px;font-size:13px;color:var(--ink2)}
+.autopause-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--ink2);width:100%;max-width:280px}
 .toggle{position:relative;width:34px;height:18px;margin-left:auto}
 .toggle input{opacity:0;width:0;height:0}
 .tsl{position:absolute;inset:0;background:var(--border2);border-radius:99px;cursor:pointer;transition:.2s}
@@ -147,19 +141,22 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 .toggle input:checked+.tsl{background:var(--btn-pink-text)}
 .toggle input:checked+.tsl:before{transform:translateX(16px)}
 
-/* ── MOBILE ── */
+/* left panel: video only, no subtitle list */
+.left-panel-content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* progress */
+.prog-bar{height:3px;background:var(--border);position:relative;flex-shrink:0}
+.prog-fill2{height:100%;background:var(--gold);transition:width .3s}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
 @media(max-width:768px){
   .layout{grid-template-columns:1fr;height:auto;overflow:visible}
   .left-panel{border-right:none;border-bottom:1px solid var(--border)}
   .right-panel{min-height:60vh}
-  .sub-area{max-height:40vh}
-  .mode-panel{min-height:40vh}
 }
-
-/* scrollbar */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 </style>
 </head>
 <body>
@@ -171,97 +168,119 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 </div>
 
 <div class="layout">
-  <!-- LEFT: video + subtitle list -->
+  <!-- LEFT: video + vid controls only -->
   <div class="left-panel">
     <div class="video-wrap"><div id="yt-player"></div></div>
     <div class="prog-bar"><div class="prog-fill2" id="prog" style="width:0%"></div></div>
-
-    <!-- video controls -->
     <div class="vid-controls">
-      <button class="vc-btn" id="btn-sub" onclick="toggleSubLang()">字幕</button>
-      <button class="vc-btn" onclick="go(-1)">上一句</button>
+      <button class="vc-btn" onclick="go(-1)">← 上一句</button>
       <button class="vc-btn play-btn" id="btn-play" onclick="togglePlay()">▶</button>
-      <button class="vc-btn" onclick="go(1)">下一句</button>
-      <button class="vc-btn" id="btn-blind" onclick="toggleBlind()">盲听</button>
-    </div>
-
-    <!-- subtitle lang bar -->
-    <div class="sub-lang-bar" id="sub-lang-bar">
-      <span class="sub-lang-label">字幕：</span>
-      <button class="sub-lang-btn active" id="slb-en" onclick="setSubLang('en')">英文</button>
-      <button class="sub-lang-btn" id="slb-bi" onclick="setSubLang('bi')">双语</button>
-    </div>
-
-    <!-- subtitle scroll -->
-    <div class="sub-area" id="sub-area"></div>
-
-    <!-- blind overlay (inside left panel, over subtitle area) -->
-    <div class="blind-overlay" id="blind-overlay">
-      <div class="blind-icon">👂</div>
-      <div class="blind-t">盲听模式</div>
-      <div class="blind-s">字幕已隐藏<br>专注用耳朵听</div>
-      <div class="blind-cur" id="blind-cur">
-        <div id="blind-cur-text">—</div>
-        <div class="blind-cur-cn" id="blind-cur-cn">—</div>
-      </div>
-      <div class="autopause-row">
-        单句播放完自动暂停
-        <label class="toggle"><input type="checkbox" id="ap-tog" onchange="autoPause=this.checked"><span class="tsl"></span></label>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="vc-btn play-btn" onclick="blindRestart()">▶ 从头播放</button>
-        <button class="vc-btn" onclick="toggleBlind()">☰ 退出盲听</button>
-      </div>
+      <button class="vc-btn" onclick="go(1)">下一句 →</button>
     </div>
   </div>
 
-  <!-- RIGHT: mode tabs + mode panels -->
+  <!-- RIGHT: tab-switched panels -->
   <div class="right-panel">
     <div class="mode-tabs">
-      <button class="tab" id="tab-subtitle" onclick="toggleRightSubtitle()" title="显示/隐藏左侧字幕区域">字幕</button>
-      <button class="tab active" id="tab-shadow" onclick="setModeTab('shadow')">跟读</button>
+      <button class="tab active" id="tab-subtitle" onclick="setModeTab('subtitle')">字幕</button>
+      <button class="tab" id="tab-shadow" onclick="setModeTab('shadow')">跟读</button>
       <button class="tab" id="tab-dictate" onclick="setModeTab('dictate')">听写</button>
       <button class="tab" id="tab-fill" onclick="setModeTab('fill')">挖空</button>
       <button class="tab" id="tab-note" onclick="setModeTab('note')">笔记</button>
     </div>
 
-    <!-- 跟读 panel -->
-    <div class="mode-panel show" id="panel-shadow">
-      <div class="sub-mode-row">
-        <button class="sm-btn active" id="sm-single" onclick="setShadowMode('single')">单句跟读</button>
-        <button class="sm-btn" id="sm-cont" onclick="setShadowMode('cont')">连续跟读</button>
-        <button class="sm-btn" id="sm-timed" onclick="setShadowMode('timed')">限时跟读</button>
+    <!-- ── 字幕 view ── -->
+    <div class="right-view show" id="view-subtitle" style="flex-direction:column">
+      <div class="sub-lang-bar">
+        <span class="sub-lang-label">字幕：</span>
+        <button class="sub-lang-btn active" id="slb-en" onclick="setSubLang('en')">英文</button>
+        <button class="sub-lang-btn" id="slb-bi" onclick="setSubLang('bi')">双语</button>
       </div>
-      <div id="shadow-content"></div>
+      <div class="sub-area" id="sub-area"></div>
     </div>
 
-    <!-- 听写 panel -->
-    <div class="mode-panel" id="panel-dictate">
-      <div class="sub-mode-row">
+    <!-- ── 跟读 view ── -->
+    <div class="right-view" id="view-shadow" style="flex-direction:column">
+      <!-- 盲听模式 panel (shown when isBlind=true) -->
+      <div class="blind-panel" id="blind-panel">
+        <div class="blind-icon">👂</div>
+        <div class="blind-t">盲听模式已开启</div>
+        <div class="blind-s">字幕已隐藏，专注用耳朵听<br>开启自动暂停后字幕完全不显示</div>
+        <div class="autopause-row">
+          单句播放完自动暂停
+          <label class="toggle"><input type="checkbox" id="ap-tog" onchange="setAutoPause(this.checked)"><span class="tsl"></span></label>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center">
+          <button class="vc-btn play-btn" onclick="blindRestart()">▶ 从头播放</button>
+          <button class="vc-btn" onclick="toggleBlind()">退出盲听</button>
+        </div>
+      </div>
+
+      <!-- 正常跟读内容 (hidden when isBlind=true) -->
+      <div class="shadow-view-inner" id="shadow-inner">
+        <div class="sub-mode-row">
+          <button class="sm-btn active" id="sm-single" onclick="setShadowMode('single')">单句跟读</button>
+          <button class="sm-btn" id="sm-cont" onclick="setShadowMode('cont')">连续跟读</button>
+          <button class="sm-btn" id="sm-timed" onclick="setShadowMode('timed')">限时跟读</button>
+          <div style="flex:1"></div>
+          <button class="sm-btn" id="btn-blind" onclick="toggleBlind()">盲听</button>
+        </div>
+
+        <!-- 单句跟读 panel -->
+        <div class="sm-panel show" id="sm-panel-single">
+          <div id="single-content"></div>
+        </div>
+
+        <!-- 连续跟读 panel -->
+        <div class="sm-panel" id="sm-panel-cont" style="padding:0;display:none;flex-direction:column">
+          <div class="shadow-list-area" id="cont-list"></div>
+          <div class="cont-controls">
+            <button class="sc-btn" onclick="contGo(-1)">← 上一句</button>
+            <span class="cont-info" id="cont-info">1 / 84</span>
+            <button class="sc-btn primary" onclick="contPlay()">▶ 播放</button>
+            <button class="sc-btn" onclick="contGo(1)">下一句 →</button>
+          </div>
+        </div>
+
+        <!-- 限时跟读 panel -->
+        <div class="sm-panel" id="sm-panel-timed" style="padding:0;display:none;flex-direction:column">
+          <div class="shadow-list-area" id="timed-list"></div>
+          <div class="cont-controls">
+            <button class="sc-btn" onclick="timedGo(-1)">← 上一句</button>
+            <span class="cont-info" id="timed-info">1 / 84</span>
+            <button class="sc-btn primary" id="timed-start-btn" onclick="startTimedChunk()">▶ 开始</button>
+            <button class="sc-btn" onclick="timedGo(1)">下一句 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 听写 view ── -->
+    <div class="right-view" id="view-dictate">
+      <div class="sub-mode-row" style="padding:10px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0">
         <button class="sm-btn active" id="dm-cn" onclick="setDictateMode('cn')">显示中文</button>
         <button class="sm-btn" id="dm-none" onclick="setDictateMode('none')">无字幕</button>
       </div>
-      <div id="dictate-content"></div>
+      <div class="mode-panel show" id="dictate-content" style="flex:1;overflow-y:auto;padding:14px 18px;display:block"></div>
     </div>
 
-    <!-- 挖空 panel -->
-    <div class="mode-panel" id="panel-fill">
-      <div class="sub-mode-row">
+    <!-- ── 挖空 view ── -->
+    <div class="right-view" id="view-fill">
+      <div class="sub-mode-row" style="padding:10px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0">
         <button class="sm-btn active" id="fm-cn" onclick="setFillMode('cn')">显示中文</button>
         <button class="sm-btn" id="fm-none" onclick="setFillMode('none')">不显示中文</button>
       </div>
-      <div id="fill-content"></div>
+      <div class="mode-panel show" id="fill-content" style="flex:1;overflow-y:auto;padding:14px 18px;display:block"></div>
     </div>
 
-    <!-- 笔记 panel -->
-    <div class="mode-panel" id="panel-note">
-      <div id="note-content"></div>
+    <!-- ── 笔记 view ── -->
+    <div class="right-view" id="view-note">
+      <div class="mode-panel show" id="note-content" style="flex:1;overflow-y:auto;padding:14px 18px;display:block"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ── DATA ──
 const chunks=[
   {text:"Somewhere between childhood and now,",cn:"在童年与现在之间的某个时刻，",t:5},
   {text:"we learned how to measure our lives and milestones.",cn:"我们学会了用里程碑来衡量自己的人生。",t:7},
@@ -353,24 +372,22 @@ const chunks=[
   {text:"of what success looks like.",cn:"关于成功是什么样的。",t:364},
 ];
 
-// complex words to blank out
 const complexWords=['measure','milestones','overwhelming','promotion','pursuing','subsequently','indicator','reevaluate','definition','outdated','preparing','competing','adventure','frustrated','nomads','concrete'];
 
 // ── STATE ──
 let cur=0, player=null, isBlind=false, autoPause=false;
-let subLang='en'; // 'en' | 'bi'
-let modeTab='shadow'; // shadow|dictate|fill|note
-let shadowMode='single'; // single|cont|timed
-let dictateMode='cn'; // cn|none
-let fillMode='cn'; // cn|none
+let subLang='en';
+let modeTab='subtitle';
+let shadowMode='single';
+// independent cursors for each shadow mode
+let singleCur=0, contCur=0, timedCur=0;
+let dictateMode='cn', fillMode='cn';
 let syncTimer=null;
-let timedTimer=null, timedActive=false;
 let notes={};
 let playing=false;
-let recState={}; // {idx: 'idle'|'recording'}
-let recMediaRecorders={}; // store MediaRecorder per chunk
-let recAudioBlobs={}; // store recorded audio blobs
-let rightSubVisible=true; // 字幕按钮状态
+let recState={}, recAudioBlobs={};
+// timed mode state
+let timedChunkTimer=null, timedActive=false;
 
 // ── YOUTUBE API ──
 window.onYouTubeIframeAPIReady=function(){
@@ -391,18 +408,16 @@ function startSync(){
     if(!player) return;
     const t=player.getCurrentTime();
     const idx=getChunkAt(t);
-    if(idx!==cur){ cur=idx; onCurChange(t); }
-    // 需求2: 单句播放完暂停开关只属于盲听模式
+    if(idx!==cur){ cur=idx; onCurChange(); }
+    // auto-pause: only in blind mode when toggle is on
     if(isBlind && autoPause && chunks[idx+1]){
       const rem=chunks[idx+1].t-t;
       if(rem<0.35&&rem>-0.5) player.pauseVideo();
     }
-    // 需求5&6: 听写/挖空模式单句播放完自动暂停
-    if((modeTab==='dictate'||modeTab==='fill') && !isBlind){
-      if(chunks[idx+1]){
-        const rem=chunks[idx+1].t-t;
-        if(rem<0.35&&rem>-0.5) player.pauseVideo();
-      }
+    // auto-pause in dictate/fill modes
+    if((modeTab==='dictate'||modeTab==='fill') && chunks[idx+1]){
+      const rem=chunks[idx+1].t-t;
+      if(rem<0.35&&rem>-0.5) player.pauseVideo();
     }
   },250);
 }
@@ -413,12 +428,12 @@ function getChunkAt(t){
   return r;
 }
 function onCurChange(){
-  renderSubList();
-  renderRightPanel();
-  if(isBlind){
-    document.getElementById('blind-cur').classList.add('show');
-    document.getElementById('blind-cur-text').textContent=chunks[cur].text;
-    document.getElementById('blind-cur-cn').textContent=chunks[cur].cn;
+  // sync subtitle view
+  if(modeTab==='subtitle') scrollSubTo(cur);
+  // sync cont/timed list views
+  if(modeTab==='shadow'){
+    if(shadowMode==='cont'){ contCur=cur; renderContList(); updateContInfo(); }
+    if(shadowMode==='timed'){ timedCur=cur; renderTimedList(); updateTimedInfo(); }
   }
   document.getElementById('prog').style.width=Math.round((cur+1)/chunks.length*100)+'%';
 }
@@ -437,9 +452,8 @@ function togglePlay(){
   playing?player.pauseVideo():player.playVideo();
 }
 
-// ── SUBTITLE LIST ──
+// ── SUBTITLE LIST (right panel subtitle view) ──
 function renderSubList(){
-  if(isBlind) return;
   const area=document.getElementById('sub-area');
   area.innerHTML='';
   chunks.forEach((c,i)=>{
@@ -451,56 +465,51 @@ function renderSubList(){
     div.onclick=()=>seekTo(i,true);
     area.appendChild(div);
   });
-  const el=area.children[cur];
+  scrollSubTo(cur);
+}
+function scrollSubTo(i){
+  const area=document.getElementById('sub-area');
+  const el=area.children[i];
   if(el) el.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
-
 function setSubLang(l){
   subLang=l;
   document.getElementById('slb-en').classList.toggle('active',l==='en');
   document.getElementById('slb-bi').classList.toggle('active',l==='bi');
-  const bar=document.getElementById('sub-lang-bar');
-  bar.style.display=(l==='hide')?'none':'flex';
   renderSubList();
-}
-function toggleSubLang(){
-  // cycle: en → bi → en
-  setSubLang(subLang==='en'?'bi':'en');
-  document.getElementById('btn-sub').classList.toggle('active',subLang==='bi');
-}
-
-// 需求3: 右边字幕按钮（仅切换左侧字幕列表显示，电脑版视频下不放字幕）
-function toggleRightSubtitle(){
-  rightSubVisible=!rightSubVisible;
-  document.getElementById('tab-subtitle').classList.toggle('active',rightSubVisible);
-  document.getElementById('sub-lang-bar').style.display=rightSubVisible&&!isBlind?'flex':'none';
-  document.getElementById('sub-area').style.display=rightSubVisible&&!isBlind?'block':'none';
-}
-
-// ── BLIND ──
-function toggleBlind(){
-  isBlind=!isBlind;
-  document.getElementById('blind-overlay').classList.toggle('show',isBlind);
-  document.getElementById('sub-area').style.display=isBlind?'none':'block';
-  document.getElementById('sub-lang-bar').style.display=isBlind?'none':'flex';
-  document.getElementById('btn-blind').classList.toggle('active',isBlind);
-  if(!isBlind){
-    renderSubList();
-    document.getElementById('blind-cur').classList.remove('show');
-  }
-}
-function blindRestart(){
-  if(player){ player.seekTo(0,true); player.playVideo(); }
 }
 
 // ── MODE TABS ──
 function setModeTab(t){
   modeTab=t;
-  ['shadow','dictate','fill','note'].forEach(m=>{
+  ['subtitle','shadow','dictate','fill','note'].forEach(m=>{
     document.getElementById('tab-'+m).classList.toggle('active',m===t);
-    document.getElementById('panel-'+m).classList.toggle('show',m===t);
+    document.getElementById('view-'+m).classList.toggle('show',m===t);
   });
-  renderRightPanel();
+  if(t==='subtitle') renderSubList();
+  else if(t==='shadow') renderShadowView();
+  else if(t==='dictate') renderDictate();
+  else if(t==='fill') renderFill();
+  else if(t==='note') renderNote();
+}
+
+// ── BLIND ──
+function toggleBlind(){
+  isBlind=!isBlind;
+  document.getElementById('btn-blind').classList.toggle('active',isBlind);
+  document.getElementById('blind-panel').classList.toggle('show',isBlind);
+  document.getElementById('shadow-inner').style.display=isBlind?'none':'flex';
+  if(isBlind){
+    // go to shadow tab if not there
+    if(modeTab!=='shadow') setModeTab('shadow');
+  }
+}
+function setAutoPause(v){
+  autoPause=v;
+  // if autopause is on, subtitle view doesn't matter (blind panel has no subtitle)
+}
+function blindRestart(){
+  if(player){ player.seekTo(0,true); player.playVideo(); }
 }
 
 // ── SHADOW MODE ──
@@ -509,128 +518,68 @@ function setShadowMode(m){
   ['single','cont','timed'].forEach(s=>{
     document.getElementById('sm-'+s).classList.toggle('active',s===m);
   });
-  renderShadow();
+  // show/hide sub-panels
+  ['single','cont','timed'].forEach(s=>{
+    const p=document.getElementById('sm-panel-'+s);
+    if(s===m){
+      p.style.display=(s==='single')?'block':'flex';
+      if(s!=='single') p.classList.add('show');
+    } else {
+      p.style.display='none';
+      p.classList.remove('show');
+    }
+  });
+  renderShadowView();
 }
 
-function renderShadow(){
-  const c=document.getElementById('shadow-content');
-  if(shadowMode==='single'){
-    // 需求4: 单句跟读 - 录用户声音，回放用户录音；点击播放只播该句，播完自动停
-    c.innerHTML=chunks.map((ch,i)=>`
-      <div class="shadowing-card" id="sc-${i}" style="${i===cur?'border-color:var(--gold)':''}">
-        <div class="sc-en">${ch.text}</div>
-        <div class="sc-cn">${ch.cn}</div>
-        <div class="sc-controls">
-          <button class="sc-btn primary" onclick="playSingleChunk(${i})">▶ 播放</button>
-          <button class="sc-btn" id="rec-${i}" onclick="toggleRec(${i})">🎙 录音</button>
-          <button class="sc-btn" id="pb-${i}" onclick="playbackRec(${i})" style="display:none">↺ 回放</button>
-          <span class="rec-status" id="rs-${i}"></span>
-        </div>
-      </div>`).join('');
-    setTimeout(()=>{ const el=document.getElementById('sc-'+cur); if(el) el.scrollIntoView({block:'nearest',behavior:'smooth'}); },50);
-  } else if(shadowMode==='cont'){
-    // 需求4: 连续跟读 - 隐藏字幕（用长条遮住），自动切分句
-    const ch=chunks[cur];
-    c.innerHTML=`
-      <div class="continuous-card">
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">${cur+1} / ${chunks.length}</div>
-        <div style="position:relative;display:inline-block;width:100%">
-          <div class="sc-en" style="font-size:16px;line-height:1.8;filter:blur(0)">${ch.text}</div>
-          <div style="position:absolute;left:0;bottom:0;width:100%;height:22px;background:var(--paper2);border-radius:4px;pointer-events:none"></div>
-        </div>
-        <div class="cc-nav">
-          <button class="sc-btn" onclick="go(-1)">← 上一句</button>
-          <button class="sc-btn primary" id="cont-play" onclick="playSingleChunk(cur)">▶ 播放</button>
-          <button class="sc-btn" onclick="go(1)">下一句 →</button>
-        </div>
-      </div>`;
-  } else {
-    // 需求4: 限时跟读 - 隐藏字幕+遮条，播完"滴"一声，倒计时进度条(+3s)，结束后继续
-    const ch=chunks[cur];
-    c.innerHTML=`
-      <div class="continuous-card">
-        <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">${cur+1} / ${chunks.length}</div>
-        <div style="position:relative;display:inline-block;width:100%">
-          <div class="sc-en" style="font-size:16px;line-height:1.8">${ch.text}</div>
-          <div style="position:absolute;left:0;bottom:0;width:100%;height:22px;background:var(--paper2);border-radius:4px;pointer-events:none"></div>
-        </div>
-        <div class="countdown-bar show" id="cd-bar"><div class="countdown-fill" id="cd-fill" style="width:0%"></div></div>
-        <div id="timed-status" style="font-size:12px;color:var(--ink3);margin-top:6px;text-align:center">等待播放...</div>
-        <div class="cc-nav">
-          <button class="sc-btn" onclick="go(-1)">← 上一句</button>
-          <button class="sc-btn primary" id="timed-start-btn" onclick="startTimedChunk()">▶ 开始</button>
-          <button class="sc-btn" onclick="go(1)">下一句 →</button>
-        </div>
-      </div>`;
-  }
+function renderShadowView(){
+  if(shadowMode==='single') renderSingle();
+  else if(shadowMode==='cont'){ renderContList(); updateContInfo(); }
+  else if(shadowMode==='timed'){ renderTimedList(); updateTimedInfo(); }
 }
 
-// 需求4: 单句播放 - 只播该句，播完自动停
+// ── SINGLE MODE ──
+function renderSingle(){
+  const c=document.getElementById('single-content');
+  c.innerHTML=chunks.map((ch,i)=>`
+    <div class="shadowing-card" id="sc-${i}">
+      <div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:6px">字幕已隐藏</div>
+      <div class="sc-cn">${ch.cn}</div>
+      <div class="sc-controls">
+        <button class="sc-btn primary" onclick="playSingleChunk(${i})">▶ 播放</button>
+        <button class="sc-btn" id="rec-${i}" onclick="toggleRec(${i})">🎙 录音</button>
+        <button class="sc-btn" id="pb-${i}" onclick="playbackRec(${i})">↺ 回放</button>
+        <span class="rec-status" id="rs-${i}"></span>
+      </div>
+    </div>`).join('');
+  const el=document.getElementById('sc-'+singleCur);
+  if(el) setTimeout(()=>el.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
+}
+
 function playSingleChunk(i){
   if(!player) return;
-  cur=i;
+  singleCur=i; cur=i;
   player.seekTo(chunks[i].t,true);
   player.playVideo();
-  // 计算该句时长，播完后暂停
   const dur=(chunks[i+1]?chunks[i+1].t:chunks[i].t+5)-chunks[i].t;
   clearTimeout(window._singlePauseTimer);
   window._singlePauseTimer=setTimeout(()=>{ if(player) player.pauseVideo(); },dur*1000-100);
 }
 
-// 需求4: 限时跟读 - 播完当前句→滴声→倒计时进度条(句长+3s)→继续下句
-let timedChunkTimer=null;
-function startTimedChunk(){
-  if(!player) return;
-  const statusEl=document.getElementById('timed-status');
-  const fillEl=document.getElementById('cd-fill');
-  const btn=document.getElementById('timed-start-btn');
-  if(btn) btn.disabled=true;
-  const sentDur=(chunks[cur+1]?chunks[cur+1].t:chunks[cur].t+5)-chunks[cur].t;
-  const countdownDur=sentDur+3; // 比原句长3秒
-  statusEl&&(statusEl.textContent='播放中...');
-  player.seekTo(chunks[cur].t,true);
-  player.playVideo();
-  clearTimeout(timedChunkTimer);
-  timedChunkTimer=setTimeout(()=>{
-    if(player) player.pauseVideo();
-    // 滴声
-    try{
-      const ctx=new (window.AudioContext||window.webkitAudioContext)();
-      const osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=880;
-      osc.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.15);
-    }catch(e){}
-    if(statusEl) statusEl.textContent='跟读中，请开口...';
-    // 倒计时进度条
-    if(fillEl){ fillEl.style.transition='none';fillEl.style.width='100%';
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        fillEl.style.transition='width '+countdownDur+'s linear';
-        fillEl.style.width='0%';
-      }));
-    }
-    timedChunkTimer=setTimeout(()=>{
-      if(statusEl) statusEl.textContent='继续下一句';
-      if(cur+1<chunks.length){ go(1); }
-      else{ if(statusEl) statusEl.textContent='全文完成 🎉'; }
-    },countdownDur*1000);
-  },sentDur*1000);
-}
-
-let recStreams={};
 function toggleRec(i){
   const btn=document.getElementById('rec-'+i);
   const rs=document.getElementById('rs-'+i);
-  const pbBtn=document.getElementById('pb-'+i);
   if(recState[i]==='recording'){
-    // 停止录音
     recState[i]='idle';
-    btn.textContent='🎙 录音';btn.classList.remove('danger');
+    btn.textContent='🎙 录音'; btn.classList.remove('danger');
     rs.textContent='录音已保存 ✓';
-    if(recStreams[i]){
-      recStreams[i].recorder&&recStreams[i].recorder.stop();
+    if(window._recStreams&&window._recStreams[i]){
+      window._recStreams[i].recorder&&window._recStreams[i].recorder.stop();
     }
   } else {
     recState[i]='recording';
-    btn.textContent='⏹ 停止';btn.classList.add('danger');
+    btn.textContent='⏹ 停止'; btn.classList.add('danger');
     rs.textContent='录音中...';
     navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
       const recorder=new MediaRecorder(stream);
@@ -639,24 +588,122 @@ function toggleRec(i){
       recorder.onstop=()=>{
         recAudioBlobs[i]=new Blob(chunks2,{type:'audio/webm'});
         stream.getTracks().forEach(t=>t.stop());
-        if(pbBtn) pbBtn.style.display='inline-flex';
         rs.textContent='录音已保存 ✓';
       };
       recorder.start();
-      recStreams[i]={recorder,stream};
-    }).catch(()=>{ rs.textContent='无麦克风权限'; recState[i]='idle'; btn.textContent='🎙 录音';btn.classList.remove('danger'); });
+      if(!window._recStreams) window._recStreams={};
+      window._recStreams[i]={recorder,stream};
+    }).catch(()=>{ rs.textContent='无麦克风权限'; recState[i]='idle'; btn.textContent='🎙 录音'; btn.classList.remove('danger'); });
   }
 }
 
-// 需求4: 回放用户自己的录音
 function playbackRec(i){
   const rs=document.getElementById('rs-'+i);
-  if(!recAudioBlobs[i]){ rs.textContent='尚无录音'; return; }
+  if(!recAudioBlobs[i]){ if(rs) rs.textContent='尚无录音'; return; }
   const url=URL.createObjectURL(recAudioBlobs[i]);
   const audio=new Audio(url);
-  rs.textContent='回放中...';
+  if(rs) rs.textContent='回放中...';
   audio.play();
-  audio.onended=()=>{ rs.textContent='回放结束'; URL.revokeObjectURL(url); };
+  audio.onended=()=>{ if(rs) rs.textContent='回放结束'; URL.revokeObjectURL(url); };
+}
+
+// ── CONTINUOUS MODE ──
+function renderContList(){
+  const el=document.getElementById('cont-list');
+  el.innerHTML='';
+  chunks.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='shadow-row'+(i===contCur?' active':'');
+    div.innerHTML=`<div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="shadow-row-hidden">字幕已隐藏</div>
+      ${i===contCur?`<div class="shadow-row-label">▶ 当前句</div>`:''}`;
+    div.onclick=()=>{ contCur=i; cur=i; renderContList(); updateContInfo(); };
+    el.appendChild(div);
+  });
+  const activeEl=el.children[contCur];
+  if(activeEl) setTimeout(()=>activeEl.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
+}
+function updateContInfo(){
+  document.getElementById('cont-info').textContent=`${contCur+1} / ${chunks.length}`;
+}
+function contGo(dir){
+  const ni=contCur+dir;
+  if(ni>=0&&ni<chunks.length){ contCur=ni; cur=ni; renderContList(); updateContInfo(); }
+}
+function contPlay(){
+  if(!player) return;
+  cur=contCur;
+  seekTo(contCur,true);
+}
+
+// ── TIMED MODE ──
+function renderTimedList(){
+  const el=document.getElementById('timed-list');
+  el.innerHTML='';
+  chunks.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='shadow-row'+(i===timedCur?' active':'');
+    div.innerHTML=`<div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="shadow-row-hidden">字幕已隐藏</div>
+      ${i===timedCur?`
+        <div class="countdown-bar" id="timed-cd-bar"><div class="countdown-fill" id="timed-cd-fill" style="width:100%"></div></div>
+        <div class="timed-status-text" id="timed-status">等待开始...</div>`:''}`;
+    div.onclick=()=>{ timedCur=i; cur=i; renderTimedList(); updateTimedInfo(); };
+    el.appendChild(div);
+  });
+  const activeEl=el.children[timedCur];
+  if(activeEl) setTimeout(()=>activeEl.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
+}
+function updateTimedInfo(){
+  document.getElementById('timed-info').textContent=`${timedCur+1} / ${chunks.length}`;
+}
+function timedGo(dir){
+  clearTimeout(timedChunkTimer); timedActive=false;
+  const ni=timedCur+dir;
+  if(ni>=0&&ni<chunks.length){ timedCur=ni; cur=ni; renderTimedList(); updateTimedInfo(); }
+}
+
+function startTimedChunk(){
+  if(!player) return;
+  clearTimeout(timedChunkTimer);
+  const btn=document.getElementById('timed-start-btn');
+  if(btn) btn.disabled=true;
+  const sentDur=(chunks[timedCur+1]?chunks[timedCur+1].t:chunks[timedCur].t+5)-chunks[timedCur].t;
+  const countdownDur=sentDur+3;
+  const statusEl=document.getElementById('timed-status');
+  if(statusEl) statusEl.textContent='播放中...';
+  player.seekTo(chunks[timedCur].t,true);
+  player.playVideo();
+  timedChunkTimer=setTimeout(()=>{
+    if(player) player.pauseVideo();
+    // 滴声 (before countdown starts)
+    try{
+      const ctx=new(window.AudioContext||window.webkitAudioContext)();
+      const osc=ctx.createOscillator(); osc.type='sine'; osc.frequency.value=880;
+      osc.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+0.15);
+    }catch(e){}
+    if(statusEl) statusEl.textContent='开始跟读，倒计时中...';
+    const fillEl=document.getElementById('timed-cd-fill');
+    const barEl=document.getElementById('timed-cd-bar');
+    if(barEl) barEl.classList.add('show');
+    if(fillEl){
+      fillEl.style.transition='none'; fillEl.style.width='100%';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        fillEl.style.transition='width '+countdownDur+'s linear';
+        fillEl.style.width='0%';
+      }));
+    }
+    timedChunkTimer=setTimeout(()=>{
+      if(btn) btn.disabled=false;
+      if(timedCur+1<chunks.length){
+        timedCur++; cur=timedCur;
+        renderTimedList(); updateTimedInfo();
+        if(statusEl) {}
+      } else {
+        if(statusEl) statusEl.textContent='全文完成 🎉';
+      }
+    },countdownDur*1000);
+  },sentDur*1000);
 }
 
 // ── DICTATE MODE ──
@@ -672,7 +719,7 @@ function renderDictate(){
     <div class="dictation-card">
       <div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
       ${dictateMode==='cn'?`<div class="dc-prompt">${ch.cn}</div>`:'<div class="dc-prompt" style="color:var(--ink3);font-style:italic">（无提示，凭耳朵作答）</div>'}
-      <button class="sc-btn primary" style="margin-bottom:8px;font-size:12px" onclick="playSingleChunk(${i})">▶ 播放（单句）</button>
+      <button class="sc-btn primary" style="margin-bottom:8px;font-size:12px" onclick="playSingleChunk(${i})">▶ 播放</button>
       <div class="dc-input-row">
         <input class="dc-input" id="di-${i}" placeholder="输入你听到的英文..." onkeydown="if(event.key==='Enter')checkDictate(${i})">
         <button class="sc-btn primary" onclick="checkDictate(${i})">检查</button>
@@ -680,9 +727,7 @@ function renderDictate(){
       <div class="dc-answer" id="da-${i}">${ch.text}</div>
     </div>`).join('');
 }
-function checkDictate(i){
-  document.getElementById('da-'+i).classList.add('show');
-}
+function checkDictate(i){ document.getElementById('da-'+i).classList.add('show'); }
 
 // ── FILL MODE ──
 function setFillMode(m){
@@ -691,11 +736,10 @@ function setFillMode(m){
   document.getElementById('fm-none').classList.toggle('active',m==='none');
   renderFill();
 }
-function getFilledText(text, sentIdx){
+function getFilledText(text,sentIdx){
   const words=text.split(' ');
   const blankable=words.map((w,i)=>({w,i,clean:w.replace(/[^a-zA-Z']/g,'').toLowerCase()}))
     .filter(o=>complexWords.includes(o.clean));
-  // 需求6: 每句至少挖一个词；若没有complexWord则取最长词
   let toBlank=new Set(blankable.map(o=>o.i));
   if(toBlank.size===0){
     let best=0,bestLen=0;
@@ -714,19 +758,11 @@ function renderFill(){
   const c=document.getElementById('fill-content');
   c.innerHTML=chunks.map((ch,i)=>{
     const filled=getFilledText(ch.text,i);
-    // 收集该句挖空的词
-    const words=ch.text.split(' ');
-    const blankedWords=words.filter((w,wi)=>{
-      const clean=w.replace(/[^a-zA-Z']/g,'').toLowerCase();
-      if(complexWords.includes(clean)) return true;
-      return false;
-    });
-    const hint=blankedWords.length>0?blankedWords.join(', '):(()=>{let best='',bl=0;words.forEach(w=>{const cl=w.replace(/[^a-zA-Z]/g,'');if(cl.length>bl){bl=cl.length;best=w;}});return best;})();
     return `
     <div class="dictation-card">
       <div class="chunk-num">${String(i+1).padStart(2,'0')}</div>
       ${fillMode==='cn'?`<div class="dc-prompt">${ch.cn}</div>`:''}
-      <button class="sc-btn primary" style="font-size:12px;margin-bottom:8px" onclick="playSingleChunk(${i})">▶ 播放（单句）</button>
+      <button class="sc-btn primary" style="font-size:12px;margin-bottom:8px" onclick="playSingleChunk(${i})">▶ 播放</button>
       <div class="chunk-en" style="font-size:14px;line-height:1.9;margin-bottom:8px">${filled}</div>
       <div class="dc-input-row">
         <input class="dc-input" id="fi-${i}" placeholder="输入缺失单词（逗号分隔）..." onkeydown="if(event.key==='Enter')checkFill(${i})">
@@ -737,8 +773,7 @@ function renderFill(){
   }).join('');
 }
 function checkFill(i){
-  const ansEl=document.getElementById('fa-'+i);
-  ansEl.classList.add('show');
+  document.getElementById('fa-'+i).classList.add('show');
   document.querySelectorAll(`[id^="bl-${i}_"]`).forEach(b=>b.classList.add('revealed'));
 }
 
@@ -762,16 +797,9 @@ function saveNote(i){
   setTimeout(()=>s.style.display='none',1500);
 }
 
-function renderRightPanel(){
-  if(modeTab==='shadow') renderShadow();
-  else if(modeTab==='dictate') renderDictate();
-  else if(modeTab==='fill') renderFill();
-  else renderNote();
-}
-
 // ── INIT ──
 renderSubList();
-renderRightPanel();
+renderSingle();
 
 const tag=document.createElement('script');
 tag.src='https://www.youtube.com/iframe_api';
