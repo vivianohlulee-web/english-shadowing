@@ -179,7 +179,13 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 <div class="layout">
   <!-- ══ LEFT ══ -->
   <div class="left">
-    <div class="vid-wrap"><div id="ytp"></div></div>
+    <div class="vid-wrap">
+      <!-- 本地视频：将视频文件与本网页放在同一目录，文件名改为 video.mp4 即可 -->
+      <video id="ytp" controls style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000" preload="metadata">
+        <source src="video.mp4" type="video/mp4">
+        您的浏览器不支持视频播放。
+      </video>
+    </div>
     <div class="vpbar"><div class="vpfill" id="vpf" style="width:0%"></div></div>
 
     <!-- 视频控制：字幕 | 上一句 | 播放 | 下一句 | 盲听，居中 -->
@@ -194,7 +200,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
     <!-- 单句自动暂停开关，仅盲听时显示 -->
     <div class="ap-row" id="ap-row">
       单句播放完自动暂停
-      <label class="tog"><input type="checkbox" id="ap-tog" onchange="autoPause=this.checked"><span class="tsl"></span></label>
+      <label class="tog"><input type="checkbox" id="ap-tog" onchange="setAutoPause(this.checked)"><span class="tsl"></span></label>
     </div>
 
     <!-- 左侧空白区 -->
@@ -241,7 +247,6 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
         <!-- 导航框在顶部 -->
         <div class="nav-box">
           <button class="cbtn" onclick="contGo(-1)">⏮ 上一句</button>
-          <span class="nav-info" id="cont-info">1 / 84</span>
           <button class="cbtn pink" onclick="contPlay()">▶ 播放</button>
           <button class="cbtn" onclick="contGo(1)">下一句 ⏭</button>
         </div>
@@ -254,7 +259,6 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
         <!-- 导航框在顶部 -->
         <div class="nav-box">
           <button class="cbtn" onclick="timedGo(-1)">⏮ 上一句</button>
-          <span class="nav-info" id="timed-info">1 / 84</span>
           <button class="cbtn pink" id="timed-btn" onclick="startTimed()">▶ 开始</button>
           <button class="cbtn" onclick="timedGo(1)">下一句 ⏭</button>
         </div>
@@ -407,7 +411,7 @@ function pickBlanks(text){
 // ═══════════════ STATE ═══════════════
 let cur=0,player=null,playing=false;
 let isBlind=false,autoPause=false;
-let subLang='en'; // en|bi — syncs with left btn
+let subLang='off'; // off|en|bi — syncs with left btn
 let modeTab='subtitle';
 let sm='single'; // single|cont|timed
 let dm='cn',fm='cn';
@@ -417,19 +421,25 @@ let notes={},recState={},recBlobs={};
 let timedTimer=null,cdInterval=null;
 let singlePauseTimers={};
 
-// ═══════════════ YOUTUBE ═══════════════
-window.onYouTubeIframeAPIReady=function(){
-  player=new YT.Player('ytp',{
-    videoId:'4M6Ykqw26TI',
-    playerVars:{rel:0,modestbranding:1},
-    events:{onStateChange:onPSC}
-  });
-};
-function onPSC(e){
-  playing=(e.data===YT.PlayerState.PLAYING);
-  document.getElementById('btn-play').textContent=playing?'⏸':'▶';
-  if(playing)startSync();else stopSync();
+// ═══════════════ LOCAL VIDEO PLAYER ═══════════════
+// 封装本地 <video> 元素，使接口与原 YT.player 兼容
+function initLocalPlayer(){
+  const v=document.getElementById('ytp');
+  if(!v)return;
+  // 封装对象
+  player={
+    _v:v,
+    seekTo(t){v.currentTime=t;},
+    playVideo(){v.play();},
+    pauseVideo(){v.pause();},
+    getCurrentTime(){return v.currentTime;},
+    getPlaybackRate(){return v.playbackRate;}
+  };
+  v.addEventListener('play',()=>{playing=true;document.getElementById('btn-play').textContent='⏸';startSync();});
+  v.addEventListener('pause',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();});
+  v.addEventListener('ended',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();});
 }
+// 页面加载后初始化本地播放器（通过 window load 事件触发）
 function startSync(){
   stopSync();
   syncTimer=setInterval(()=>{
@@ -441,10 +451,13 @@ function startSync(){
     if(idx!==cur){
       cur=idx;
       onCurChange();
-      // blind autopause
-      if(isBlind&&autoPause)player.pauseVideo();
+      // blind autopause: pause at sentence boundary
+      if(isBlind&&autoPause){
+        clearTimeout(window._apTimer);
+        player.pauseVideo();
+      }
     }
-  },100);
+  },80);
 }
 function stopSync(){clearInterval(syncTimer);}
 
@@ -452,8 +465,8 @@ function onCurChange(){
   document.getElementById('vpf').style.width=Math.round((cur+1)/chunks.length*100)+'%';
   if(modeTab==='subtitle')scrollSubTo(cur);
   if(modeTab==='shadow'){
-    if(sm==='cont'){contCur=cur;renderContList();document.getElementById('cont-info').textContent=`${contCur+1}/${chunks.length}`;}
-    if(sm==='timed'){timedCur=cur;renderTimedList();document.getElementById('timed-info').textContent=`${timedCur+1}/${chunks.length}`;}
+    if(sm==='cont'){contCur=cur;renderContList();}
+    if(sm==='timed'){timedCur=cur;renderTimedList();}
   }
 }
 
@@ -472,7 +485,7 @@ function togglePlay(){if(!player)return;playing?player.pauseVideo():player.playV
 // off → en → bi → off; button label changes
 function cycleSubLang(){
   const states=['off','en','bi'];
-  const labels={off:'📄 字幕',en:'📄 中文',bi:'📄 双语'};
+  const labels={off:'📄 字幕',en:'📄 英文',bi:'📄 双语'};
   const cur_i=states.indexOf(subLang);
   subLang=states[(cur_i+1)%states.length];
   const btn=document.getElementById('btn-sub');
@@ -491,15 +504,39 @@ function cycleSubLang(){
 }
 
 // ═══════════════ BLIND ═══════════════
+function setAutoPause(checked){
+  autoPause=checked;
+  // 如果当前正在播放且开关打开，立即暂停到当前句末
+  if(autoPause&&player&&playing){
+    // 直接暂停视频以切换到单句模式
+    const t=player.getCurrentTime();
+    const idx=getIdx(t);
+    const end=chunks[idx].t+chunkDur(idx);
+    const remain=(end-t)*1000+300;
+    clearTimeout(window._apTimer);
+    window._apTimer=setTimeout(()=>{if(player&&autoPause)player.pauseVideo();},Math.max(0,remain));
+  } else if(!autoPause){
+    clearTimeout(window._apTimer);
+    // 如果视频被暂停且应该继续播放，恢复播放
+    if(player&&!playing&&isBlind){
+      player.playVideo();
+    }
+  }
+}
 function toggleBlind(){
   isBlind=!isBlind;
   document.getElementById('btn-blind').classList.toggle('active-pink',isBlind);
   document.getElementById('ap-row').classList.toggle('show',isBlind);
+  if(!isBlind){
+    // 关闭盲听：重置自动暂停，恢复播放
+    autoPause=false;
+    document.getElementById('ap-tog').checked=false;
+    clearTimeout(window._apTimer);
+  }
   // hide/show subtitle area
   const sa=document.getElementById('sub-area');
   if(isBlind){
     sa.style.visibility='hidden';
-    // auto-navigate to subtitle tab to show the hidden area
   } else {
     sa.style.visibility='visible';
     renderSubList();
@@ -538,28 +575,43 @@ function setSubLang(l){
   document.getElementById('slb-bi').classList.toggle('active',l==='bi');
   // sync left button
   const leftBtn=document.getElementById('btn-sub');
-  leftBtn.textContent=l==='en'?'📄 中文':'📄 双语';
+  leftBtn.textContent=l==='en'?'📄 英文':'📄 双语';
   leftBtn.classList.add('active-pink');
   renderSubList();
 }
 
-// karaoke word highlight
+// karaoke word highlight - uses actual video time for accurate sync
 let lastLitWord=null;
 function highlightWord(t){
   if(subLang==='off')return;
-  const words=document.querySelectorAll('.w');
-  let best=null;
-  words.forEach(w=>{
-    const wt=parseFloat(w.dataset.t);
-    if(wt<=t)best=w;
-  });
-  if(best===lastLitWord)return;
+  // Find the current chunk
+  const ci=getIdx(t);
+  const chunk=chunks[ci];
+  const dur=chunkDur(ci);
+  const words=chunk.text.split(' ');
+  const count=words.length;
+  // Time within the chunk
+  const elapsed=t-chunk.t;
+  // Which word index should be lit (linear interpolation within chunk duration)
+  const wi=Math.min(count-1,Math.floor(elapsed/dur*count));
+  // Find the DOM element
+  const senEl=document.getElementById('sen-'+ci);
+  if(!senEl)return;
+  const wordEls=senEl.querySelectorAll('.w');
+  const target=wordEls[wi]||null;
+  if(target===lastLitWord)return;
   if(lastLitWord)lastLitWord.classList.remove('lit');
-  if(best){best.classList.add('lit');lastLitWord=best;}
+  if(target){target.classList.add('lit');lastLitWord=target;}
 }
 
 // ═══════════════ TABS ═══════════════
 function setTab(t){
+  // 停止旧标签的运行状态
+  if(modeTab==='shadow'){
+    if(sm==='timed')clearTimed();
+    if(sm==='single'){Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));singlePauseTimers={};}
+    if(player&&playing)player.pauseVideo();
+  }
   modeTab=t;
   ['subtitle','shadow','dictate','fill','note'].forEach(m=>{
     document.getElementById('tab-'+m).classList.toggle('active',m===t);
@@ -574,6 +626,18 @@ function setTab(t){
 
 // ═══════════════ SHADOW MODE ═══════════════
 function setSM(m){
+  // 停止旧模式的所有计时器/录音/播放
+  if(sm==='timed'){clearTimed();}
+  if(sm==='single'){
+    // 清除所有单句暂停计时器
+    Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));
+    singlePauseTimers={};
+  }
+  if(sm==='cont'){
+    // 暂停播放
+  }
+  // 如果视频正在播放，暂停（切换模式时停止当前播放）
+  if(player&&playing)player.pauseVideo();
   sm=m;
   ['single','cont','timed'].forEach(s=>document.getElementById('sm-'+s).classList.toggle('active',s===m));
   renderSM();
@@ -583,8 +647,8 @@ function renderSM(){
   document.getElementById('smp-cont').classList.toggle('show',sm==='cont');
   document.getElementById('smp-timed').classList.toggle('show',sm==='timed');
   if(sm==='single')renderSingle();
-  else if(sm==='cont'){renderContList();document.getElementById('cont-info').textContent=`${contCur+1}/${chunks.length}`;}
-  else{renderTimedList();document.getElementById('timed-info').textContent=`${timedCur+1}/${chunks.length}`;}
+  else if(sm==='cont'){renderContList();}
+  else{renderTimedList();}
 }
 
 // ── SINGLE ──
@@ -597,7 +661,7 @@ function renderSingle(){
       <div class="card-btns">
         <button class="cbtn pink" onclick="singlePlay(${i})">▶ 播放</button>
         <button class="cbtn" id="recbtn${i}" onclick="toggleRec(${i})">🎙 录音</button>
-        <button class="cbtn green" id="pbbtn${i}" style="display:none" onclick="playRec(${i})">▶ 回放</button>
+        <button class="cbtn green" id="pbbtn${i}" ${recBlobs[i]?'':'disabled style="opacity:.4;cursor:not-allowed"'} onclick="playRec(${i})">↩ 回放</button>
         <span class="rec-st" id="recst${i}"></span>
       </div>
     </div>`).join('');
@@ -631,7 +695,7 @@ function toggleRec(i){
         btn.innerHTML='🎙 录音';btn.className='cbtn';
         st.textContent='录音完成 ✓';
         const pb=document.getElementById('pbbtn'+i);
-        if(pb)pb.style.display='inline-flex';
+        if(pb){pb.removeAttribute('disabled');pb.style.opacity='1';pb.style.cursor='pointer';}
       };
       mr.start();
       btn.innerHTML='<span class="rec-dot"></span> 停止';btn.className='cbtn red';
@@ -650,13 +714,13 @@ function renderContList(){
     d.className='srow'+(i===contCur?' cur':'');
     d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')}</div>
       <div class="srow-mask">━━━━━━━━━━━━━━━</div>`;
-    d.onclick=()=>{contCur=i;cur=i;renderContList();document.getElementById('cont-info').textContent=`${i+1}/${chunks.length}`;};
+    d.onclick=()=>{contCur=i;cur=i;renderContList();};
     el.appendChild(d);
   });
   const ae=el.children[contCur];
   if(ae)setTimeout(()=>ae.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
 }
-function contGo(d){const n=contCur+d;if(n>=0&&n<chunks.length){contCur=n;cur=n;renderContList();document.getElementById('cont-info').textContent=`${n+1}/${chunks.length}`;}}
+function contGo(d){const n=contCur+d;if(n>=0&&n<chunks.length){contCur=n;cur=n;renderContList();}}
 function contPlay(){if(!player)return;cur=contCur;player.seekTo(chunks[contCur].t,true);player.playVideo();}
 
 // ── TIMED ──
@@ -669,7 +733,7 @@ function renderTimedList(){
     d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')}</div>
       <div class="srow-mask">━━━━━━━━━━━━━━━</div>
       ${i===timedCur?`<div class="cd-wrap" id="cd-wrap"><div class="cd-label">跟读倒计时</div><div class="cd-bar"><div class="cd-fill" id="cd-fill" style="width:0%"></div></div></div>`:''}`
-    d.onclick=()=>{timedCur=i;cur=i;renderTimedList();document.getElementById('timed-info').textContent=`${i+1}/${chunks.length}`;};
+    d.onclick=()=>{timedCur=i;cur=i;renderTimedList();};
     el.appendChild(d);
   });
   const ae=el.children[timedCur];
@@ -678,7 +742,7 @@ function renderTimedList(){
 function timedGo(d){
   clearTimed();
   const n=timedCur+d;
-  if(n>=0&&n<chunks.length){timedCur=n;cur=n;renderTimedList();document.getElementById('timed-info').textContent=`${n+1}/${chunks.length}`;}
+  if(n>=0&&n<chunks.length){timedCur=n;cur=n;renderTimedList();}
 }
 function clearTimed(){clearTimeout(timedTimer);clearInterval(cdInterval);}
 function startTimed(){
@@ -706,7 +770,7 @@ function startTimed(){
         if(timedCur<chunks.length-1){
           timedCur++;cur=timedCur;
           renderTimedList();
-          document.getElementById('timed-info').textContent=`${timedCur+1}/${chunks.length}`;
+          
           setTimeout(()=>startTimed(),200);
         }
       }
@@ -810,9 +874,8 @@ function saveNote(i){notes[i]=document.getElementById('ni'+i).value;const s=docu
 renderSubList();
 renderSingle();
 
-const ytTag=document.createElement('script');
-ytTag.src='https://www.youtube.com/iframe_api';
-document.head.appendChild(ytTag);
+// 页面加载后初始化本地播放器
+window.addEventListener('load',initLocalPlayer);
 </script>
 </body>
 </html>
