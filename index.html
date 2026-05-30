@@ -233,25 +233,12 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
     <div class="view" id="view-shadow">
       <div class="sm-bar">
         <button class="smbtn active" id="sm-single" onclick="setSM('single')">单句跟读</button>
-        <button class="smbtn" id="sm-cont" onclick="setSM('cont')">连续跟读</button>
         <button class="smbtn" id="sm-timed" onclick="setSM('timed')">限时跟读</button>
       </div>
 
       <!-- 单句跟读 -->
       <div class="sm-panel show" id="smp-single">
         <div id="single-content"></div>
-      </div>
-
-      <!-- 连续跟读 -->
-      <div class="sm-panel-list" id="smp-cont">
-        <!-- 导航框在顶部 -->
-        <div class="nav-box">
-          <button class="cbtn" onclick="contGo(-1)">⏮ 上一句</button>
-          <button class="cbtn pink" onclick="contPlay()">▶ 播放</button>
-          <button class="cbtn" onclick="contGo(1)">下一句 ⏭</button>
-        </div>
-        <div style="height:8px;flex-shrink:0"></div>
-        <div class="shadow-list" id="cont-list"></div>
       </div>
 
       <!-- 限时跟读 -->
@@ -465,7 +452,6 @@ function onCurChange(){
   document.getElementById('vpf').style.width=Math.round((cur+1)/chunks.length*100)+'%';
   if(modeTab==='subtitle')scrollSubTo(cur);
   if(modeTab==='shadow'){
-    if(sm==='cont'){contCur=cur;renderContList();}
     if(sm==='timed'){timedCur=cur;renderTimedList();}
   }
 }
@@ -639,15 +625,13 @@ function setSM(m){
   // 如果视频正在播放，暂停（切换模式时停止当前播放）
   if(player&&playing)player.pauseVideo();
   sm=m;
-  ['single','cont','timed'].forEach(s=>document.getElementById('sm-'+s).classList.toggle('active',s===m));
+  ['single','timed'].forEach(s=>document.getElementById('sm-'+s).classList.toggle('active',s===m));
   renderSM();
 }
 function renderSM(){
   document.getElementById('smp-single').classList.toggle('show',sm==='single');
-  document.getElementById('smp-cont').classList.toggle('show',sm==='cont');
   document.getElementById('smp-timed').classList.toggle('show',sm==='timed');
   if(sm==='single')renderSingle();
-  else if(sm==='cont'){renderContList();}
   else{renderTimedList();}
 }
 
@@ -704,24 +688,6 @@ function toggleRec(i){
   }
 }
 function playRec(i){if(recBlobs[i])new Audio(URL.createObjectURL(recBlobs[i])).play();}
-
-// ── CONT ──
-function renderContList(){
-  const el=document.getElementById('cont-list');
-  el.innerHTML='';
-  chunks.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='srow'+(i===contCur?' cur':'');
-    d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')}</div>
-      <div class="srow-mask">━━━━━━━━━━━━━━━</div>`;
-    d.onclick=()=>{contCur=i;cur=i;renderContList();};
-    el.appendChild(d);
-  });
-  const ae=el.children[contCur];
-  if(ae)setTimeout(()=>ae.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
-}
-function contGo(d){const n=contCur+d;if(n>=0&&n<chunks.length){contCur=n;cur=n;renderContList();}}
-function contPlay(){if(!player)return;cur=contCur;player.seekTo(chunks[contCur].t,true);player.playVideo();}
 
 // ── TIMED ──
 function renderTimedList(){
