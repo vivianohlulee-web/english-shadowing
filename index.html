@@ -258,7 +258,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
     <div class="view" id="view-dictate">
       <div class="dc-bar">
         <button class="smbtn active" id="dm-cn" onclick="setDM('cn')">显示中文</button>
-        <button class="smbtn" id="dm-none" onclick="setDM('none')">无提示</button>
+        <button class="smbtn" id="dm-none" onclick="setDM('none')">隐藏中文</button>
       </div>
       <div class="dc-scroll" id="dictate-content"></div>
     </div>
@@ -353,23 +353,96 @@ function wordsHtml(text,chunkIdx){
   return words.map((w,wi)=>`<span class="w" data-ci="${chunkIdx}" data-wi="${wi}" data-t="${(chunks[chunkIdx].t+wi*perWord).toFixed(2)}">${w}</span>`).join(' ');
 }
 
-const _fw=new Set(['i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','the','a','an','and','but','or','so','if','as','in','on','at','to','for','of','with','by','from','up','out','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','not','no','yes','oh','ah','just','that','this','there','here','what','why','how','who','when','where','then','than','now','too','also','very','really','quite','well','all','some','any','more','most','much','many','own','same','such','even','back','still','get','got','go','went','know','want','need','see','say','said','come','look','think','make','take','give','put','let','like','feel','down','over','about','after','never','always','only','ever','yeah','okay','come','came','called','right','good','little','gonna','wanna','gotta']);
+// 虚词黑名单（不挖空）
+const _fw=new Set(['i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','the','a','an','and','but','or','so','if','as','in','on','at','to','for','of','with','by','from','up','out','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','not','no','yes','oh','ah','just','that','this','there','here','what','why','how','who','when','where','then','than','now','too','also','very','really','quite','well','all','some','any','more','most','much','many','own','same','such','even','still','down','over','about','after','never','always','only','ever','yeah','okay','right','good','little','gonna','wanna','gotta','got','get','go','went','come','came','look','say','said','see','put','let','feel','know','want','need','think','make','take','give','back','here','away']);
+
+// 每句预设挖空词索引（动词短语/名词/搭配）— 按 chunks 数组顺序
+// 格式：句子文本片段 -> 要挖的词列表（小写，忽略标点）
+const _blankMap={
+  "God, I wish Mike were here.":['wish'],
+  "Okay, if Mike were here, what would the two of you be doing?":['doing'],
+  "What are you, animals? It's 4:00 in the afternoon.":['animals','afternoon'],
+  "We got to call him. Just just to talk to him. There's no harm in that.":['harm'],
+  "Phoebe, that's how it starts. I don't need to eat the cake, I'll just smell the icing.":['starts','smell','icing'],
+  "Well, not just a little sliver, or okay, just a a slice or two. You know, the next thing you know, you're 210 lb and you get wedged in going down the tunnel slide.":['sliver','wedged','tunnel','slide'],
+  "Phoebe, I I I know this is hard. But look, if you talk to him, then you're going to want to see him.":['hard','talk'],
+  "And if you see him, you're going to want to get back together with him. And I know that's not what you want.":['together'],
+  "All right, so give me your phone.":['give','phone'],
+  "Here. And now your cell.":['cell'],
+  "Here.":['Here'],
+  "This is your cell phone.":['cell'],
+  "Yes. This is your current cell phone.":['current','cell'],
+  "Yes. It reminds me of a simpler time.":['reminds','simpler'],
+  "Phoebe, where's your purse?":['purse'],
+  "Hey. No. No. Give it to me. You can't have it.":['Give'],
+  "Give it to me. No.":['Give'],
+  "I'll go in there. Oh, yeah. Phoebe, come here. No. Give it to me. No.":['Give'],
+  "Damn you, Monica Geller-Bing.":['Damn'],
+  "So, Phoebe, why are there men's shoes by the door? Those are my shoes.":['shoes','door'],
+  "Oh. Well, when you get over this breakup, we need to go shopping.":['breakup','shopping'],
+  "Look, Monica, I really appreciate you checking in on me, but I'm actually feeling a lot better.":['appreciate','checking','feeling'],
+  "You are? Yeah, and I I just kind of want to be alone right now.":['alone'],
+  "Who's that? I ordered Chinese food.":['ordered','Chinese'],
+  "What are the chances?":['chances'],
+  "1 billion Chinese people and they said Mike.":['billion'],
+  "What are you doing here? Phoebe called me. Phoebe. I'm sorry, I broke down. I wanted to see him.":['broke','wanted'],
+  "Damn it, Phoebe. How how did you even call him? There's a speaker phone on the base unit. Base unit? Think, Monica, think.":['speaker','base','unit'],
+  "If I want to see Phoebe and she wants to see me — why does that concern you?":['concern'],
+  "I'm sorry. I guess I was thrown off by the mention of my name.":['thrown','mention'],
+  "Look, guys, you can't do this. It's just going to make getting over each other that much harder. Not if nothing happens.":['getting','harder','happens'],
+  "Why can't, why can't we just hang out as friends?":['hang','friends'],
+  "Why sure. If you're just going to hang out as friends, then then maybe I'll join you. You know, I'm your friend and Mike's friend.":['hang','join','friend'],
+  "Sit down.":['Sit'],
+  "Oh, whoa, whoa, whoa, whoa, whoa. Make room for your friend.":['room','friend'],
+  "So, how have you been? I've been pretty good.":['pretty'],
+  "I didn't ask you to get back together because I know we want different things, but just to be with you one more night.":['together','different','night'],
+  "I want that, too, but is that going to make it too hard? It can't be any harder than this.":['harder'],
+  "I mean, if I'd known the last time I saw you would be the last time, I I would have stopped to memorize your face, the way you moved, everything about you.":['memorize','moved','everything'],
+  "If I'd known the last time I kissed you would be the last time, I never would have stopped.":['kissed','stopped'],
+  "Kiss him, you fool.":['fool'],
+  "What? Didn't you hear that speech? If you don't kiss him, then I will.":['speech','kiss'],
+  "This is too much.":['much'],
+  "I knew you'd be here. Ah, crap.":['crap'],
+  "Who is this? My friend Manny.":['friend'],
+  "I asked him to keep me away from you.":['keep','away'],
+  "Hey, that's what I'm doing for Phoebe.":['doing'],
+  "Well, you're not doing a very good job.":['job'],
+  "Excuse me? What's with the kissing? Hey, at least I knew where my guy was.":['kissing','least'],
+  "Yeah, thank god you were here to oversee all the kissing.":['oversee','kissing'],
+  "You didn't hear the speech. I've heard the speech. If he knew it was going to be the last time he saw her — it was very moving.":['speech','moving'],
+  "You're just heartless.":['heartless'],
+  "You're weak. You're weird. Your pants are undone. Oh.":['weak','weird','undone']
+};
+
 function pickBlanks(text){
   const ws=text.split(' ');
+  // try prebuilt map first
+  const key=Object.keys(_blankMap).find(k=>text.includes(k.slice(0,20)));
+  if(key){
+    const targets=_blankMap[key];
+    const idxs=[];
+    targets.forEach(t=>{
+      const ti=ws.findIndex(w=>w.replace(/[^a-zA-Z']/g,'').toLowerCase()===t.toLowerCase());
+      if(ti>=0&&!idxs.includes(ti))idxs.push(ti);
+    });
+    if(idxs.length)return idxs.slice(0,2).sort((a,b)=>a-b);
+  }
+  // fallback: score-based
   const scored=ws.map((raw,i)=>{
     const w=raw.replace(/[^a-zA-Z']/g,'').toLowerCase();
     if(w.length<3)return{i,score:-1};
     let s=0;
     if(!_fw.has(w))s+=3;
     if(w.length>=6)s+=2;else if(w.length>=4)s+=1;
-    if(/ing$|ed$|tion$|ness$|ment$|ful$|less$|ize$|ise$|ize$/.test(w))s+=2;
+    if(/ing$|tion$|ness$|ment$|ful$|less$|ize$|ise$/.test(w))s+=2;
+    if(/ed$/.test(w)&&w.length>4)s+=1;
     if(i===0)s-=1;
     return{i,score:s};
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
   if(!scored.length){const f=ws.findIndex(w=>w.replace(/[^a-zA-Z]/g,'').length>=4);return[f<0?0:f];}
   if(scored.length===1)return[scored[0].i];
   const first=scored[0];
-  const second=scored.find(x=>x.i!==first.i&&Math.abs(x.i-first.i)>2)||scored[1];
+  const second=scored.find(x=>x.i!==first.i&&Math.abs(x.i-first.i)>1)||scored[1];
   return[first.i,second.i].sort((a,b)=>a-b);
 }
 
@@ -685,7 +758,7 @@ function renderTimedList(){
     const d=document.createElement('div');
     d.className='srow'+(i===timedCur?' cur':'');
     d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      <div class="srow-mask">━━━━━━━━━━━━━━━</div>
+      <div style="font-size:14px;font-family:var(--mono);line-height:1.7;margin:2px 0 4px;color:var(--ink)">${c.text}</div>
       <div class="cd-wrap" id="cdw-${i}" style="display:none">
         <div class="cd-label">跟读倒计时</div>
         <div class="cd-bar"><div class="cd-fill" id="cdf-${i}" style="width:100%"></div></div>
@@ -763,7 +836,7 @@ function renderDictate(){
   document.getElementById('dictate-content').innerHTML=chunks.map((c,i)=>`
     <div class="dc-card">
       <div class="dc-meta">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      ${dm==='cn'?`<div class="dc-prompt">${c.cn}</div>`:'<div class="dc-prompt" style="color:var(--ink3);font-style:italic">（无提示）</div>'}
+      ${dm==='cn'?`<div class="dc-prompt">${c.cn}</div>`:''}
       <button class="cbtn pink" style="margin-bottom:8px" onclick="dictPlay(${i})">▶ 播放</button>
       <div class="dc-row">
         <input class="dc-input" id="dci${i}" placeholder="输入你听到的英文…">
