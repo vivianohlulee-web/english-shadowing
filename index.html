@@ -353,12 +353,24 @@ function wordsHtml(text,chunkIdx){
   return words.map((w,wi)=>`<span class="w" data-ci="${chunkIdx}" data-wi="${wi}" data-t="${(chunks[chunkIdx].t+wi*perWord).toFixed(2)}">${w}</span>`).join(' ');
 }
 
+const _fw=new Set(['i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','the','a','an','and','but','or','so','if','as','in','on','at','to','for','of','with','by','from','up','out','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','not','no','yes','oh','ah','just','that','this','there','here','what','why','how','who','when','where','then','than','now','too','also','very','really','quite','well','all','some','any','more','most','much','many','own','same','such','even','back','still','get','got','go','went','know','want','need','see','say','said','come','look','think','make','take','give','put','let','like','feel','down','over','about','after','never','always','only','ever','yeah','okay','come','came','called','right','good','little','gonna','wanna','gotta']);
 function pickBlanks(text){
   const ws=text.split(' ');
-  const longs=ws.map((w,i)=>({w:w.replace(/[^a-zA-Z]/g,''),i})).filter(x=>x.w.length>5);
-  if(!longs.length){const f=ws.findIndex(w=>w.replace(/[^a-zA-Z]/g,'').length>3);return[f<0?0:f];}
-  if(longs.length===1)return[longs[0].i];
-  return[longs[0].i,longs[Math.floor(longs.length*0.6)].i];
+  const scored=ws.map((raw,i)=>{
+    const w=raw.replace(/[^a-zA-Z']/g,'').toLowerCase();
+    if(w.length<3)return{i,score:-1};
+    let s=0;
+    if(!_fw.has(w))s+=3;
+    if(w.length>=6)s+=2;else if(w.length>=4)s+=1;
+    if(/ing$|ed$|tion$|ness$|ment$|ful$|less$|ize$|ise$|ize$/.test(w))s+=2;
+    if(i===0)s-=1;
+    return{i,score:s};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
+  if(!scored.length){const f=ws.findIndex(w=>w.replace(/[^a-zA-Z]/g,'').length>=4);return[f<0?0:f];}
+  if(scored.length===1)return[scored[0].i];
+  const first=scored[0];
+  const second=scored.find(x=>x.i!==first.i&&Math.abs(x.i-first.i)>2)||scored[1];
+  return[first.i,second.i].sort((a,b)=>a-b);
 }
 
 // ═══════════════ STATE ═══════════════
@@ -372,6 +384,7 @@ let contCur=0,timedCur=0;
 let syncTimer=null;
 let notes={},recState={},recBlobs={};
 let timedTimer=null,cdInterval=null;
+let timedRunning=false,_timedCD=false;
 let singlePauseTimers={};
 
 // ═══════════════ LOCAL VIDEO PLAYER ═══════════════
@@ -389,7 +402,7 @@ function initLocalPlayer(){
     getPlaybackRate(){return v.playbackRate;}
   };
   v.addEventListener('play',()=>{playing=true;document.getElementById('btn-play').textContent='⏸';startSync();});
-  v.addEventListener('pause',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();});
+  v.addEventListener('pause',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();if(timedRunning&&!_timedCD)_stopTimed();});
   v.addEventListener('ended',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();});
 }
 // 页面加载后初始化本地播放器（通过 window load 事件触发）
@@ -418,7 +431,6 @@ function onCurChange(){
   document.getElementById('vpf').style.width=Math.round((cur+1)/chunks.length*100)+'%';
   if(modeTab==='subtitle')scrollSubTo(cur);
   if(modeTab==='shadow'){
-    // 限时跟读进行中不自动跳行（避免打断进度条）
     if(sm==='timed'&&!timedRunning){timedCur=cur;renderTimedList();}
   }
 }
@@ -432,15 +444,7 @@ function vidGo(d){
     onCurChange();
   }
 }
-function togglePlay(){
-  if(!player)return;
-  if(modeTab==='shadow'&&sm==='timed'&&timedRunning){
-    // 左侧播放键在限时跟读进行中 = 暂停整个流程
-    stopTimed();
-    return;
-  }
-  playing?player.pauseVideo():player.playVideo();
-}
+function togglePlay(){if(!player)return;if(modeTab==='shadow'&&sm==='timed'&&timedRunning){_stopTimed();return;}playing?player.pauseVideo():player.playVideo();}
 
 // left btn: cycle subtitle lang AND sync right subtitle view
 // off → en → bi → off; button label changes
@@ -570,8 +574,7 @@ function highlightWord(t){
 function setTab(t){
   // 停止旧标签的运行状态
   if(modeTab==='shadow'){
-    if(sm==='timed'&&timedRunning)stopTimed();
-    else clearTimed();
+    if(sm==='timed'){if(timedRunning)_stopTimed();else clearTimed();}
     if(sm==='single'){Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));singlePauseTimers={};}
     if(player&&playing)player.pauseVideo();
   }
@@ -590,7 +593,7 @@ function setTab(t){
 // ═══════════════ SHADOW MODE ═══════════════
 function setSM(m){
   // 停止旧模式的所有计时器/录音/播放
-  if(sm==='timed'){if(timedRunning)stopTimed();else clearTimed();}
+  if(sm==='timed'){if(timedRunning)_stopTimed();else clearTimed();}
   if(sm==='single'){
     // 清除所有单句暂停计时器
     Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));
@@ -667,128 +670,86 @@ function toggleRec(i){
 function playRec(i){if(recBlobs[i])new Audio(URL.createObjectURL(recBlobs[i])).play();}
 
 // ── TIMED ──
-// timedRunning: true = 限时跟读进行中（区别于普通播放）
-let timedRunning=false;
-
+function _stopTimed(){
+  clearTimed();
+  timedRunning=false;_timedCD=false;
+  const btn=document.getElementById('timed-btn');
+  if(btn)btn.textContent='▶ 开始';
+  // hide any visible countdown bar
+  document.querySelectorAll('.cd-wrap').forEach(el=>el.style.display='none');
+}
 function renderTimedList(){
   const el=document.getElementById('timed-list');
   el.innerHTML='';
   chunks.forEach((c,i)=>{
     const d=document.createElement('div');
     d.className='srow'+(i===timedCur?' cur':'');
-    // 进度条固定挂在每一行，只有当前行才显示内容
-    d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')}</div>
+    d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
       <div class="srow-mask">━━━━━━━━━━━━━━━</div>
-      <div class="cd-wrap" id="cd-wrap-${i}" style="display:${i===timedCur&&timedRunning?'block':'none'}">
-        <div class="cd-label" id="cd-label-${i}">跟读倒计时</div>
-        <div class="cd-bar"><div class="cd-fill" id="cd-fill-${i}" style="width:100%"></div></div>
+      <div class="cd-wrap" id="cdw-${i}" style="display:none">
+        <div class="cd-label">跟读倒计时</div>
+        <div class="cd-bar"><div class="cd-fill" id="cdf-${i}" style="width:100%"></div></div>
       </div>`;
-    d.onclick=()=>{
-      if(timedRunning)stopTimed();
-      timedCur=i;cur=i;
-      renderTimedList();
-    };
+    d.onclick=()=>{if(timedRunning)_stopTimed();timedCur=i;cur=i;renderTimedList();};
     el.appendChild(d);
   });
-  // 同步右侧开始按钮状态
   const btn=document.getElementById('timed-btn');
   if(btn)btn.textContent=timedRunning?'⏸ 暂停':'▶ 开始';
   const ae=el.children[timedCur];
   if(ae)setTimeout(()=>ae.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
 }
-
 function timedGo(d){
-  stopTimed();
+  if(timedRunning)_stopTimed();
   const n=timedCur+d;
   if(n>=0&&n<chunks.length){timedCur=n;cur=n;renderTimedList();}
 }
-
 function clearTimed(){clearTimeout(timedTimer);clearInterval(cdInterval);}
-
-function stopTimed(){
-  clearTimed();
-  timedRunning=false;
-  // 隐藏当前行的进度条
-  const wrap=document.getElementById('cd-wrap-'+timedCur);
-  if(wrap)wrap.style.display='none';
-  // 同步左侧播放按钮和右侧按钮
-  if(player&&playing)player.pauseVideo();
-  const btn=document.getElementById('timed-btn');
-  if(btn)btn.textContent='▶ 开始';
-}
-
-function toggleTimed(){
-  if(timedRunning){stopTimed();}
-  else{startTimed();}
-}
-
-function beep(){
-  try{
-    const ac=new(window.AudioContext||window.webkitAudioContext)();
-    const o=ac.createOscillator();const g=ac.createGain();
-    o.connect(g);g.connect(ac.destination);
-    o.frequency.value=880;g.gain.value=0.3;
-    o.start();
-    setTimeout(()=>{g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.25);setTimeout(()=>o.stop(),250);},0);
-  }catch(e){}
-}
-
+function toggleTimed(){timedRunning?_stopTimed():startTimed();}
 function startTimed(){
   if(!player)return;
   clearTimed();
-  timedRunning=true;
+  timedRunning=true;_timedCD=false;
   const btn=document.getElementById('timed-btn');
   if(btn)btn.textContent='⏸ 暂停';
-
   const i=timedCur;
   const playDur=chunkDur(i);
-
-  // 隐藏进度条（播放期间不显示）
-  const wrap=document.getElementById('cd-wrap-'+i);
+  // hide bar during playback phase
+  const wrap=document.getElementById('cdw-'+i);
   if(wrap)wrap.style.display='none';
-
-  // 跳到当前句并播放
   player.seekTo(chunks[i].t,true);
   player.playVideo();
-
-  // 播放结束后暂停，滴一声，开始倒计时
   timedTimer=setTimeout(()=>{
     if(!timedRunning)return;
+    _timedCD=true;
     player.pauseVideo();
-    beep();
-
-    // 显示进度条
-    if(wrap){
-      wrap.style.display='block';
-      const fill=document.getElementById('cd-fill-'+i);
-      if(fill)fill.style.width='100%';
-    }
-
-    // 倒计时 = 该句时长 + 5s
+    // beep
+    try{const ac=new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=0.3;o.start();setTimeout(()=>{g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.25);setTimeout(()=>o.stop(),250);},0);}catch(e){}
+    // show countdown bar on SAME row
+    if(wrap){wrap.style.display='block';}
+    const fill=document.getElementById('cdf-'+i);
+    if(fill)fill.style.width='100%';
     const total=(playDur+5)*1000;
-    const start=Date.now();
-
+    const t0=Date.now();
     cdInterval=setInterval(()=>{
-      if(!timedRunning){clearTimed();return;}
-      const fill=document.getElementById('cd-fill-'+i);
-      if(!fill){clearTimed();return;}
-      const pct=Math.max(0,100-(Date.now()-start)/total*100);
-      fill.style.width=pct+'%';
+      if(!timedRunning){clearInterval(cdInterval);return;}
+      const pct=Math.max(0,100-(Date.now()-t0)/total*100);
+      if(fill)fill.style.width=pct+'%';
       if(pct<=0){
-        clearTimed();
+        clearInterval(cdInterval);
+        _timedCD=false;
+        if(wrap)wrap.style.display='none';
         if(timedCur<chunks.length-1){
           timedCur++;cur=timedCur;
           renderTimedList();
-          setTimeout(()=>startTimed(),150);
+          setTimeout(()=>startTimed(),100);
         } else {
-          // 最后一句结束
           timedRunning=false;
           const b=document.getElementById('timed-btn');
           if(b)b.textContent='▶ 开始';
         }
       }
     },50);
-  },playDur*1000+150);
+  },playDur*1000+100);
 }
 
 // ═══════════════ DICTATE ═══════════════
