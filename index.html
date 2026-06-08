@@ -243,17 +243,10 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(-
 
       <!-- 限时跟读 -->
       <div class="sm-panel-list" id="smp-timed">
-        <!-- 导航框在顶部 -->
-        <div class="nav-box">
-          <button class="cbtn" onclick="timedGo(-1)">⏮ 上一句</button>
-          <button class="cbtn pink" id="timed-btn" onclick="toggleTimed()">▶ 开始</button>
-          <button class="cbtn" onclick="timedGo(1)">下一句 ⏭</button>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;padding:6px 14px 0;flex-shrink:0">
+        <div style="display:flex;gap:8px;justify-content:center;padding:9px 14px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--paper2)">
           <button class="smbtn active" id="tcn-show" onclick="setTimedCN('show')">显示中文</button>
           <button class="smbtn" id="tcn-hide" onclick="setTimedCN('hide')">隐藏中文</button>
         </div>
-        <div style="height:8px;flex-shrink:0"></div>
         <div class="shadow-list" id="timed-list"></div>
       </div>
     </div>
@@ -690,7 +683,7 @@ function renderSM(){
   document.getElementById('smp-single').classList.toggle('show',sm==='single');
   document.getElementById('smp-timed').classList.toggle('show',sm==='timed');
   if(sm==='single')renderSingle();
-  else{renderTimedList();}
+  else{renderTimedList();setTimeout(()=>startTimed(),200);}
 }
 
 // ── SINGLE ──
@@ -751,8 +744,6 @@ function playRec(i){if(recBlobs[i])new Audio(URL.createObjectURL(recBlobs[i])).p
 function _stopTimed(){
   clearTimed();
   timedRunning=false;_timedCD=false;
-  const btn=document.getElementById('timed-btn');
-  if(btn)btn.textContent='▶ 开始';
   // hide any visible countdown bar
   document.querySelectorAll('.cd-wrap').forEach(el=>el.style.display='none');
 }
@@ -762,21 +753,18 @@ function renderTimedList(){
   chunks.forEach((c,i)=>{
     const d=document.createElement('div');
     d.className='srow'+(i===timedCur?' cur':'');
-    // hide mode: hide both en and cn; show mode: show cn only
-    const enStyle=timedCNMode==='hide'?'display:none':'';
-    const cnHtml=timedCNMode==='show'?`<div style="font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.5">${c.cn}</div>`:'';
+    // show: cn only (no en); hide: neither en nor cn
+    const enHtml=timedCNMode==='show'||timedCNMode==='hide'?'':'<div style="font-size:14px;font-family:var(--mono);line-height:1.7;margin:2px 0 4px;color:var(--ink)">'+c.text+'</div>';
+    const cnHtml=timedCNMode==='show'?`<div style="font-size:14px;color:var(--ink);margin:2px 0 4px;line-height:1.6">${c.cn}</div>`:'';
     d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      <div style="font-size:14px;font-family:var(--mono);line-height:1.7;margin:2px 0 4px;color:var(--ink);${enStyle}">${c.text}</div>
-      ${cnHtml}
+      ${enHtml}${cnHtml}
       <div class="cd-wrap" id="cdw-${i}" style="display:none">
         <div class="cd-label">跟读倒计时</div>
         <div class="cd-bar"><div class="cd-fill" id="cdf-${i}" style="width:100%"></div></div>
       </div>`;
-    d.onclick=()=>{if(timedRunning)_stopTimed();timedCur=i;cur=i;renderTimedList();};
+    d.onclick=()=>{_stopTimed();timedCur=i;cur=i;renderTimedList();setTimeout(()=>startTimed(),100);};
     el.appendChild(d);
   });
-  const btn=document.getElementById('timed-btn');
-  if(btn)btn.textContent=timedRunning?'⏸ 暂停':'▶ 开始';
   const ae=el.children[timedCur];
   if(ae)setTimeout(()=>ae.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
 }
@@ -797,8 +785,6 @@ function startTimed(){
   if(!player)return;
   clearTimed();
   timedRunning=true;_timedCD=false;
-  const btn=document.getElementById('timed-btn');
-  if(btn)btn.textContent='⏸ 暂停';
   const i=timedCur;
   const playDur=chunkDur(i);
   // hide bar during playback phase
@@ -832,8 +818,6 @@ function startTimed(){
           setTimeout(()=>startTimed(),100);
         } else {
           timedRunning=false;
-          const b=document.getElementById('timed-btn');
-          if(b)b.textContent='▶ 开始';
         }
       }
     },50);
