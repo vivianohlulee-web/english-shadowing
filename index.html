@@ -1,283 +1,28 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>每日英语跟读 · Friends</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>每日英语 · 情境跟读</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#1a1a1a;--ink2:#555;--ink3:#999;
-  --paper:#faf9f7;--paper2:#f4f2ef;--paper3:#ece8e2;
-  --border:#ddd8ce;--border2:#ccc5b8;
-  --blue-bg:#daeefb;--blue-bd:#93c8f0;--blue-text:#2a7db5;
-  --pink-bg:#fce4ef;--pink-bd:#f4a7bf;--pink-text:#c2547a;
-  --green-bg:#e2f5ea;--green-bd:#7dcc99;--green-text:#2d8a52;
-  --red-bg:#fdecea;--red-bd:#f5a6a0;--red-text:#c0392b;
-  --hi:#f5c842;/* karaoke highlight */
-  --r:10px;--rs:20px;
-  --font:'Noto Serif SC',serif;--mono:'DM Mono',monospace;
-  --shadow:0 2px 10px rgba(0,0,0,.07);
-}
-html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--font)}
-
-/* ── HEADER ── */
-.hdr{display:flex;align-items:center;gap:12px;padding:11px 20px;background:var(--paper);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.logo{font-size:15px;font-weight:600;color:var(--blue-text)}
-.vtitle{flex:1;font-size:13px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vmeta{font-size:11px;color:var(--ink3)}
-
-/* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:1fr 1fr;height:calc(100vh - 49px);overflow:hidden}
-.left{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
-.right{display:flex;flex-direction:column;overflow:hidden}
-
-/* ── VIDEO ── */
-.vid-wrap{position:relative;padding-bottom:56.25%;background:#000;flex-shrink:0}
-.vid-wrap #ytp{position:absolute;top:0;left:0;width:100%;height:100%}
-.vpbar{height:3px;background:var(--paper3);flex-shrink:0}
-.vpfill{height:100%;background:var(--blue-text);transition:width .3s}
-
-/* ── VIDEO CONTROLS ── */
-.vid-ctrl{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.vbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 15px;border-radius:var(--rs);border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue-text);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
-.vbtn:hover{filter:brightness(.93)}
-.vbtn.pink{border-color:var(--pink-bd);background:var(--pink-bg);color:var(--pink-text)}
-.vbtn.plain{border-color:var(--border2);background:var(--paper);color:var(--ink2)}
-.vbtn.playbig{font-size:15px;padding:5px 18px;border-color:var(--pink-bd);background:var(--pink-bg);color:var(--pink-text)}
-.vbtn.active-pink{border-color:var(--pink-text);background:var(--pink-text);color:#fff}
-
-/* ── AUTOPAUSE ROW (below vid ctrl, only visible when blind) ── */
-.ap-row{display:none;align-items:center;justify-content:center;gap:10px;padding:7px 14px;background:var(--paper2);border-bottom:1px solid var(--border);font-size:12px;color:var(--ink2);flex-shrink:0}
-.ap-row.show{display:flex}
-.tog{position:relative;width:34px;height:18px}
-.tog input{opacity:0;width:0;height:0}
-.tsl{position:absolute;inset:0;background:var(--border2);border-radius:99px;cursor:pointer;transition:.2s}
-.tsl:before{content:'';position:absolute;width:14px;height:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:.2s}
-.tog input:checked+.tsl{background:var(--pink-text)}
-.tog input:checked+.tsl:before{transform:translateX(16px)}
-
-/* ── LEFT BLANK (below controls) ── */
-.left-blank{flex:1;background:var(--paper);display:flex;align-items:center;justify-content:center}
-.left-blank-hint{font-size:13px;color:var(--ink3)}
-
-/* ── RIGHT TABS ── */
-.tabs{display:flex;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0}
-.tab{flex:1;padding:9px 4px;text-align:center;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
-.tab:hover{color:var(--ink2)}
-.tab.active{color:var(--blue-text);border-bottom-color:var(--blue-text);background:var(--paper)}
-
-/* ── VIEWS ── */
-.view{display:none;flex:1;overflow:hidden;flex-direction:column}
-.view.show{display:flex}
-
-/* ── SUBTITLE VIEW ── */
-.sub-lang-bar{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0}
-.sub-lang-label{font-size:11px;color:var(--ink3)}
-.slbtn{padding:3px 13px;border-radius:var(--rs);border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue-text);font-size:11px;cursor:pointer;transition:all .15s;font-weight:500}
-.slbtn.active{background:var(--pink-bg);border-color:var(--pink-bd);color:var(--pink-text)}
-
-/* subtitle list: karaoke scroll */
-.sub-area{flex:1;overflow-y:auto;background:var(--paper)}
-.sub-chunk{padding:13px 17px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
-.sub-chunk:hover{background:var(--paper2)}
-.sub-chunk.cur{background:var(--blue-bg);border-left:3px solid var(--blue-text)}
-.sub-num{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-bottom:4px}
-.sub-en{font-size:14px;line-height:1.8;font-family:var(--mono)}
-.sub-cn{font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.5}
-/* word highlight */
-.w{display:inline}
-.w.lit{background:var(--hi);border-radius:2px;padding:0 1px}
-
-/* ── SHADOW VIEW ── */
-.sm-bar{display:flex;gap:6px;padding:9px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.smbtn{padding:4px 14px;border-radius:var(--rs);border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue-text);font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
-.smbtn.active{background:var(--pink-bg);border-color:var(--pink-bd);color:var(--pink-text)}
-
-/* nav mini box (cont/timed top) */
-.nav-box{display:flex;align-items:center;gap:8px;margin:10px 14px 0;padding:8px 12px;background:var(--paper2);border:1px solid var(--border);border-radius:var(--r);flex-shrink:0}
-.nav-info{font-size:12px;color:var(--ink3);flex:1;text-align:center}
-
-.sm-panel{display:none;flex:1;overflow-y:auto;padding:12px 14px}
-.sm-panel.show{display:block}
-/* cont/timed: full height list */
-.sm-panel-list{display:none;flex:1;flex-direction:column;overflow:hidden}
-.sm-panel-list.show{display:flex}
-.shadow-list{flex:1;overflow-y:auto}
-
-/* cards */
-.card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
-.card.cur{border-color:var(--blue-text);background:var(--blue-bg)}
-.card-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-bottom:5px}
-.card-en{font-size:14px;font-family:var(--mono);line-height:1.8;margin-bottom:4px}
-.card-cn{font-size:12px;color:var(--ink2);margin-bottom:10px}
-.card-btns{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.cbtn{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:var(--rs);border:1px solid var(--blue-bd);background:var(--blue-bg);color:var(--blue-text);font-size:12px;font-family:var(--font);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
-.cbtn:hover{filter:brightness(.93)}
-.cbtn.pink{border-color:var(--pink-bd);background:var(--pink-bg);color:var(--pink-text)}
-.cbtn.green{border-color:var(--green-bd);background:var(--green-bg);color:var(--green-text)}
-.cbtn.red{border-color:var(--red-bd);background:var(--red-bg);color:var(--red-text)}
-.rec-st{font-size:11px;color:var(--ink3)}
-.rec-dot{width:7px;height:7px;background:var(--red-text);border-radius:50%;display:inline-block;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* cont/timed rows */
-.srow{padding:12px 17px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s}
-.srow:hover{background:var(--paper2)}
-.srow.cur{background:var(--blue-bg);border-left:3px solid var(--blue-text)}
-.srow-num{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-bottom:3px}
-.srow-mask{font-size:14px;font-family:var(--mono);color:var(--border2);letter-spacing:2px;user-select:none}
-/* timed countdown */
-.cd-wrap{margin-top:8px}
-.cd-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden}
-.cd-fill{height:100%;background:linear-gradient(90deg,var(--pink-text),var(--blue-text));border-radius:99px;transition:width .1s linear}
-.cd-label{font-size:11px;color:var(--pink-text);margin-bottom:3px}
-
-/* dictate / fill */
-.dc-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
-.dc-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);margin-bottom:4px}
-.dc-prompt{font-size:12px;color:var(--ink2);margin-bottom:8px;line-height:1.5}
-.dc-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
-.dc-input{flex:1;padding:7px 12px;border:1px solid var(--border2);border-radius:var(--rs);background:var(--paper2);font-size:13px;font-family:var(--mono);color:var(--ink);outline:none;transition:border .15s}
-.dc-input:focus{border-color:var(--blue-text);background:#fff}
-.dc-answer{font-size:13px;font-family:var(--mono);color:var(--green-text);margin-top:6px;padding:7px 11px;background:var(--green-bg);border-radius:8px;display:none;line-height:1.6}
-.dc-answer.show{display:block}
-.blank-wd{display:inline-block;min-width:50px;border-bottom:2px solid var(--pink-text);color:transparent;background:var(--pink-bg);border-radius:3px;padding:0 3px;font-family:var(--mono);font-size:14px}
-.blank-wd.rev{color:var(--pink-text)}
-
-/* note */
-.note-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
-.note-input{width:100%;padding:7px 11px;border:1px solid var(--border2);border-radius:8px;background:var(--paper2);font-size:13px;font-family:var(--font);color:var(--ink);outline:none;resize:vertical;min-height:55px;margin-top:6px}
-.note-input:focus{border-color:var(--blue-text);background:#fff}
-.note-saved{font-size:11px;color:var(--green-text);margin-top:3px;display:none}
-
-/* sub-mode bar (dictate/fill) */
-.dc-bar{display:flex;gap:6px;padding:9px 14px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.dc-scroll{flex:1;overflow-y:auto;padding:12px 14px}
-
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
-
-@media(max-width:768px){
-  .layout{grid-template-columns:1fr;height:auto;overflow:visible}
-  .left{border-right:none;border-bottom:1px solid var(--border)}
-  .right{min-height:60vh}
-  .sm-panel-list{min-height:40vh}
-}
+*{box-sizing:border-box}body{margin:0;background:#faf9f7;color:#253b39;font:16px/1.6 system-ui,sans-serif}button,select,textarea,input{font:inherit}button,select{border:1px solid #ccd8d4;background:white;color:inherit;border-radius:12px;padding:10px 14px;cursor:pointer}button:hover{background:#e9f3ed}button:disabled{opacity:.45;cursor:default}button:focus-visible,select:focus-visible{outline:3px solid #de9569}header{padding:16px 28px;border-bottom:1px solid #dfe4df;display:flex;justify-content:space-between;gap:16px}.brand{font-weight:750}.muted{color:#71827d;font-size:13px}main{max-width:1440px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:24px}.media{position:sticky;top:20px;align-self:start}video{width:100%;aspect-ratio:16/9;background:#182320;border-radius:18px}.panel{background:white;border:1px solid #dfe4df;border-radius:20px;padding:24px;margin-bottom:16px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.settings{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.settings label{font-size:13px}.settings select{display:block;width:100%;margin-top:4px}.primary{background:#315e50;color:white;border-color:#315e50}.primary:hover{background:#244a3e}.active{background:#e5eee8;border-color:#527965}.sentence{font-size:25px;line-height:1.55;margin:20px 0 12px;overflow-wrap:anywhere}.translation{color:#6b7974}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.toolbar button{flex:1;white-space:nowrap}.expression{background:#f4f0e7;border-radius:12px;padding:16px;margin-top:14px}.expression strong{font-size:19px}.expression p{margin:6px 0;font-size:14px}.nav{display:flex;gap:6px;margin-bottom:16px}.nav button{flex:1;padding:9px 5px}.list{max-height:340px;overflow:auto;margin-top:12px}.list button{display:block;width:100%;text-align:left;margin-bottom:7px}.list small{display:block;color:#71827d}textarea,input{width:100%;border:1px solid #ccd8d4;border-radius:12px;padding:12px;background:#fff}textarea{min-height:95px}#status{min-height:26px;color:#315e50;margin-top:10px}progress{width:100%;accent-color:#315e50;height:8px}summary{cursor:pointer;padding:8px 0}h2{font-size:18px;margin:0}h3{font-size:15px}#notice{font-size:13px;color:#9a492f}#counter{font-variant-numeric:tabular-nums}button.recording{background:#a53d3d;color:#fff}footer{max-width:1392px;margin:0 auto;padding:0 24px 20px;color:#71827d;font-size:12px}
+@media(max-width:768px){header{padding:12px 16px}header .muted{display:none}main{display:block;padding:12px;gap:0}.media{position:static}.panel{padding:16px;border-radius:16px}.settings{grid-template-columns:1fr 1fr}.sentence{font-size:22px}.toolbar{position:sticky;bottom:0;z-index:5;background:#fff;padding:12px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:0}.toolbar button{padding:12px 8px}video{max-height:32vh}.list{max-height:240px}}
 </style>
-</head>
-<body>
-
-<div class="hdr">
-  <div class="logo">每日英语</div>
-  <div class="vtitle">Monica Tries to Keep Phoebe Away from Her Ex — Friends</div>
-  <div class="vmeta">54句</div>
-</div>
-
-<div class="layout">
-  <!-- ══ LEFT ══ -->
-  <div class="left">
-    <div class="vid-wrap">
-      <!-- 本地视频：将视频文件与本网页放在同一目录，文件名改为 video.mp4 即可 -->
-      <video id="ytp" controls style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000" preload="metadata">
-        <source src="video.mp4" type="video/mp4">
-        您的浏览器不支持视频播放。
-      </video>
-    </div>
-    <div class="vpbar"><div class="vpfill" id="vpf" style="width:0%"></div></div>
-
-    <!-- 视频控制：字幕 | 上一句 | 播放 | 下一句 | 盲听，居中 -->
-    <div class="vid-ctrl">
-      <button class="vbtn" id="btn-sub" onclick="cycleSubLang()">📄 字幕</button>
-      <button class="vbtn plain" onclick="vidGo(-1)">⏮ 上一句</button>
-      <button class="vbtn playbig" id="btn-play" onclick="togglePlay()">▶</button>
-      <button class="vbtn plain" onclick="vidGo(1)">下一句 ⏭</button>
-      <button class="vbtn pink" id="btn-blind" onclick="toggleBlind()">👂 盲听</button>
-    </div>
-
-    <!-- 单句自动暂停开关，仅盲听时显示 -->
-    <div class="ap-row" id="ap-row">
-      单句播放完自动暂停
-      <label class="tog"><input type="checkbox" id="ap-tog" onchange="setAutoPause(this.checked)"><span class="tsl"></span></label>
-    </div>
-
-    <!-- 左侧空白区 -->
-    <div class="left-blank">
-      <div class="left-blank-hint" id="left-hint">点击字幕按钮在右侧显示字幕</div>
-    </div>
-  </div>
-
-  <!-- ══ RIGHT ══ -->
-  <div class="right">
-    <div class="tabs">
-      <div class="tab active" id="tab-subtitle" onclick="setTab('subtitle')">字幕</div>
-      <div class="tab" id="tab-shadow" onclick="setTab('shadow')">跟读</div>
-      <div class="tab" id="tab-dictate" onclick="setTab('dictate')">听写</div>
-      <div class="tab" id="tab-fill" onclick="setTab('fill')">挖空</div>
-      <div class="tab" id="tab-note" onclick="setTab('note')">笔记</div>
-    </div>
-
-    <!-- 字幕 view -->
-    <div class="view show" id="view-subtitle">
-      <div class="sub-lang-bar">
-        <span class="sub-lang-label">字幕模式：</span>
-        <button class="slbtn active" id="slb-en" onclick="setSubLang('en')">英文</button>
-        <button class="slbtn" id="slb-bi" onclick="setSubLang('bi')">双语</button>
-      </div>
-      <div class="sub-area" id="sub-area"></div>
-    </div>
-
-    <!-- 跟读 view -->
-    <div class="view" id="view-shadow">
-      <div class="sm-bar">
-        <button class="smbtn active" id="sm-single" onclick="setSM('single')">单句跟读</button>
-        <button class="smbtn" id="sm-timed" onclick="setSM('timed')">限时跟读</button>
-      </div>
-
-      <!-- 单句跟读 -->
-      <div class="sm-panel show" id="smp-single">
-        <div id="single-content"></div>
-      </div>
-
-      <!-- 限时跟读 -->
-      <div class="sm-panel-list" id="smp-timed">
-        <div style="display:flex;gap:8px;justify-content:center;padding:9px 14px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--paper2)">
-          <button class="smbtn active" id="tcn-show" onclick="setTimedCN('show')">显示中文</button>
-          <button class="smbtn" id="tcn-hide" onclick="setTimedCN('hide')">隐藏中文</button>
-        </div>
-        <div class="shadow-list" id="timed-list"></div>
-      </div>
-    </div>
-
-    <!-- 听写 view -->
-    <div class="view" id="view-dictate">
-      <div class="dc-bar">
-        <button class="smbtn active" id="dm-cn" onclick="setDM('cn')">显示中文</button>
-        <button class="smbtn" id="dm-none" onclick="setDM('none')">隐藏中文</button>
-      </div>
-      <div class="dc-scroll" id="dictate-content"></div>
-    </div>
-
-    <!-- 挖空 view -->
-    <div class="view" id="view-fill">
-      <div class="dc-bar">
-        <button class="smbtn active" id="fm-cn" onclick="setFM('cn')">显示中文</button>
-        <button class="smbtn" id="fm-none" onclick="setFM('none')">隐藏中文</button>
-      </div>
-      <div class="dc-scroll" id="fill-content"></div>
-    </div>
-
-    <!-- 笔记 view -->
-    <div class="view" id="view-note">
-      <div class="dc-scroll" id="note-content"></div>
-    </div>
-  </div>
-</div>
-
+<header><span class="brand">每日英语 <span class="muted">/ Friends · 情境跟读</span></span><span class="muted">理解表达 · 反复开口 · 自然调用</span></header>
+<main><section class="media"><video id="video" controls playsinline preload="metadata"><source src="video.mp4" type="video/mp4"></video><div id="notice" role="status"></div>
+<div class="panel" style="margin-top:16px"><h2>练习设置</h2><div class="settings">
+<label>练习方式<select id="mode"><option value="shadow">同步跟读 · 跟着原声说</option><option value="echo">听后跟读 · 留时间自己说</option></select></label>
+<label>播放速度<select id="rate"><option value="0.65">0.65×</option><option value="0.8">0.8×</option><option value="1" selected>1× 原速</option><option value="1.15">1.15×</option></select></label>
+<label>每句重复<select id="repeat"><option value="1">1 次</option><option value="3" selected>3 次</option><option value="5">5 次</option><option value="0">持续循环</option></select></label>
+<label>句间留白<select id="gap"><option value="0">不留白</option><option value="2" selected>2 秒</option><option value="4">4 秒</option><option value="6">6 秒</option></select></label></div>
+<p class="muted" id="modeHint"></p><label><input id="autoNext" type="checkbox" style="width:auto"> 完成本句后自动进入下一句</label><div id="status" role="status" aria-live="polite">准备开始</div><progress id="progress" value="0" max="1"></progress></div>
+<details class="panel"><summary>全部台词 · 54 句</summary><div id="sentences" class="list"></div></details></section>
+<section><nav class="nav" aria-label="学习区域"><button id="practiceTab">跟读练习</button><button id="reviewTab">我的收藏 <span id="favCount">0</span></button></nav>
+<div id="reviewPanel" class="panel" hidden><h2>收藏的句子与表达</h2><p class="muted">优先重练“还不熟”的内容。熟悉程度由你自己标记。</p><div id="reviews" class="list"></div></div>
+<div class="panel"><div class="row" style="justify-content:space-between"><span id="counter" class="muted"></span><button id="favorite">☆ 收藏本句</button></div><div class="row" style="margin-top:12px"><label class="muted">文字提示 <select id="subtitle"><option value="bi">中英双语</option><option value="en">仅英文</option><option value="cn">仅中文</option><option value="off">隐藏文字</option></select></label></div>
+<p class="sentence" id="english"></p><p class="translation" id="chinese"></p><div id="expression"></div>
+<div class="toolbar"><button id="previous" aria-label="上一句">← 上一句</button><button id="play" class="primary">▶ 开始跟读</button><button id="next" aria-label="下一句">下一句 →</button></div>
+<div class="row"><button id="record">● 录音</button><button id="replay" disabled>回放录音</button><a id="download" hidden>下载录音</a></div><p class="muted" id="recordStatus">录音保存在本机浏览器，不上传。</p>
+<label class="muted">当前熟悉程度 <select id="mastery"><option value="new">未标记</option><option value="hard">还不熟</option><option value="follow">能跟上</option><option value="own">能独立说</option></select></label>
+</div><details class="panel"><summary>笔记与造句 · 自动保存</summary><textarea id="note" placeholder="这个表达可以用在我的什么场景？"></textarea><span class="muted" id="saved"></span></details>
+<details class="panel"><summary>辅助练习 · 听写 / 挖空</summary><h3>听写</h3><input id="dictation" placeholder="输入听到的英文"><button id="dictAnswer">查看原文</button><p id="dictResult" hidden></p><h3>挖空</h3><p id="fillPrompt"></p><input id="fillInput" placeholder="输入缺少的词，用逗号分隔"><button id="fillAnswer">查看答案</button><p id="fillResult" hidden></p></details></section></main>
+<footer>进度、收藏和笔记保存在当前浏览器，不会自动跨设备同步。单词高亮未作为精确发音提示使用。</footer>
 <script>
-// ═══════════════ DATA ═══════════════
 const chunks=[
   {text:"God, I wish Mike were here.",cn:"天啊，我多希望迈克在这里。",t:0.0,end:3.2},
   {text:"Okay, if Mike were here, what would the two of you be doing?",cn:"好吧，如果迈克在这里，你们俩会做什么？",t:3.2,end:7.4},
@@ -443,485 +188,98 @@ function pickBlanks(text){
   return[first.i,second.i].sort((a,b)=>a-b);
 }
 
-// ═══════════════ STATE ═══════════════
-let cur=0,player=null,playing=false;
-let isBlind=false,autoPause=false;
-let subLang='off'; // off|en|bi — syncs with left btn
-let modeTab='subtitle';
-let sm='single'; // single|cont|timed
-let dm='cn',fm='cn';
-let contCur=0,timedCur=0;
-let syncTimer=null;
-let notes={},recState={},recBlobs={};
-let timedTimer=null,cdInterval=null;
-let timedRunning=false,_timedCD=false;
-let singlePauseTimers={};
-let timedCNMode='show'; // show | hide
 
-// ═══════════════ LOCAL VIDEO PLAYER ═══════════════
-// 封装本地 <video> 元素，使接口与原 YT.player 兼容
-function initLocalPlayer(){
-  const v=document.getElementById('ytp');
-  if(!v)return;
-  // 封装对象
-  player={
-    _v:v,
-    seekTo(t){v.currentTime=t;},
-    playVideo(){v.play();},
-    pauseVideo(){v.pause();},
-    getCurrentTime(){return v.currentTime;},
-    getPlaybackRate(){return v.playbackRate;}
-  };
-  v.addEventListener('play',()=>{playing=true;document.getElementById('btn-play').textContent='⏸';startSync();});
-  v.addEventListener('pause',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();if(timedRunning&&!_timedCD)_stopTimed();});
-  v.addEventListener('ended',()=>{playing=false;document.getElementById('btn-play').textContent='▶';stopSync();});
+const $=id=>document.getElementById(id), video=$('video'), KEY='friends-shadow-v2';
+let state={cur:0,notes:{},favorites:{},mastery:{},drafts:{},settings:{}};
+try{const old=JSON.parse(localStorage.getItem(KEY));if(old&&typeof old==='object')for(const k of Object.keys(state))if(old[k]!=null)state[k]=old[k];}catch(e){}
+let cur=Number.isInteger(state.cur)&&chunks[state.cur]?state.cur:0;
+function save(){state.cur=cur;try{localStorage.setItem(KEY,JSON.stringify(state));$('saved').textContent='已保存到当前浏览器';return true;}catch(e){$('saved').textContent='保存失败，请复制笔记备份';return false;}}
+const expressions={22:['checking in on me','关心、问候我的近况','朋友在你低落时来问候你。','Thanks for checking in on me.','朋友知道你工作很累，发消息问候。试着感谢对方。'],7:['get back together','复合，重新在一起','谈论分手后的关系。','Do you want to get back together?','问朋友是否想与前任复合。'],30:['thrown off','被打乱思路，感到措手不及','意外的问题或消息让你一时不知如何回应。','I was thrown off by the question.','描述一个突然的问题让你乱了思路。'],32:['hang out as friends','以朋友的身份一起相处','邀请别人轻松聚聚。',"Let's hang out this weekend.",'邀请朋友这个周末一起聚聚。'],39:['memorize','熟记，记住','有意识地记下某个细节。','I tried to memorize the route.','说说你试着记住一条路线。']};
+let run=null, generation=0, waitTimer=0, raf=0, internalPause=false, rec=null, pendingRec=0, recUrl=null, audio=null, currentBlob=null;
+function status(s){$('status').textContent=s;}
+function pauseVideo(){internalPause=true;video.pause();queueMicrotask(()=>internalPause=false);}
+function stop(message='已暂停'){generation++;run=null;clearTimeout(waitTimer);cancelAnimationFrame(raf);pauseVideo();$('play').textContent='▶ 开始跟读';status(message);}
+function stopAudio(){if(audio){audio.pause();audio=null;}}
+function endRecording(){pendingRec++;if(rec&&rec.state==='recording')rec.stop();}
+function choose(i){if(!chunks[i])return;stop('准备开始');endRecording();stopAudio();cur=i;save();render();}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderLists(){
+ $('sentences').innerHTML=chunks.map((c,i)=>`<button data-index="${i}" class="${i===cur?'active':''}">${i+1}. ${escapeHTML(c.text)}<small>${fmtT(c.t)}</small></button>`).join('');
+ const ids=Object.keys(state.favorites).filter(i=>state.favorites[i]&&chunks[i]).map(Number).sort((a,b)=>(state.mastery[a]==='hard'?0:1)-(state.mastery[b]==='hard'?0:1));
+ $('favCount').textContent=ids.length;
+ $('reviews').innerHTML=ids.length?ids.map(i=>`<button data-index="${i}">${i+1}. ${escapeHTML(expressions[i]?.[0]||chunks[i].text)}<small>${({hard:'还不熟',follow:'能跟上',own:'能独立说'})[state.mastery[i]]||'未标记'} · 点击重练</small></button>`).join(''):'还没有收藏。点击「收藏本句」留下想重练的内容。';
 }
-// 页面加载后初始化本地播放器（通过 window load 事件触发）
-function startSync(){
-  stopSync();
-  syncTimer=setInterval(()=>{
-    if(!player)return;
-    const t=player.getCurrentTime();
-    const idx=getIdx(t);
-    // update karaoke word highlight (subtitle view only)
-    if(modeTab==='subtitle')highlightWord(t);
-    if(idx!==cur){
-      cur=idx;
-      onCurChange();
-      // blind autopause: pause at sentence boundary
-      if(isBlind&&autoPause){
-        clearTimeout(window._apTimer);
-        player.pauseVideo();
-      }
-    }
-  },80);
+function render(){
+ const c=chunks[cur];$('counter').textContent=`第 ${cur+1} / ${chunks.length} 句 · ${fmtT(c.t)}`;
+ $('english').textContent=c.text;$('chinese').textContent=c.cn;
+ const sub=$('subtitle').value;$('english').hidden=!['bi','en'].includes(sub);$('chinese').hidden=!['bi','cn'].includes(sub);
+ $('favorite').textContent=state.favorites[cur]?'★ 已收藏':'☆ 收藏本句';
+ $('previous').disabled=cur===0;$('next').disabled=cur===chunks.length-1;
+ $('note').value=state.notes[cur]||'';$('mastery').value=state.mastery[cur]||'new';
+ const draft=state.drafts[cur]||{};$('dictation').value=draft.dictation||'';$('fillInput').value=draft.fillInput||'';
+ $('dictResult').hidden=true;$('fillResult').hidden=true;$('dictResult').textContent=c.text;
+ const blanks=pickBlanks(c.text);$('fillPrompt').textContent=c.text.split(' ').map((w,i)=>blanks.includes(i)?'______':w).join(' ');$('fillResult').textContent=blanks.map(i=>c.text.split(' ')[i]).join(', ');
+ const e=expressions[cur];$('expression').innerHTML=e?`<details class="expression"><summary>重点表达 · 点击展开</summary><strong>${escapeHTML(e[0])}</strong><p>${escapeHTML(e[1])}</p><p>场景：${escapeHTML(e[2])}</p><p>可用句：${escapeHTML(e[3])}</p><p>自己说：${escapeHTML(e[4])}</p></details>`:'';
+ if(sub==='off')$('expression').innerHTML='';
+ renderLists();loadRecording(cur);
 }
-function stopSync(){clearInterval(syncTimer);}
+async function playRound(token){
+ if(!run||token!==generation)return;
+ video.currentTime=chunks[cur].t;
+ try{await video.play();if(token!==generation)return;status(`原声 / 跟读 · 第 ${run.round} 轮`);tick(token);}catch(e){if(token===generation)stop('播放失败，请检查视频或点击播放器重试');}
+}
+function tick(token){
+ if(token!==generation||!run)return;
+ const c=chunks[cur];$('progress').value=Math.min(1,Math.max(0,(video.currentTime-c.t)/(c.end-c.t)));
+ if(!video.seeking&&video.currentTime>=c.end){
+  pauseVideo();run.phase='gap';
+  const seconds=Number($('gap').value)+($('mode').value==='echo'?chunkDur(cur)/video.playbackRate:0);
+  const until=Date.now()+seconds*1000;
+  const advance=()=>{if(token!==generation||!run)return;const remaining=until-Date.now();if(remaining>0){status(`${$('mode').value==='echo'?'现在自己说':'休息'} · ${Math.ceil(remaining/1000)} 秒`);waitTimer=setTimeout(advance,100);return;}
+   const max=Number($('repeat').value);if(max===0||run.round<max){run.round++;run.phase='play';playRound(token);}else if($('autoNext').checked&&cur<chunks.length-1){cur++;save();render();run.round=1;run.phase='play';playRound(token);}else stop('本句练习完成，试着不看英文再说一次');};advance();return;
+ }
+ raf=requestAnimationFrame(()=>tick(token));
+}
+function start(){stop();endRecording();stopAudio();run={round:1,phase:'play'};$('play').textContent='■ 停止练习';playRound(generation);}
+video.addEventListener('pause',()=>{if(run&&run.phase==='play'&&!internalPause){if(video.currentTime>=chunks[cur].end)tick(generation);else stop();}});
+video.addEventListener('seeking',()=>{if(run&&run.phase==='gap')stop('已停止循环，可重新开始');});
+video.addEventListener('ended',()=>{if(run&&run.phase==='play')tick(generation);});
+video.addEventListener('error',()=>{$('notice').textContent='视频未能加载。请确保本页与原来的 video.mp4 放在同一目录。';stop('视频未能加载');});
+video.addEventListener('loadedmetadata',()=>{video.currentTime=chunks[cur].t;$('notice').textContent='';});
+video.addEventListener('play',()=>{if(!run){endRecording();stopAudio();}});
+// IndexedDB keeps audio local without filling localStorage.
+const dbPromise=new Promise(resolve=>{try{const request=indexedDB.open(KEY,1);request.onupgradeneeded=()=>request.result.createObjectStore('recordings');request.onsuccess=()=>resolve(request.result);request.onerror=()=>resolve(null);}catch(e){resolve(null);}});
+async function storeRecording(i,blob){const db=await dbPromise;if(!db)return false;return new Promise(resolve=>{try{const tx=db.transaction('recordings','readwrite');tx.objectStore('recordings').put(blob,i);tx.oncomplete=()=>resolve(true);tx.onerror=()=>resolve(false);tx.onabort=()=>resolve(false);}catch(e){resolve(false);}});}
+async function loadRecording(i){currentBlob=null;$('replay').disabled=true;$('download').hidden=true;if(recUrl){URL.revokeObjectURL(recUrl);recUrl=null;}const db=await dbPromise;if(!db||i!==cur)return;const req=db.transaction('recordings').objectStore('recordings').get(i);req.onsuccess=()=>{if(i!==cur)return;currentBlob=req.result||null;showRecording();};}
+function showRecording(){ $('replay').disabled=!currentBlob;if(!currentBlob)return;if(recUrl)URL.revokeObjectURL(recUrl);recUrl=URL.createObjectURL(currentBlob);$('download').href=recUrl;$('download').download=`friends-${cur+1}.${currentBlob.type.includes('mp4')?'m4a':'webm'}`;$('download').textContent='下载录音';$('download').hidden=false;}
+async function record(){
+ if(rec&&rec.state==='recording'){endRecording();return;}stop();stopAudio();
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){$('recordStatus').textContent='当前浏览器不支持录音，请使用 HTTPS 页面和新版浏览器。';return;}
+ const token=++pendingRec,i=cur;$('record').disabled=true;$('recordStatus').textContent='等待麦克风权限…';
+ try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});if(token!==pendingRec){stream.getTracks().forEach(t=>t.stop());return;}
+ let mr;try{mr=new MediaRecorder(stream);}catch(e){stream.getTracks().forEach(t=>t.stop());throw e;}rec=mr;const parts=[];mr.ondataavailable=e=>{if(e.data.size)parts.push(e.data);};
+ mr.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());if(rec===mr)rec=null;$('record').textContent='● 录音';$('record').classList.remove('recording');const blob=new Blob(parts,{type:mr.mimeType||parts[0]?.type||'audio/webm'});const saved=await storeRecording(i,blob);if(cur===i){currentBlob=blob;showRecording();$('recordStatus').textContent=saved?'录音已保存到本机浏览器':'无法持久保存，请下载本次录音';}};
+ mr.onerror=()=>{stream.getTracks().forEach(t=>t.stop());$('recordStatus').textContent='录音被中断，请重试';};mr.start();$('record').textContent='■ 停止录音';$('record').classList.add('recording');$('recordStatus').textContent='录音中，切换句子或页面会自动停止并保存。';
+ }catch(e){$('recordStatus').textContent='无法使用麦克风，请检查权限或设备后重试';}finally{$('record').disabled=false;}
+}
+$('previous').onclick=()=>choose(cur-1);$('next').onclick=()=>choose(cur+1);$('play').onclick=()=>run?stop():start();$('record').onclick=record;
+$('replay').onclick=()=>{if(!recUrl)return;stop();endRecording();stopAudio();audio=new Audio(recUrl);audio.play().catch(()=>{$('recordStatus').textContent='录音回放失败，请下载后播放';});};
+$('favorite').onclick=()=>{state.favorites[cur]=!state.favorites[cur];save();renderLists();$('favorite').textContent=state.favorites[cur]?'★ 已收藏':'☆ 收藏本句';};
+$('mastery').onchange=()=>{state.mastery[cur]=$('mastery').value;save();renderLists();};
+$('note').oninput=()=>{state.notes[cur]=$('note').value;save();};
+for(const id of ['dictation','fillInput'])$(id).oninput=()=>{state.drafts[cur]??={};state.drafts[cur][id]=$(id).value;save();};
+$('dictAnswer').onclick=()=>$('dictResult').hidden=false;$('fillAnswer').onclick=()=>$('fillResult').hidden=false;
+for(const id of ['sentences','reviews'])$(id).onclick=e=>{const b=e.target.closest('button[data-index]');if(b)choose(Number(b.dataset.index));};
+function tab(review){stop();endRecording();stopAudio();$('reviewPanel').hidden=!review;$('reviewTab').classList.toggle('active',review);$('practiceTab').classList.toggle('active',!review);}
+$('reviewTab').onclick=()=>tab(true);$('practiceTab').onclick=()=>tab(false);
+function hint(){$('modeHint').textContent=$('mode').value==='echo'?'听完一句后，留出“当前语速句长 + 句间留白”的时间自己说。':'跟着原声稍滞后开口，模仿节奏。每轮后按设置留白。';}
+for(const id of ['mode','rate','repeat','gap','autoNext','subtitle']){
+ if(state.settings[id]!=null){if(id==='autoNext')$(id).checked=!!state.settings[id];else if([...$(id).options].some(o=>o.value===String(state.settings[id])))$(id).value=state.settings[id];}
+ $(id).onchange=()=>{if(id!=='subtitle')stop('设置已更新');state.settings[id]=id==='autoNext'?$(id).checked:$(id).value;video.playbackRate=Number($('rate').value);save();hint();if(id==='subtitle')render();};
+}
+video.playbackRate=Number($('rate').value);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stop('已暂停');endRecording();stopAudio();save();}});
+window.addEventListener('pagehide',()=>{stop();endRecording();save();});
+hint();render();$('practiceTab').classList.add('active');
 
-function onCurChange(){
-  document.getElementById('vpf').style.width=Math.round((cur+1)/chunks.length*100)+'%';
-  if(modeTab==='subtitle')scrollSubTo(cur);
-  if(modeTab==='shadow'){
-    if(sm==='timed'&&!timedRunning){timedCur=cur;renderTimedList();}
-  }
-}
-
-// ═══════════════ LEFT VIDEO CONTROLS ═══════════════
-function vidGo(d){
-  const n=cur+d;
-  if(n>=0&&n<chunks.length){
-    cur=n;
-    if(player){player.seekTo(chunks[n].t,true);player.playVideo();}
-    onCurChange();
-  }
-}
-function togglePlay(){if(!player)return;if(modeTab==='shadow'&&sm==='timed'&&timedRunning){_stopTimed();return;}playing?player.pauseVideo():player.playVideo();}
-
-// left btn: cycle subtitle lang AND sync right subtitle view
-// off → en → bi → off; button label changes
-function cycleSubLang(){
-  const states=['off','en','bi'];
-  const labels={off:'📄 字幕',en:'📄 英文',bi:'📄 双语'};
-  const cur_i=states.indexOf(subLang);
-  subLang=states[(cur_i+1)%states.length];
-  const btn=document.getElementById('btn-sub');
-  btn.textContent=labels[subLang];
-  btn.classList.toggle('active-pink',subLang!=='off');
-  // sync right subtitle view lang buttons
-  if(subLang!=='off'){
-    document.getElementById('slb-en').classList.toggle('active',subLang==='en');
-    document.getElementById('slb-bi').classList.toggle('active',subLang==='bi');
-    // switch to subtitle tab if not already there
-    if(modeTab!=='subtitle')setTab('subtitle');
-  }
-  // if blind mode ON, hide subtitle regardless
-  if(isBlind)return;
-  renderSubList();
-}
-
-// ═══════════════ BLIND ═══════════════
-function setAutoPause(checked){
-  autoPause=checked;
-  // 如果当前正在播放且开关打开，立即暂停到当前句末
-  if(autoPause&&player&&playing){
-    // 直接暂停视频以切换到单句模式
-    const t=player.getCurrentTime();
-    const idx=getIdx(t);
-    const end=chunks[idx].t+chunkDur(idx);
-    const remain=(end-t)*1000+300;
-    clearTimeout(window._apTimer);
-    window._apTimer=setTimeout(()=>{if(player&&autoPause)player.pauseVideo();},Math.max(0,remain));
-  } else if(!autoPause){
-    clearTimeout(window._apTimer);
-    // 如果视频被暂停且应该继续播放，恢复播放
-    if(player&&!playing&&isBlind){
-      player.playVideo();
-    }
-  }
-}
-function toggleBlind(){
-  isBlind=!isBlind;
-  document.getElementById('btn-blind').classList.toggle('active-pink',isBlind);
-  document.getElementById('ap-row').classList.toggle('show',isBlind);
-  if(!isBlind){
-    // 关闭盲听：重置自动暂停，恢复播放
-    autoPause=false;
-    document.getElementById('ap-tog').checked=false;
-    clearTimeout(window._apTimer);
-  }
-  // hide/show subtitle area
-  const sa=document.getElementById('sub-area');
-  if(isBlind){
-    sa.style.visibility='hidden';
-  } else {
-    sa.style.visibility='visible';
-    renderSubList();
-  }
-}
-
-// ═══════════════ SUBTITLE LIST + KARAOKE ═══════════════
-function renderSubList(){
-  if(subLang==='off'){
-    document.getElementById('sub-area').innerHTML='<div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">点击「字幕」切换显示模式</div>';
-    return;
-  }
-  const area=document.getElementById('sub-area');
-  area.innerHTML='';
-  chunks.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='sub-chunk'+(i===cur?' cur':'');
-    d.innerHTML=`<div class="sub-num">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      <div class="sub-en" id="sen-${i}">${wordsHtml(c.text,i)}</div>
-      ${subLang==='bi'?`<div class="sub-cn">${c.cn}</div>`:''}`;
-    d.onclick=()=>{cur=i;if(player){player.seekTo(chunks[i].t,true);player.playVideo();}onCurChange();};
-    area.appendChild(d);
-  });
-  scrollSubTo(cur);
-}
-function scrollSubTo(i){
-  const area=document.getElementById('sub-area');
-  if(!area.children[i])return;
-  area.children[i].scrollIntoView({block:'nearest',behavior:'smooth'});
-  // update cur highlight
-  Array.from(area.children).forEach((el,j)=>el.classList.toggle('cur',j===i));
-}
-function setSubLang(l){
-  subLang=l;
-  document.getElementById('slb-en').classList.toggle('active',l==='en');
-  document.getElementById('slb-bi').classList.toggle('active',l==='bi');
-  // sync left button
-  const leftBtn=document.getElementById('btn-sub');
-  leftBtn.textContent=l==='en'?'📄 英文':'📄 双语';
-  leftBtn.classList.add('active-pink');
-  renderSubList();
-}
-
-// karaoke word highlight - uses actual video time + SRT end timestamp for accurate per-word sync
-let lastLitWord=null;
-function highlightWord(t){
-  if(subLang==='off')return;
-  const ci=getIdx(t);
-  const chunk=chunks[ci];
-  const dur=chunk.end - chunk.t;
-  const words=chunk.text.split(' ');
-  const count=words.length;
-  const elapsed=Math.max(0, t - chunk.t);
-  // only highlight while within the chunk's own time window
-  if(t > chunk.end + 0.1){
-    if(lastLitWord){lastLitWord.classList.remove('lit');lastLitWord=null;}
-    return;
-  }
-  const wi=Math.min(count-1, Math.floor(elapsed/dur*count));
-  const senEl=document.getElementById('sen-'+ci);
-  if(!senEl)return;
-  const wordEls=senEl.querySelectorAll('.w');
-  const target=wordEls[wi]||null;
-  if(target===lastLitWord)return;
-  if(lastLitWord)lastLitWord.classList.remove('lit');
-  if(target){target.classList.add('lit');lastLitWord=target;}
-}
-
-// ═══════════════ TABS ═══════════════
-function setTab(t){
-  // 停止旧标签的运行状态
-  if(modeTab==='shadow'){
-    if(sm==='timed'){if(timedRunning)_stopTimed();else clearTimed();}
-    if(sm==='single'){Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));singlePauseTimers={};}
-    if(player&&playing)player.pauseVideo();
-  }
-  modeTab=t;
-  ['subtitle','shadow','dictate','fill','note'].forEach(m=>{
-    document.getElementById('tab-'+m).classList.toggle('active',m===t);
-    document.getElementById('view-'+m).classList.toggle('show',m===t);
-  });
-  if(t==='subtitle')renderSubList();
-  else if(t==='shadow')renderSM();
-  else if(t==='dictate')renderDictate();
-  else if(t==='fill')renderFill();
-  else renderNote();
-}
-
-// ═══════════════ SHADOW MODE ═══════════════
-function setSM(m){
-  // 停止旧模式的所有计时器/录音/播放
-  if(sm==='timed'){if(timedRunning)_stopTimed();else clearTimed();}
-  if(sm==='single'){
-    // 清除所有单句暂停计时器
-    Object.keys(singlePauseTimers).forEach(k=>clearTimeout(singlePauseTimers[k]));
-    singlePauseTimers={};
-  }
-  if(sm==='cont'){
-    // 暂停播放
-  }
-  // 如果视频正在播放，暂停（切换模式时停止当前播放）
-  if(player&&playing)player.pauseVideo();
-  sm=m;
-  ['single','timed'].forEach(s=>document.getElementById('sm-'+s).classList.toggle('active',s===m));
-  renderSM();
-}
-function renderSM(){
-  document.getElementById('smp-single').classList.toggle('show',sm==='single');
-  document.getElementById('smp-timed').classList.toggle('show',sm==='timed');
-  if(sm==='single')renderSingle();
-  else{renderTimedList();setTimeout(()=>startTimed(),200);}
-}
-
-// ── SINGLE ──
-function renderSingle(){
-  document.getElementById('single-content').innerHTML=chunks.map((c,i)=>`
-    <div class="card" id="sc${i}">
-      <div class="card-meta">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      <div class="card-en">${c.text}</div>
-      <div class="card-cn">${c.cn}</div>
-      <div class="card-btns">
-        <button class="cbtn pink" onclick="singlePlay(${i})">▶ 播放</button>
-        <button class="cbtn" id="recbtn${i}" onclick="toggleRec(${i})">🎙 录音</button>
-        <button class="cbtn green" id="pbbtn${i}" ${recBlobs[i]?'':'disabled style="opacity:.4;cursor:not-allowed"'} onclick="playRec(${i})">↩ 回放</button>
-        <span class="rec-st" id="recst${i}"></span>
-      </div>
-    </div>`).join('');
-}
-// single play: play one sentence then pause (independent of left player)
-function singlePlay(i){
-  if(!player)return;
-  clearTimeout(singlePauseTimers[i]);
-  player.seekTo(chunks[i].t,true);
-  player.playVideo();
-  const dur=chunkDur(i);
-  singlePauseTimers[i]=setTimeout(()=>{if(player)player.pauseVideo();},dur*1000+300);
-}
-
-// recording
-let recMR={},recChunks2={};
-function toggleRec(i){
-  const btn=document.getElementById('recbtn'+i);
-  const st=document.getElementById('recst'+i);
-  if(recMR[i]&&recMR[i].state==='recording'){
-    recMR[i].stop();
-  } else {
-    recChunks2[i]=[];
-    navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-      const mr=new MediaRecorder(stream);
-      recMR[i]=mr;
-      mr.ondataavailable=e=>recChunks2[i].push(e.data);
-      mr.onstop=()=>{
-        recBlobs[i]=new Blob(recChunks2[i],{type:'audio/webm'});
-        stream.getTracks().forEach(t=>t.stop());
-        btn.innerHTML='🎙 录音';btn.className='cbtn';
-        st.textContent='录音完成 ✓';
-        const pb=document.getElementById('pbbtn'+i);
-        if(pb){pb.removeAttribute('disabled');pb.style.opacity='1';pb.style.cursor='pointer';}
-      };
-      mr.start();
-      btn.innerHTML='<span class="rec-dot"></span> 停止';btn.className='cbtn red';
-      st.textContent='录音中...';
-    }).catch(()=>{st.textContent='无麦克风权限';});
-  }
-}
-function playRec(i){if(recBlobs[i])new Audio(URL.createObjectURL(recBlobs[i])).play();}
-
-// ── TIMED ──
-function _stopTimed(){
-  clearTimed();
-  timedRunning=false;_timedCD=false;
-  // hide any visible countdown bar
-  document.querySelectorAll('.cd-wrap').forEach(el=>el.style.display='none');
-}
-function renderTimedList(){
-  const el=document.getElementById('timed-list');
-  el.innerHTML='';
-  chunks.forEach((c,i)=>{
-    const d=document.createElement('div');
-    d.className='srow'+(i===timedCur?' cur':'');
-    // show: cn only (no en); hide: neither en nor cn
-    const enHtml=timedCNMode==='show'||timedCNMode==='hide'?'':'<div style="font-size:14px;font-family:var(--mono);line-height:1.7;margin:2px 0 4px;color:var(--ink)">'+c.text+'</div>';
-    const cnHtml=timedCNMode==='show'?`<div style="font-size:14px;color:var(--ink);margin:2px 0 4px;line-height:1.6">${c.cn}</div>`:'';
-    d.innerHTML=`<div class="srow-num">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      ${enHtml}${cnHtml}
-      <div class="cd-wrap" id="cdw-${i}" style="display:none">
-        <div class="cd-label">跟读倒计时</div>
-        <div class="cd-bar"><div class="cd-fill" id="cdf-${i}" style="width:100%"></div></div>
-      </div>`;
-    d.onclick=()=>{_stopTimed();timedCur=i;cur=i;renderTimedList();setTimeout(()=>startTimed(),100);};
-    el.appendChild(d);
-  });
-  const ae=el.children[timedCur];
-  if(ae)setTimeout(()=>ae.scrollIntoView({block:'nearest',behavior:'smooth'}),50);
-}
-function timedGo(d){
-  if(timedRunning)_stopTimed();
-  const n=timedCur+d;
-  if(n>=0&&n<chunks.length){timedCur=n;cur=n;renderTimedList();}
-}
-function setTimedCN(m){
-  timedCNMode=m;
-  document.getElementById('tcn-show').classList.toggle('active',m==='show');
-  document.getElementById('tcn-hide').classList.toggle('active',m==='hide');
-  renderTimedList();
-}
-function clearTimed(){clearTimeout(timedTimer);clearInterval(cdInterval);}
-function toggleTimed(){timedRunning?_stopTimed():startTimed();}
-function startTimed(){
-  if(!player)return;
-  clearTimed();
-  timedRunning=true;_timedCD=false;
-  const i=timedCur;
-  const playDur=chunkDur(i);
-  // hide bar during playback phase
-  const wrap=document.getElementById('cdw-'+i);
-  if(wrap)wrap.style.display='none';
-  player.seekTo(chunks[i].t,true);
-  player.playVideo();
-  timedTimer=setTimeout(()=>{
-    if(!timedRunning)return;
-    _timedCD=true;
-    player.pauseVideo();
-    // beep
-    try{const ac=new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=880;g.gain.value=0.3;o.start();setTimeout(()=>{g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.25);setTimeout(()=>o.stop(),250);},0);}catch(e){}
-    // show countdown bar on SAME row
-    if(wrap){wrap.style.display='block';}
-    const fill=document.getElementById('cdf-'+i);
-    if(fill)fill.style.width='100%';
-    const total=(playDur+3)*1000;
-    const t0=Date.now();
-    cdInterval=setInterval(()=>{
-      if(!timedRunning){clearInterval(cdInterval);return;}
-      const pct=Math.max(0,100-(Date.now()-t0)/total*100);
-      if(fill)fill.style.width=pct+'%';
-      if(pct<=0){
-        clearInterval(cdInterval);
-        _timedCD=false;
-        if(wrap)wrap.style.display='none';
-        if(timedCur<chunks.length-1){
-          timedCur++;cur=timedCur;
-          renderTimedList();
-          setTimeout(()=>startTimed(),100);
-        } else {
-          timedRunning=false;
-        }
-      }
-    },50);
-  },playDur*1000+100);
-}
-
-// ═══════════════ DICTATE ═══════════════
-function setDM(m){
-  dm=m;
-  document.getElementById('dm-cn').classList.toggle('active',m==='cn');
-  document.getElementById('dm-none').classList.toggle('active',m==='none');
-  renderDictate();
-}
-function renderDictate(){
-  document.getElementById('dictate-content').innerHTML=chunks.map((c,i)=>`
-    <div class="dc-card">
-      <div class="dc-meta">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      ${dm==='cn'?`<div class="dc-prompt">${c.cn}</div>`:''}
-      <button class="cbtn pink" style="margin-bottom:8px" onclick="dictPlay(${i})">▶ 播放</button>
-      <div class="dc-row">
-        <input class="dc-input" id="dci${i}" placeholder="输入你听到的英文…">
-        <button class="cbtn pink" onclick="checkDi(${i})">检查</button>
-      </div>
-      <div class="dc-answer" id="dca${i}">${c.text}</div>
-    </div>`).join('');
-}
-function dictPlay(i){
-  if(!player)return;
-  player.seekTo(chunks[i].t,true);
-  player.playVideo();
-  const dur=chunkDur(i);
-  clearTimeout(window._dp);
-  window._dp=setTimeout(()=>{if(player)player.pauseVideo();},dur*1000+300);
-}
-function checkDi(i){document.getElementById('dca'+i).classList.add('show');}
-
-// ═══════════════ FILL ═══════════════
-function setFM(m){
-  fm=m;
-  document.getElementById('fm-cn').classList.toggle('active',m==='cn');
-  document.getElementById('fm-none').classList.toggle('active',m==='none');
-  renderFill();
-}
-function fillHtml(text,ci){
-  const ws=text.split(' ');
-  const bi=new Set(pickBlanks(text));
-  return ws.map((w,wi)=>{
-    if(bi.has(wi)){
-      const clean=w.replace(/[^a-zA-Z']/g,'');
-      const trail=w.slice(clean.length);
-      return `<span class="blank-wd" id="bw${ci}_${wi}" data-ans="${clean}">${'_'.repeat(Math.max(4,clean.length))}</span>${trail}`;
-    }
-    return w;
-  }).join(' ');
-}
-function renderFill(){
-  document.getElementById('fill-content').innerHTML=chunks.map((c,i)=>`
-    <div class="dc-card">
-      <div class="dc-meta">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      ${fm==='cn'?`<div class="dc-prompt">${c.cn}</div>`:''}
-      <div style="font-size:14px;font-family:var(--mono);line-height:2;margin-bottom:8px">${fillHtml(c.text,i)}</div>
-      <button class="cbtn pink" style="margin-bottom:8px" onclick="fillPlay(${i})">▶ 播放</button>
-      <div class="dc-row">
-        <input class="dc-input" id="fci${i}" placeholder="输入挖空的词（多个用逗号分隔）…">
-        <button class="cbtn pink" onclick="checkFill(${i})">检查</button>
-      </div>
-      <div class="dc-answer" id="fca${i}">${c.text}</div>
-    </div>`).join('');
-}
-function fillPlay(i){
-  if(!player)return;
-  player.seekTo(chunks[i].t,true);
-  player.playVideo();
-  clearTimeout(window._fp);
-  window._fp=setTimeout(()=>{if(player)player.pauseVideo();},chunkDur(i)*1000+300);
-}
-function checkFill(i){
-  document.getElementById('fca'+i).classList.add('show');
-  const ws=chunks[i].text.split(' ');
-  pickBlanks(chunks[i].text).forEach(wi=>{
-    const el=document.getElementById(`bw${i}_${wi}`);
-    if(el){el.textContent=ws[wi].replace(/[^a-zA-Z']/g,'');el.classList.add('rev');}
-  });
-}
-
-// ═══════════════ NOTE ═══════════════
-function renderNote(){
-  document.getElementById('note-content').innerHTML=chunks.map((c,i)=>`
-    <div class="note-card">
-      <div class="dc-meta">#${String(i+1).padStart(2,'0')} · ${fmtT(c.t)}</div>
-      <div style="font-size:14px;font-family:var(--mono);line-height:1.7;margin-bottom:3px">${c.text}</div>
-      <div style="font-size:12px;color:var(--ink2);margin-bottom:6px">${c.cn}</div>
-      <textarea class="note-input" id="ni${i}" placeholder="写下笔记、生词、造句…" onblur="saveNote(${i})">${notes[i]||''}</textarea>
-      <div class="note-saved" id="ns${i}">已保存 ✓</div>
-    </div>`).join('');
-}
-function saveNote(i){notes[i]=document.getElementById('ni'+i).value;const s=document.getElementById('ns'+i);s.style.display='block';setTimeout(()=>s.style.display='none',1500);}
-
-// ═══════════════ INIT ═══════════════
-renderSubList();
-renderSingle();
-
-// 页面加载后初始化本地播放器
-window.addEventListener('load',initLocalPlayer);
-</script>
-</body>
-</html>
+</script></html>
