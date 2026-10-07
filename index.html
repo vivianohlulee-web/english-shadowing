@@ -1,285 +1,81 @@
-<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>每日英语 · 情境跟读</title>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>情境跟读 · 移动端优先原型</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#faf9f7;color:#253b39;font:16px/1.6 system-ui,sans-serif}button,select,textarea,input{font:inherit}button,select{border:1px solid #ccd8d4;background:white;color:inherit;border-radius:12px;padding:10px 14px;cursor:pointer}button:hover{background:#e9f3ed}button:disabled{opacity:.45;cursor:default}button:focus-visible,select:focus-visible{outline:3px solid #de9569}header{padding:16px 28px;border-bottom:1px solid #dfe4df;display:flex;justify-content:space-between;gap:16px}.brand{font-weight:750}.muted{color:#71827d;font-size:13px}main{max-width:1440px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;padding:24px}.media{position:sticky;top:20px;align-self:start}video{width:100%;aspect-ratio:16/9;background:#182320;border-radius:18px}.panel{background:white;border:1px solid #dfe4df;border-radius:20px;padding:24px;margin-bottom:16px}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.settings{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.settings label{font-size:13px}.settings select{display:block;width:100%;margin-top:4px}.primary{background:#315e50;color:white;border-color:#315e50}.primary:hover{background:#244a3e}.active{background:#e5eee8;border-color:#527965}.sentence{font-size:25px;line-height:1.55;margin:20px 0 12px;overflow-wrap:anywhere}.translation{color:#6b7974}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.toolbar button{flex:1;white-space:nowrap}.expression{background:#f4f0e7;border-radius:12px;padding:16px;margin-top:14px}.expression strong{font-size:19px}.expression p{margin:6px 0;font-size:14px}.nav{display:flex;gap:6px;margin-bottom:16px}.nav button{flex:1;padding:9px 5px}.list{max-height:340px;overflow:auto;margin-top:12px}.list button{display:block;width:100%;text-align:left;margin-bottom:7px}.list small{display:block;color:#71827d}textarea,input{width:100%;border:1px solid #ccd8d4;border-radius:12px;padding:12px;background:#fff}textarea{min-height:95px}#status{min-height:26px;color:#315e50;margin-top:10px}progress{width:100%;accent-color:#315e50;height:8px}summary{cursor:pointer;padding:8px 0}h2{font-size:18px;margin:0}h3{font-size:15px}#notice{font-size:13px;color:#9a492f}#counter{font-variant-numeric:tabular-nums}button.recording{background:#a53d3d;color:#fff}footer{max-width:1392px;margin:0 auto;padding:0 24px 20px;color:#71827d;font-size:12px}
-@media(max-width:768px){header{padding:12px 16px}header .muted{display:none}main{display:block;padding:12px;gap:0}.media{position:static}.panel{padding:16px;border-radius:16px}.settings{grid-template-columns:1fr 1fr}.sentence{font-size:22px}.toolbar{position:sticky;bottom:0;z-index:5;background:#fff;padding:12px 0 calc(12px + env(safe-area-inset-bottom));margin-bottom:0}.toolbar button{padding:12px 8px}video{max-height:32vh}.list{max-height:240px}}
+:root{--ink:#1d2838;--muted:#6d798a;--line:#dfe4ec;--soft:#f4f6fa;--violet:#6559e8;--violet2:#eceaff;--green:#21a884;--red:#f0546a;--yellow:#fff4bf;--shadow:0 14px 38px rgba(31,43,70,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f6f7fb;color:var(--ink);font:15px/1.55 ui-sans-serif,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}button,select{font:inherit;color:inherit}button{cursor:pointer}.appbar{height:64px;padding:0 max(18px,calc((100vw - 1320px)/2));display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}.brand{font-size:20px;font-weight:850}.brand span{color:var(--violet)}.toplinks{display:flex;gap:24px;color:var(--muted)}.shell{max-width:1320px;margin:auto;padding:22px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,.8fr);gap:20px}.left,.right{min-width:0}.card{background:white;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}.player{aspect-ratio:16/9;min-height:280px;position:relative;overflow:hidden;background:radial-gradient(circle at 55% 38%,#8590f8 0,#4f48b6 28%,#242b4b 69%,#161b2f 100%)}.player:before,.player:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.32);border-radius:50%;inset:16% 20%;transform:rotate(-12deg)}.player:after{inset:27% 32%;transform:rotate(18deg)}.orb{position:absolute;border-radius:50%;filter:blur(.1px);background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(158,225,255,.15));box-shadow:inset -12px -12px 28px rgba(90,65,205,.2)}.o1{width:120px;height:120px;left:12%;top:18%}.o2{width:75px;height:75px;right:16%;top:21%}.o3{width:150px;height:150px;right:8%;bottom:-45px}.playbig{position:absolute;left:50%;top:48%;translate:-50% -50%;width:72px;height:72px;border:0;border-radius:50%;background:rgba(255,255,255,.94);font-size:28px;padding-left:7px;box-shadow:0 12px 28px rgba(0,0,0,.24)}.video-copy{position:absolute;left:22px;bottom:43px;color:white}.video-copy strong{display:block;font-size:22px}.video-copy span{opacity:.75}.timeline{position:absolute;left:22px;right:22px;bottom:20px;height:5px;background:rgba(255,255,255,.28);border-radius:9px;overflow:hidden}.timeline i{display:block;height:100%;width:36%;background:white}.practice{padding:22px;margin-top:18px}.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px}.english{font-size:clamp(26px,3vw,38px);line-height:1.25;margin:18px 0 7px;font-weight:830;letter-spacing:-.02em}.chinese{font-size:17px;color:var(--muted);margin:0}.timer-wrap{display:none;margin-top:18px;padding:14px;border-radius:15px;background:#fff3f5}.timer-wrap.show{display:block}.timer-line{height:9px;background:#f6c8cf;border-radius:8px;overflow:hidden;margin-top:9px}.timer-line i{display:block;height:100%;width:100%;background:var(--red);transform-origin:left}.timer-text{display:flex;justify-content:space-between;font-weight:750;color:#a72e40}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.action{border:0;border-radius:16px;padding:14px 10px;font-weight:800;font-size:16px}.listen{background:#dff7ef;color:#08755d}.record{background:#ffe1e6;color:#b32039}.replay{background:#e7eaf0}.action:disabled{opacity:.48;cursor:not-allowed}.secondary-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.secondary{border:1px solid var(--line);background:white;border-radius:12px;padding:8px 11px}.status{margin-top:13px;color:var(--violet);min-height:23px;font-weight:650}.controls{padding:20px;position:sticky;top:84px}.controls h2,.sentences h2{font-size:18px;margin:0 0 14px}.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.mode-tabs button{border:1px solid var(--line);background:white;border-radius:13px;padding:10px 5px;font-size:13px}.mode-tabs button.active{background:var(--violet);border-color:var(--violet);color:#fff}.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.field{font-size:12px;color:var(--muted)}select{display:block;width:100%;margin-top:5px;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px}.session{margin-top:18px;border-top:1px solid var(--line);padding-top:18px}.session-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.primary{border:0;border-radius:14px;background:var(--red);color:white;font-weight:800;padding:12px}.ghost{border:1px solid var(--line);border-radius:14px;background:white;font-weight:750;padding:12px}.hint{font-size:12px;color:var(--muted);margin:10px 0 0}.sentences{padding:18px;margin-top:18px}.sentence-list{display:grid;gap:8px;max-height:390px;overflow:auto}.sentence-item{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;text-align:left;display:grid;grid-template-columns:34px 1fr auto;gap:9px;align-items:start}.sentence-item:hover{background:var(--soft)}.sentence-item.active{background:var(--yellow);border-color:#efc84a}.num{color:var(--muted);font-weight:800}.sentence-item strong{display:block}.sentence-item small{display:block;color:var(--muted);margin-top:2px}.duration{font-size:12px;color:var(--muted)}.mobile-settings{display:none}.drawer-mask{display:none}.toast{position:fixed;left:50%;bottom:22px;translate:-50% 30px;opacity:0;background:#20283b;color:#fff;border-radius:13px;padding:10px 16px;transition:.25s;z-index:60}.toast.show{translate:-50% 0;opacity:1}
+@media(max-width:820px){body{background:#fff}.appbar{height:56px;padding:0 15px}.brand{font-size:18px}.toplinks{display:none}.shell{display:block;padding:0}.card{border-radius:0;border-left:0;border-right:0;box-shadow:none}.player{min-height:0;border:0}.right{display:none}.practice{margin-top:0;border-top:0;padding:17px 15px 112px}.meta{font-size:12px}.english{font-size:25px;margin-top:14px}.chinese{font-size:15px}.actions{position:fixed;z-index:30;left:0;right:0;bottom:0;margin:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));backdrop-filter:blur(14px)}.action{padding:13px 5px}.secondary-row{display:grid;grid-template-columns:1fr 1fr}.mobile-settings{display:block;border:1px solid var(--line);background:white;border-radius:12px;padding:8px 11px}.sentence-list{max-height:none}.mobile-list{padding:0 15px 30px}.mobile-list .sentences{border:0;padding:0}.drawer-mask{display:none;position:fixed;inset:0;background:rgba(20,26,42,.42);z-index:39}.drawer-mask.show{display:block}.drawer{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom))}.drawer .controls{position:static;padding:0;border:0;box-shadow:none}.drawer-close{float:right;border:0;background:var(--soft);border-radius:50%;width:34px;height:34px}.player .video-copy strong{font-size:17px}.player .video-copy span{font-size:12px}.playbig{width:58px;height:58px;font-size:23px}.timer-wrap{margin-top:14px}}
+@media(min-width:821px){.mobile-list{display:none}}
 </style>
-<header><span class="brand">每日英语 <span class="muted">/ Friends · 情境跟读</span></span><span class="muted">理解表达 · 反复开口 · 自然调用</span></header>
-<main><section class="media"><video id="video" controls playsinline preload="metadata"><source src="video.mp4" type="video/mp4"></video><div id="notice" role="status"></div>
-<div class="panel" style="margin-top:16px"><h2>练习设置</h2><div class="settings">
-<label>练习方式<select id="mode"><option value="shadow">同步跟读 · 跟着原声说</option><option value="echo">听后跟读 · 留时间自己说</option></select></label>
-<label>播放速度<select id="rate"><option value="0.65">0.65×</option><option value="0.8">0.8×</option><option value="1" selected>1× 原速</option><option value="1.15">1.15×</option></select></label>
-<label>每句重复<select id="repeat"><option value="1">1 次</option><option value="3" selected>3 次</option><option value="5">5 次</option><option value="0">持续循环</option></select></label>
-<label>句间留白<select id="gap"><option value="0">不留白</option><option value="2" selected>2 秒</option><option value="4">4 秒</option><option value="6">6 秒</option></select></label></div>
-<p class="muted" id="modeHint"></p><label><input id="autoNext" type="checkbox" style="width:auto"> 完成本句后自动进入下一句</label><div id="status" role="status" aria-live="polite">准备开始</div><progress id="progress" value="0" max="1"></progress></div>
-<details class="panel"><summary>全部台词 · 54 句</summary><div id="sentences" class="list"></div></details></section>
-<section><nav class="nav" aria-label="学习区域"><button id="practiceTab">跟读练习</button><button id="reviewTab">我的收藏 <span id="favCount">0</span></button></nav>
-<div id="reviewPanel" class="panel" hidden><h2>收藏的句子与表达</h2><p class="muted">优先重练“还不熟”的内容。熟悉程度由你自己标记。</p><div id="reviews" class="list"></div></div>
-<div class="panel"><div class="row" style="justify-content:space-between"><span id="counter" class="muted"></span><button id="favorite">☆ 收藏本句</button></div><div class="row" style="margin-top:12px"><label class="muted">文字提示 <select id="subtitle"><option value="bi">中英双语</option><option value="en">仅英文</option><option value="cn">仅中文</option><option value="off">隐藏文字</option></select></label></div>
-<p class="sentence" id="english"></p><p class="translation" id="chinese"></p><div id="expression"></div>
-<div class="toolbar"><button id="previous" aria-label="上一句">← 上一句</button><button id="play" class="primary">▶ 开始跟读</button><button id="next" aria-label="下一句">下一句 →</button></div>
-<div class="row"><button id="record">● 录音</button><button id="replay" disabled>回放录音</button><a id="download" hidden>下载录音</a></div><p class="muted" id="recordStatus">录音保存在本机浏览器，不上传。</p>
-<label class="muted">当前熟悉程度 <select id="mastery"><option value="new">未标记</option><option value="hard">还不熟</option><option value="follow">能跟上</option><option value="own">能独立说</option></select></label>
-</div><details class="panel"><summary>笔记与造句 · 自动保存</summary><textarea id="note" placeholder="这个表达可以用在我的什么场景？"></textarea><span class="muted" id="saved"></span></details>
-<details class="panel"><summary>辅助练习 · 听写 / 挖空</summary><h3>听写</h3><input id="dictation" placeholder="输入听到的英文"><button id="dictAnswer">查看原文</button><p id="dictResult" hidden></p><h3>挖空</h3><p id="fillPrompt"></p><input id="fillInput" placeholder="输入缺少的词，用逗号分隔"><button id="fillAnswer">查看答案</button><p id="fillResult" hidden></p></details></section></main>
-<footer>进度、收藏和笔记保存在当前浏览器，不会自动跨设备同步。单词高亮未作为精确发音提示使用。</footer>
+</head>
+<body>
+<header class="appbar"><div class="brand"><span>Echo</span> English · 情境跟读</div><nav class="toplinks"><span>练习记录</span><span>表达收藏</span><span>设置</span></nav></header>
+<main class="shell">
+<section class="left">
+  <div class="player card" id="player"><i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i><button class="playbig" id="heroPlay" aria-label="播放当前句">▶</button><div class="video-copy"><strong>Friends · Everyday English</strong><span>演示版使用浏览器英文朗读</span></div><div class="timeline"><i></i></div></div>
+  <article class="practice card">
+    <div class="meta"><span id="counter">第 1 / 8 句</span><span id="timecode">00:00–00:04</span></div>
+    <h1 class="english" id="english"></h1><p class="chinese" id="chinese"></p>
+    <div class="timer-wrap" id="timerWrap"><div class="timer-text"><span id="timerLabel">准备录音</span><span id="timerValue">9.0s</span></div><div class="timer-line"><i id="timerBar"></i></div></div>
+    <div class="actions"><button class="action listen" id="playBtn">▶ 播放</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button></div>
+    <div class="secondary-row"><button class="secondary" id="prevBtn">← 上一句</button><button class="secondary" id="nextBtn">下一句 →</button><button class="mobile-settings" id="openSettings">⚙ 练习设置</button><button class="secondary" id="favBtn">☆ 收藏表达</button></div>
+    <div class="status" id="status" role="status">请选择一句开始练习</div>
+  </article>
+  <div class="mobile-list"><section class="sentences card"><h2>全部句段</h2><div class="sentence-list" id="mobileSentenceList"></div></section></div>
+</section>
+<aside class="right">
+  <section class="controls card" id="desktopControls"></section>
+  <section class="sentences card"><h2>全部句段</h2><div class="sentence-list" id="desktopSentenceList"></div></section>
+</aside>
+</main>
+<div class="drawer-mask" id="drawerMask"><div class="drawer"><button class="drawer-close" id="closeSettings">×</button><div id="mobileControls"></div></div></div>
+<div class="toast" id="toast">已收藏</div>
+<template id="controlsTemplate"><div class="controls-inner"><h2>练习控制</h2><div class="mode-tabs"><button data-mode="normal">普通跟读</button><button data-mode="timed">限时单句</button><button data-mode="continuous">限时连续</button></div><div class="setting-grid"><label class="field">字幕<select data-setting="subtitle"><option value="bi">中英双语</option><option value="en">仅英文</option><option value="cn">仅中文</option><option value="off">隐藏字幕</option></select></label><label class="field">播放速度<select data-setting="rate"><option value="0.7">0.7×</option><option value="0.8">0.8×</option><option value="1" selected>1.0×</option><option value="1.2">1.2×</option></select></label><label class="field">播放方式<select data-setting="repeat"><option value="1">单次播放</option><option value="3">循环 3 次</option><option value="5">循环 5 次</option><option value="0">持续循环</option></select></label><label class="field">录音余量<select data-setting="extra"><option value="3">原句 + 3 秒</option><option value="5" selected>原句 + 5 秒</option><option value="8">原句 + 8 秒</option></select></label></div><div class="session"><div class="session-buttons"><button class="primary" data-action="session">● 开始连续练习</button><button class="ghost" data-action="sessionReplay" disabled>↻ 本轮回放</button></div><p class="hint">连续模式会自动完成“播放 → 提示音 → 倒计时录音 → 下一句”。开始新一轮会清空上一轮录音。</p></div></div></template>
 <script>
 const chunks=[
-  {text:"God, I wish Mike were here.",cn:"天啊，我多希望迈克在这里。",t:0.0,end:3.2},
-  {text:"Okay, if Mike were here, what would the two of you be doing?",cn:"好吧，如果迈克在这里，你们俩会做什么？",t:3.2,end:7.4},
-  {text:"What are you, animals? It's 4:00 in the afternoon.",cn:"你们是什么人啊，禽兽吗？现在才下午四点。",t:7.68,end:11.135},
-  {text:"We got to call him. Just just to talk to him. There's no harm in that.",cn:"我们得给他打电话。就只是聊聊天。这有什么坏处呢。",t:11.88,end:15.96},
-  {text:"Phoebe, that's how it starts. I don't need to eat the cake, I'll just smell the icing.",cn:"菲比，就是这样开始的。我不需要吃蛋糕，我就闻闻糖霜。",t:15.96,end:21.16},
-  {text:"Well, not just a little sliver, or okay, just a a slice or two. You know, the next thing you know, you're 210 lb and you get wedged in going down the tunnel slide.",cn:"结果不只是一小片，好吧，就一两片。你知道的，下一刻你就胖到两百多磅，卡在隧道滑梯里出不来。",t:21.16,end:29.28},
-  {text:"Phoebe, I I I know this is hard. But look, if you talk to him, then you're going to want to see him.",cn:"菲比，我知道这很难。但你听着，如果你跟他说话，你就会想见他。",t:32.439,end:36.72},
-  {text:"And if you see him, you're going to want to get back together with him. And I know that's not what you want.",cn:"如果你见了他，你就会想跟他复合。而我知道那不是你真正想要的。",t:36.72,end:44.48},
-  {text:"All right, so give me your phone.",cn:"好吧，那把你的电话给我。",t:45.08,end:48.0},
-  {text:"Here. And now your cell.",cn:"给你。现在把手机也给我。",t:48.0,end:52.12},
-  {text:"Okay.",cn:"好的。",t:52.12,end:54.88},
-  {text:"Here.",cn:"给你。",t:58.16,end:62.935},
-  {text:"This is your cell phone.",cn:"这是你的手机。",t:66.72,end:69.52},
-  {text:"Yes. This is your current cell phone.",cn:"是的。这是你现在用的手机。",t:69.52,end:74.76},
-  {text:"Yes. It reminds me of a simpler time.",cn:"是的。它让我想起了一段更简单的时光。",t:74.76,end:79.32},
-  {text:"Phoebe, where's your purse?",cn:"菲比，你的包呢？",t:79.68,end:84.64},
-  {text:"Hey. No. No. Give it to me. You can't have it.",cn:"嘿，不行。不行。把它给我。你不能留着它。",t:84.64,end:88.16},
-  {text:"Give it to me. No.",cn:"给我。不要。",t:88.16,end:91.04},
-  {text:"I'll go in there. Oh, yeah. Phoebe, come here. No. Give it to me. No.",cn:"我进去了。哦，好啊。菲比，过来。不要。给我。不要。",t:92.56,end:98.6},
-  {text:"Damn you, Monica Geller-Bing.",cn:"该死的，莫妮卡·盖勒-宾。",t:102.24,end:106.12},
-  {text:"So, Phoebe, why are there men's shoes by the door? Those are my shoes.",cn:"菲比，为什么门口有双男士鞋？那是我的鞋。",t:106.12,end:111.96},
-  {text:"Oh. Well, when you get over this breakup, we need to go shopping.",cn:"哦，好吧。等你走出这段分手，我们得去购物了。",t:111.96,end:116.52},
-  {text:"Look, Monica, I really appreciate you checking in on me, but I'm actually feeling a lot better.",cn:"莫妮卡，我真的很感谢你来看我，但我其实已经好多了。",t:116.52,end:122.04},
-  {text:"You are? Yeah, and I I just kind of want to be alone right now.",cn:"真的吗？是的，我只是想一个人待着。",t:122.04,end:126.44},
-  {text:"Who's that? I ordered Chinese food.",cn:"那是谁？我点了中餐外卖。",t:127.48,end:132.399},
-  {text:"What are the chances?",cn:"这也太巧了吧？",t:133.92,end:136.896},
-  {text:"1 billion Chinese people and they said Mike.",cn:"十亿中国人，他们偏偏说的是迈克。",t:137.16,end:142.12},
-  {text:"What are you doing here? Phoebe called me. Phoebe. I'm sorry, I broke down. I wanted to see him.",cn:"你来这里干什么？菲比叫我来的。菲比！对不起，我撑不住了。我想见他。",t:142.24,end:147.68},
-  {text:"Damn it, Phoebe. How how did you even call him? There's a speaker phone on the base unit. Base unit? Think, Monica, think.",cn:"该死的，菲比。你怎么给他打的电话？底座上有扩音功能。底座？动动脑子，莫妮卡，动动脑子。",t:147.68,end:154.2},
-  {text:"If I want to see Phoebe and she wants to see me — why does that concern you?",cn:"如果我想见菲比，她也想见我——这关你什么事？",t:157.44,end:161.68},
-  {text:"I'm sorry. I guess I was thrown off by the mention of my name.",cn:"对不起，听到有人提我的名字我有点懵。",t:161.68,end:165.716},
-  {text:"Look, guys, you can't do this. It's just going to make getting over each other that much harder. Not if nothing happens.",cn:"听着，你们不能这样。这只会让你们更难忘记彼此。如果什么都不发生的话就没事。",t:167.24,end:172.76},
-  {text:"Why can't, why can't we just hang out as friends?",cn:"为什么不能，为什么我们不能就以朋友身份聚聚呢？",t:172.76,end:177.88},
-  {text:"Why sure. If you're just going to hang out as friends, then then maybe I'll join you. You know, I'm your friend and Mike's friend.",cn:"当然可以。如果你们只是以朋友身份聚聚，那我也加入好了。你知道，我是你的朋友，也是迈克的朋友。",t:177.88,end:185.32},
-  {text:"Sit down.",cn:"坐下。",t:187.88,end:190.4},
-  {text:"Oh, whoa, whoa, whoa, whoa, whoa. Make room for your friend.",cn:"哦，哇哇哇哇哇。给你的朋友腾个位置。",t:191.88,end:195.192},
-  {text:"So, how have you been? I've been pretty good.",cn:"那么，你最近怎么样？我挺好的。",t:205.8,end:208.68},
-  {text:"I didn't ask you to get back together because I know we want different things, but just to be with you one more night.",cn:"我没有让你复合，因为我知道我们想要的不同，只是想再陪你一个晚上。",t:208.68,end:214.2},
-  {text:"I want that, too, but is that going to make it too hard? It can't be any harder than this.",cn:"我也想，但那样会不会让我们更难放手？不可能比现在更难了。",t:214.2,end:219.28},
-  {text:"I mean, if I'd known the last time I saw you would be the last time, I I would have stopped to memorize your face, the way you moved, everything about you.",cn:"我是说，如果我知道上次见你是最后一次，我会停下来，记住你的脸，你的动作，关于你的一切。",t:219.28,end:227.32},
-  {text:"If I'd known the last time I kissed you would be the last time, I never would have stopped.",cn:"如果我知道上次吻你是最后一次，我永远都不会停下来。",t:227.32,end:236.84},
-  {text:"Kiss him, you fool.",cn:"去亲他啊，傻瓜。",t:237.2,end:240.24},
-  {text:"What? Didn't you hear that speech? If you don't kiss him, then I will.",cn:"什么？你没听见那番话吗？你不亲他，我来亲。",t:240.64,end:246.2},
-  {text:"This is too much.",cn:"这太过分了。",t:246.2,end:249.4},
-  {text:"I knew you'd be here. Ah, crap.",cn:"我就知道你会在这里。哦，糟糕。",t:249.4,end:253.28},
-  {text:"Who is this? My friend Manny.",cn:"这是谁？我的朋友曼尼。",t:253.28,end:257.2},
-  {text:"I asked him to keep me away from you.",cn:"我请他帮我离你远一点。",t:257.2,end:260.84},
-  {text:"Hey, that's what I'm doing for Phoebe.",cn:"嘿，我也是这么帮菲比的。",t:260.84,end:262.64},
-  {text:"Well, you're not doing a very good job.",cn:"嗯，你做得不怎么好啊。",t:262.64,end:265.92},
-  {text:"Excuse me? What's with the kissing? Hey, at least I knew where my guy was.",cn:"什么？亲嘴是怎么回事？嘿，至少我知道我的人在哪里。",t:265.92,end:270.84},
-  {text:"Yeah, thank god you were here to oversee all the kissing.",cn:"是啊，幸好你在场监督所有的亲嘴行为。",t:270.84,end:275.0},
-  {text:"You didn't hear the speech. I've heard the speech. If he knew it was going to be the last time he saw her — it was very moving.",cn:"你没听见那番话。我听见了。如果他知道那是最后一次见她——真的很感人。",t:275.0,end:282.24},
-  {text:"You're just heartless.",cn:"你真是铁石心肠。",t:282.24,end:282.8},
-  {text:"You're weak. You're weird. Your pants are undone. Oh.",cn:"你软弱。你奇怪。你裤子没扣好。哦。",t:282.8,end:289.44}
+{text:"I’ve been meaning to tell you something.",cn:"我一直想告诉你一件事。",dur:4.2},
+{text:"What are you talking about?",cn:"你在说什么？",dur:2.7},
+{text:"Let me explain what happened.",cn:"让我解释一下发生了什么。",dur:3.1},
+{text:"I didn’t expect things to turn out this way.",cn:"我没想到事情会变成这样。",dur:4.5},
+{text:"It took me a while to figure it out.",cn:"我花了一些时间才弄明白。",dur:4.0},
+{text:"That’s exactly what I was trying to say.",cn:"那正是我想表达的。",dur:3.8},
+{text:"Do you want to give it another try?",cn:"你想再试一次吗？",dur:3.6},
+{text:"I feel much more confident now.",cn:"我现在自信多了。",dur:3.2}
 ];
-
-const complexWords=['appreciate','checking','simpler','chances','speaker','mention','concern','together','different','friends','heartless','memorize','speech','harder','tunnel','sliver','wedged','billion','remind','breakup'];
-
-// ═══════════════ HELPERS ═══════════════
-function fmtT(s){const m=Math.floor(s/60);return`${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
-function chunkDur(i){return Math.max(0.5, chunks[i].end - chunks[i].t);}
-function getIdx(t){let r=0;for(let i=0;i<chunks.length;i++){if(t>=chunks[i].t)r=i;else break;}return r;}
-
-// word-by-word html with estimated timing per word
-function wordsHtml(text,chunkIdx){
-  const words=text.split(' ');
-  const dur=chunkDur(chunkIdx);
-  const perWord=dur/words.length;
-  return words.map((w,wi)=>`<span class="w" data-ci="${chunkIdx}" data-wi="${wi}" data-t="${(chunks[chunkIdx].t+wi*perWord).toFixed(2)}">${w}</span>`).join(' ');
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let state={index:0,mode:'normal',subtitle:'bi',rate:1,repeat:1,extra:5,favorites:new Set()};
+let mediaRecorder=null,recorded=[],recordingUrl='',sessionUrls=[],timerRAF=0,runToken=0,isRecording=false;
+function fmt(v){return '00:'+String(Math.round(v)).padStart(2,'0')}
+function cloneControls(target){target.append($('#controlsTemplate').content.cloneNode(true))}
+cloneControls($('#desktopControls'));cloneControls($('#mobileControls'));
+function syncControls(){
+  $$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
+  $$('[data-setting]').forEach(el=>el.value=String(state[el.dataset.setting]));
+  $$('[data-action="session"]').forEach(b=>{b.disabled=state.mode!=='continuous';b.textContent=state.mode==='continuous'?'● 开始连续练习':'连续模式可用'});
+  $$('[data-action="sessionReplay"]').forEach(b=>b.disabled=!sessionUrls.length);
 }
-
-// 虚词黑名单（不挖空）
-const _fw=new Set(['i','you','he','she','it','we','they','me','him','her','us','them','my','your','his','its','our','their','the','a','an','and','but','or','so','if','as','in','on','at','to','for','of','with','by','from','up','out','is','are','was','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','can','not','no','yes','oh','ah','just','that','this','there','here','what','why','how','who','when','where','then','than','now','too','also','very','really','quite','well','all','some','any','more','most','much','many','own','same','such','even','still','down','over','about','after','never','always','only','ever','yeah','okay','right','good','little','gonna','wanna','gotta','got','get','go','went','come','came','look','say','said','see','put','let','feel','know','want','need','think','make','take','give','back','here','away']);
-
-// 每句预设挖空词索引（动词短语/名词/搭配）— 按 chunks 数组顺序
-// 格式：句子文本片段 -> 要挖的词列表（小写，忽略标点）
-const _blankMap={
-  "God, I wish Mike were here.":['wish'],
-  "Okay, if Mike were here, what would the two of you be doing?":['doing'],
-  "What are you, animals? It's 4:00 in the afternoon.":['animals','afternoon'],
-  "We got to call him. Just just to talk to him. There's no harm in that.":['harm'],
-  "Phoebe, that's how it starts. I don't need to eat the cake, I'll just smell the icing.":['starts','smell','icing'],
-  "Well, not just a little sliver, or okay, just a a slice or two. You know, the next thing you know, you're 210 lb and you get wedged in going down the tunnel slide.":['sliver','wedged','tunnel','slide'],
-  "Phoebe, I I I know this is hard. But look, if you talk to him, then you're going to want to see him.":['hard','talk'],
-  "And if you see him, you're going to want to get back together with him. And I know that's not what you want.":['together'],
-  "All right, so give me your phone.":['give','phone'],
-  "Here. And now your cell.":['cell'],
-  "Here.":['Here'],
-  "This is your cell phone.":['cell'],
-  "Yes. This is your current cell phone.":['current','cell'],
-  "Yes. It reminds me of a simpler time.":['reminds','simpler'],
-  "Phoebe, where's your purse?":['purse'],
-  "Hey. No. No. Give it to me. You can't have it.":['Give'],
-  "Give it to me. No.":['Give'],
-  "I'll go in there. Oh, yeah. Phoebe, come here. No. Give it to me. No.":['Give'],
-  "Damn you, Monica Geller-Bing.":['Damn'],
-  "So, Phoebe, why are there men's shoes by the door? Those are my shoes.":['shoes','door'],
-  "Oh. Well, when you get over this breakup, we need to go shopping.":['breakup','shopping'],
-  "Look, Monica, I really appreciate you checking in on me, but I'm actually feeling a lot better.":['appreciate','checking','feeling'],
-  "You are? Yeah, and I I just kind of want to be alone right now.":['alone'],
-  "Who's that? I ordered Chinese food.":['ordered','Chinese'],
-  "What are the chances?":['chances'],
-  "1 billion Chinese people and they said Mike.":['billion'],
-  "What are you doing here? Phoebe called me. Phoebe. I'm sorry, I broke down. I wanted to see him.":['broke','wanted'],
-  "Damn it, Phoebe. How how did you even call him? There's a speaker phone on the base unit. Base unit? Think, Monica, think.":['speaker','base','unit'],
-  "If I want to see Phoebe and she wants to see me — why does that concern you?":['concern'],
-  "I'm sorry. I guess I was thrown off by the mention of my name.":['thrown','mention'],
-  "Look, guys, you can't do this. It's just going to make getting over each other that much harder. Not if nothing happens.":['getting','harder','happens'],
-  "Why can't, why can't we just hang out as friends?":['hang','friends'],
-  "Why sure. If you're just going to hang out as friends, then then maybe I'll join you. You know, I'm your friend and Mike's friend.":['hang','join','friend'],
-  "Sit down.":['Sit'],
-  "Oh, whoa, whoa, whoa, whoa, whoa. Make room for your friend.":['room','friend'],
-  "So, how have you been? I've been pretty good.":['pretty'],
-  "I didn't ask you to get back together because I know we want different things, but just to be with you one more night.":['together','different','night'],
-  "I want that, too, but is that going to make it too hard? It can't be any harder than this.":['harder'],
-  "I mean, if I'd known the last time I saw you would be the last time, I I would have stopped to memorize your face, the way you moved, everything about you.":['memorize','moved','everything'],
-  "If I'd known the last time I kissed you would be the last time, I never would have stopped.":['kissed','stopped'],
-  "Kiss him, you fool.":['fool'],
-  "What? Didn't you hear that speech? If you don't kiss him, then I will.":['speech','kiss'],
-  "This is too much.":['much'],
-  "I knew you'd be here. Ah, crap.":['crap'],
-  "Who is this? My friend Manny.":['friend'],
-  "I asked him to keep me away from you.":['keep','away'],
-  "Hey, that's what I'm doing for Phoebe.":['doing'],
-  "Well, you're not doing a very good job.":['job'],
-  "Excuse me? What's with the kissing? Hey, at least I knew where my guy was.":['kissing','least'],
-  "Yeah, thank god you were here to oversee all the kissing.":['oversee','kissing'],
-  "You didn't hear the speech. I've heard the speech. If he knew it was going to be the last time he saw her — it was very moving.":['speech','moving'],
-  "You're just heartless.":['heartless'],
-  "You're weak. You're weird. Your pants are undone. Oh.":['weak','weird','undone']
-};
-
-function pickBlanks(text){
-  const ws=text.split(' ');
-  // try prebuilt map first
-  const key=Object.keys(_blankMap).find(k=>text.includes(k.slice(0,20)));
-  if(key){
-    const targets=_blankMap[key];
-    const idxs=[];
-    targets.forEach(t=>{
-      const ti=ws.findIndex(w=>w.replace(/[^a-zA-Z']/g,'').toLowerCase()===t.toLowerCase());
-      if(ti>=0&&!idxs.includes(ti))idxs.push(ti);
-    });
-    if(idxs.length)return idxs.slice(0,2).sort((a,b)=>a-b);
-  }
-  // fallback: score-based
-  const scored=ws.map((raw,i)=>{
-    const w=raw.replace(/[^a-zA-Z']/g,'').toLowerCase();
-    if(w.length<3)return{i,score:-1};
-    let s=0;
-    if(!_fw.has(w))s+=3;
-    if(w.length>=6)s+=2;else if(w.length>=4)s+=1;
-    if(/ing$|tion$|ness$|ment$|ful$|less$|ize$|ise$/.test(w))s+=2;
-    if(/ed$/.test(w)&&w.length>4)s+=1;
-    if(i===0)s-=1;
-    return{i,score:s};
-  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);
-  if(!scored.length){const f=ws.findIndex(w=>w.replace(/[^a-zA-Z]/g,'').length>=4);return[f<0?0:f];}
-  if(scored.length===1)return[scored[0].i];
-  const first=scored[0];
-  const second=scored.find(x=>x.i!==first.i&&Math.abs(x.i-first.i)>1)||scored[1];
-  return[first.i,second.i].sort((a,b)=>a-b);
-}
-
-
-const $=id=>document.getElementById(id), video=$('video'), KEY='friends-shadow-v2';
-let state={cur:0,notes:{},favorites:{},mastery:{},drafts:{},settings:{}};
-try{const old=JSON.parse(localStorage.getItem(KEY));if(old&&typeof old==='object')for(const k of Object.keys(state))if(old[k]!=null)state[k]=old[k];}catch(e){}
-let cur=Number.isInteger(state.cur)&&chunks[state.cur]?state.cur:0;
-function save(){state.cur=cur;try{localStorage.setItem(KEY,JSON.stringify(state));$('saved').textContent='已保存到当前浏览器';return true;}catch(e){$('saved').textContent='保存失败，请复制笔记备份';return false;}}
-const expressions={22:['checking in on me','关心、问候我的近况','朋友在你低落时来问候你。','Thanks for checking in on me.','朋友知道你工作很累，发消息问候。试着感谢对方。'],7:['get back together','复合，重新在一起','谈论分手后的关系。','Do you want to get back together?','问朋友是否想与前任复合。'],30:['thrown off','被打乱思路，感到措手不及','意外的问题或消息让你一时不知如何回应。','I was thrown off by the question.','描述一个突然的问题让你乱了思路。'],32:['hang out as friends','以朋友的身份一起相处','邀请别人轻松聚聚。',"Let's hang out this weekend.",'邀请朋友这个周末一起聚聚。'],39:['memorize','熟记，记住','有意识地记下某个细节。','I tried to memorize the route.','说说你试着记住一条路线。']};
-let run=null, generation=0, waitTimer=0, raf=0, internalPause=false, rec=null, pendingRec=0, recUrl=null, audio=null, currentBlob=null;
-function status(s){$('status').textContent=s;}
-function pauseVideo(){internalPause=true;video.pause();queueMicrotask(()=>internalPause=false);}
-function stop(message='已暂停'){generation++;run=null;clearTimeout(waitTimer);cancelAnimationFrame(raf);pauseVideo();$('play').textContent='▶ 开始跟读';status(message);}
-function stopAudio(){if(audio){audio.pause();audio=null;}}
-function endRecording(){pendingRec++;if(rec&&rec.state==='recording')rec.stop();}
-function choose(i){if(!chunks[i])return;stop('准备开始');endRecording();stopAudio();cur=i;save();render();}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function renderLists(){
- $('sentences').innerHTML=chunks.map((c,i)=>`<button data-index="${i}" class="${i===cur?'active':''}">${i+1}. ${escapeHTML(c.text)}<small>${fmtT(c.t)}</small></button>`).join('');
- const ids=Object.keys(state.favorites).filter(i=>state.favorites[i]&&chunks[i]).map(Number).sort((a,b)=>(state.mastery[a]==='hard'?0:1)-(state.mastery[b]==='hard'?0:1));
- $('favCount').textContent=ids.length;
- $('reviews').innerHTML=ids.length?ids.map(i=>`<button data-index="${i}">${i+1}. ${escapeHTML(expressions[i]?.[0]||chunks[i].text)}<small>${({hard:'还不熟',follow:'能跟上',own:'能独立说'})[state.mastery[i]]||'未标记'} · 点击重练</small></button>`).join(''):'还没有收藏。点击「收藏本句」留下想重练的内容。';
-}
-function render(){
- const c=chunks[cur];$('counter').textContent=`第 ${cur+1} / ${chunks.length} 句 · ${fmtT(c.t)}`;
- $('english').textContent=c.text;$('chinese').textContent=c.cn;
- const sub=$('subtitle').value;$('english').hidden=!['bi','en'].includes(sub);$('chinese').hidden=!['bi','cn'].includes(sub);
- $('favorite').textContent=state.favorites[cur]?'★ 已收藏':'☆ 收藏本句';
- $('previous').disabled=cur===0;$('next').disabled=cur===chunks.length-1;
- $('note').value=state.notes[cur]||'';$('mastery').value=state.mastery[cur]||'new';
- const draft=state.drafts[cur]||{};$('dictation').value=draft.dictation||'';$('fillInput').value=draft.fillInput||'';
- $('dictResult').hidden=true;$('fillResult').hidden=true;$('dictResult').textContent=c.text;
- const blanks=pickBlanks(c.text);$('fillPrompt').textContent=c.text.split(' ').map((w,i)=>blanks.includes(i)?'______':w).join(' ');$('fillResult').textContent=blanks.map(i=>c.text.split(' ')[i]).join(', ');
- const e=expressions[cur];$('expression').innerHTML=e?`<details class="expression"><summary>重点表达 · 点击展开</summary><strong>${escapeHTML(e[0])}</strong><p>${escapeHTML(e[1])}</p><p>场景：${escapeHTML(e[2])}</p><p>可用句：${escapeHTML(e[3])}</p><p>自己说：${escapeHTML(e[4])}</p></details>`:'';
- if(sub==='off')$('expression').innerHTML='';
- renderLists();loadRecording(cur);
-}
-async function playRound(token){
- if(!run||token!==generation)return;
- video.currentTime=chunks[cur].t;
- try{await video.play();if(token!==generation)return;status(`原声 / 跟读 · 第 ${run.round} 轮`);tick(token);}catch(e){if(token===generation)stop('播放失败，请检查视频或点击播放器重试');}
-}
-function tick(token){
- if(token!==generation||!run)return;
- const c=chunks[cur];$('progress').value=Math.min(1,Math.max(0,(video.currentTime-c.t)/(c.end-c.t)));
- if(!video.seeking&&video.currentTime>=c.end){
-  pauseVideo();run.phase='gap';
-  const seconds=Number($('gap').value)+($('mode').value==='echo'?chunkDur(cur)/video.playbackRate:0);
-  const until=Date.now()+seconds*1000;
-  const advance=()=>{if(token!==generation||!run)return;const remaining=until-Date.now();if(remaining>0){status(`${$('mode').value==='echo'?'现在自己说':'休息'} · ${Math.ceil(remaining/1000)} 秒`);waitTimer=setTimeout(advance,100);return;}
-   const max=Number($('repeat').value);if(max===0||run.round<max){run.round++;run.phase='play';playRound(token);}else if($('autoNext').checked&&cur<chunks.length-1){cur++;save();render();run.round=1;run.phase='play';playRound(token);}else stop('本句练习完成，试着不看英文再说一次');};advance();return;
- }
- raf=requestAnimationFrame(()=>tick(token));
-}
-function start(){stop();endRecording();stopAudio();run={round:1,phase:'play'};$('play').textContent='■ 停止练习';playRound(generation);}
-video.addEventListener('pause',()=>{if(run&&run.phase==='play'&&!internalPause){if(video.currentTime>=chunks[cur].end)tick(generation);else stop();}});
-video.addEventListener('seeking',()=>{if(run&&run.phase==='gap')stop('已停止循环，可重新开始');});
-video.addEventListener('ended',()=>{if(run&&run.phase==='play')tick(generation);});
-video.addEventListener('error',()=>{$('notice').textContent='视频未能加载。请确保本页与原来的 video.mp4 放在同一目录。';stop('视频未能加载');});
-video.addEventListener('loadedmetadata',()=>{video.currentTime=chunks[cur].t;$('notice').textContent='';});
-video.addEventListener('play',()=>{if(!run){endRecording();stopAudio();}});
-// IndexedDB keeps audio local without filling localStorage.
-const dbPromise=new Promise(resolve=>{try{const request=indexedDB.open(KEY,1);request.onupgradeneeded=()=>request.result.createObjectStore('recordings');request.onsuccess=()=>resolve(request.result);request.onerror=()=>resolve(null);}catch(e){resolve(null);}});
-async function storeRecording(i,blob){const db=await dbPromise;if(!db)return false;return new Promise(resolve=>{try{const tx=db.transaction('recordings','readwrite');tx.objectStore('recordings').put(blob,i);tx.oncomplete=()=>resolve(true);tx.onerror=()=>resolve(false);tx.onabort=()=>resolve(false);}catch(e){resolve(false);}});}
-async function loadRecording(i){currentBlob=null;$('replay').disabled=true;$('download').hidden=true;if(recUrl){URL.revokeObjectURL(recUrl);recUrl=null;}const db=await dbPromise;if(!db||i!==cur)return;const req=db.transaction('recordings').objectStore('recordings').get(i);req.onsuccess=()=>{if(i!==cur)return;currentBlob=req.result||null;showRecording();};}
-function showRecording(){ $('replay').disabled=!currentBlob;if(!currentBlob)return;if(recUrl)URL.revokeObjectURL(recUrl);recUrl=URL.createObjectURL(currentBlob);$('download').href=recUrl;$('download').download=`friends-${cur+1}.${currentBlob.type.includes('mp4')?'m4a':'webm'}`;$('download').textContent='下载录音';$('download').hidden=false;}
-async function record(){
- if(rec&&rec.state==='recording'){endRecording();return;}stop();stopAudio();
- if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){$('recordStatus').textContent='当前浏览器不支持录音，请使用 HTTPS 页面和新版浏览器。';return;}
- const token=++pendingRec,i=cur;$('record').disabled=true;$('recordStatus').textContent='等待麦克风权限…';
- try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});if(token!==pendingRec){stream.getTracks().forEach(t=>t.stop());return;}
- let mr;try{mr=new MediaRecorder(stream);}catch(e){stream.getTracks().forEach(t=>t.stop());throw e;}rec=mr;const parts=[];mr.ondataavailable=e=>{if(e.data.size)parts.push(e.data);};
- mr.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());if(rec===mr)rec=null;$('record').textContent='● 录音';$('record').classList.remove('recording');const blob=new Blob(parts,{type:mr.mimeType||parts[0]?.type||'audio/webm'});const saved=await storeRecording(i,blob);if(cur===i){currentBlob=blob;showRecording();$('recordStatus').textContent=saved?'录音已保存到本机浏览器':'无法持久保存，请下载本次录音';}};
- mr.onerror=()=>{stream.getTracks().forEach(t=>t.stop());$('recordStatus').textContent='录音被中断，请重试';};mr.start();$('record').textContent='■ 停止录音';$('record').classList.add('recording');$('recordStatus').textContent='录音中，切换句子或页面会自动停止并保存。';
- }catch(e){$('recordStatus').textContent='无法使用麦克风，请检查权限或设备后重试';}finally{$('record').disabled=false;}
-}
-$('previous').onclick=()=>choose(cur-1);$('next').onclick=()=>choose(cur+1);$('play').onclick=()=>run?stop():start();$('record').onclick=record;
-$('replay').onclick=()=>{if(!recUrl)return;stop();endRecording();stopAudio();audio=new Audio(recUrl);audio.play().catch(()=>{$('recordStatus').textContent='录音回放失败，请下载后播放';});};
-$('favorite').onclick=()=>{state.favorites[cur]=!state.favorites[cur];save();renderLists();$('favorite').textContent=state.favorites[cur]?'★ 已收藏':'☆ 收藏本句';};
-$('mastery').onchange=()=>{state.mastery[cur]=$('mastery').value;save();renderLists();};
-$('note').oninput=()=>{state.notes[cur]=$('note').value;save();};
-for(const id of ['dictation','fillInput'])$(id).oninput=()=>{state.drafts[cur]??={};state.drafts[cur][id]=$(id).value;save();};
-$('dictAnswer').onclick=()=>$('dictResult').hidden=false;$('fillAnswer').onclick=()=>$('fillResult').hidden=false;
-for(const id of ['sentences','reviews'])$(id).onclick=e=>{const b=e.target.closest('button[data-index]');if(b)choose(Number(b.dataset.index));};
-function tab(review){stop();endRecording();stopAudio();$('reviewPanel').hidden=!review;$('reviewTab').classList.toggle('active',review);$('practiceTab').classList.toggle('active',!review);}
-$('reviewTab').onclick=()=>tab(true);$('practiceTab').onclick=()=>tab(false);
-function hint(){$('modeHint').textContent=$('mode').value==='echo'?'听完一句后，留出“当前语速句长 + 句间留白”的时间自己说。':'跟着原声稍滞后开口，模仿节奏。每轮后按设置留白。';}
-for(const id of ['mode','rate','repeat','gap','autoNext','subtitle']){
- if(state.settings[id]!=null){if(id==='autoNext')$(id).checked=!!state.settings[id];else if([...$(id).options].some(o=>o.value===String(state.settings[id])))$(id).value=state.settings[id];}
- $(id).onchange=()=>{if(id!=='subtitle')stop('设置已更新');state.settings[id]=id==='autoNext'?$(id).checked:$(id).value;video.playbackRate=Number($('rate').value);save();hint();if(id==='subtitle')render();};
-}
-video.playbackRate=Number($('rate').value);
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stop('已暂停');endRecording();stopAudio();save();}});
-window.addEventListener('pagehide',()=>{stop();endRecording();save();});
-hint();render();$('practiceTab').classList.add('active');
-
-</script></html>
+function render(){const c=chunks[state.index];$('#english').textContent=c.text;$('#chinese').textContent=c.cn;$('#counter').textContent=`第 ${state.index+1} / ${chunks.length} 句`;let start=chunks.slice(0,state.index).reduce((a,x)=>a+x.dur,0);$('#timecode').textContent=`${fmt(start)}–${fmt(start+c.dur)}`;$('#english').hidden=!['bi','en'].includes(state.subtitle);$('#chinese').hidden=!['bi','cn'].includes(state.subtitle);$('#prevBtn').disabled=state.index===0;$('#nextBtn').disabled=state.index===chunks.length-1;$('#favBtn').textContent=state.favorites.has(state.index)?'★ 已收藏':'☆ 收藏表达';renderLists();syncControls()}
+function renderLists(){const html=chunks.map((c,i)=>`<button class="sentence-item ${i===state.index?'active':''}" data-index="${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${c.text}</strong><small>${c.cn}</small></span><span class="duration">${c.dur.toFixed(1)}s</span></button>`).join('');$('#desktopSentenceList').innerHTML=html;$('#mobileSentenceList').innerHTML=html}
+function status(s){$('#status').textContent=s}
+function stopAll(){runToken++;speechSynthesis.cancel();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
+function beep(){return new Promise(resolve=>{try{const ac=new (window.AudioContext||window.webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.18);setTimeout(()=>{ac.close();resolve()},240)}catch(e){resolve()}})}
+function speakOnce(index,token){return new Promise(resolve=>{if(token!==runToken)return resolve();const u=new SpeechSynthesisUtterance(chunks[index].text);u.lang='en-US';u.rate=state.rate;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
+async function playSentence(index=state.index,forTimed=false){const token=++runToken;speechSynthesis.cancel();let n=0,max=state.repeat===0?999:state.repeat;status(`正在播放 · ${state.rate}×`);while(token===runToken&&n<max){await speakOnce(index,token);n++;if(token!==runToken)break;if(n<max)await new Promise(r=>setTimeout(r,450));}if(token!==runToken)return;if(forTimed||state.mode!=='normal')await timedRecord(index,token);else status('播放完成，可以开始录音')}
+async function setupRecorder(){if(mediaRecorder)return true;if(!navigator.mediaDevices?.getUserMedia){status('当前浏览器不支持录音');return false}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=e=>{if(e.data.size)recorded.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recorded,{type:mediaRecorder.mimeType||'audio/webm'});recorded=[];if(recordingUrl)URL.revokeObjectURL(recordingUrl);recordingUrl=URL.createObjectURL(blob);$('#replayBtn').disabled=false;if(state.mode==='continuous'){sessionUrls.push(recordingUrl);syncControls()}status('录音已完成，可以回放')};return true}catch(e){status('需要允许麦克风权限才能录音');return false}}
+async function startRecording(auto=false){if(isRecording)return;const ok=await setupRecorder();if(!ok)return;recorded=[];mediaRecorder.start();isRecording=true;$('#recordBtn').textContent='■ 停止';status(auto?'限时录音中…':'正在录音…')}
+function stopRecording(){if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();isRecording=false;$('#recordBtn').textContent='● 录音'}
+async function timedRecord(index,token){await beep();if(token!==runToken)return;const total=chunks[index].dur+Number(state.extra);const ok=await setupRecorder();if(!ok)return;await startRecording(true);$('#timerWrap').classList.add('show');const start=performance.now();return new Promise(resolve=>{function frame(now){if(token!==runToken){stopRecording();return resolve()}const left=Math.max(0,total-(now-start)/1000);$('#timerValue').textContent=left.toFixed(1)+'s';$('#timerLabel').textContent='请跟读';$('#timerBar').style.transform=`scaleX(${left/total})`;if(left<=0){stopRecording();$('#timerWrap').classList.remove('show');return resolve()}timerRAF=requestAnimationFrame(frame)}timerRAF=requestAnimationFrame(frame)})}
+async function startContinuous(){stopAll();sessionUrls=[];recordingUrl='';$('#replayBtn').disabled=true;syncControls();const token=runToken;status('连续练习开始');for(let i=state.index;i<chunks.length&&token===runToken;i++){state.index=i;render();await speakOnce(i,token);if(token!==runToken)break;await timedRecord(i,token);await new Promise(r=>setTimeout(r,500))}if(token===runToken)status(`本轮完成，共练习 ${sessionUrls.length} 句`)}
+async function replaySession(){for(const url of sessionUrls){await new Promise(resolve=>{const a=new Audio(url);a.onended=resolve;a.onerror=resolve;a.play()})}}
+$$('[data-mode]').forEach(b=>b.onclick=()=>{stopAll();state.mode=b.dataset.mode;status(state.mode==='normal'?'普通跟读：播放与录音由你控制':state.mode==='timed'?'限时单句：播放后自动提示并录音':'限时连续：从当前句自动练到最后');syncControls()});
+$$('[data-setting]').forEach(el=>el.onchange=()=>{state[el.dataset.setting]=el.dataset.setting==='subtitle'?el.value:Number(el.value);render()});
+document.addEventListener('click',e=>{const item=e.target.closest('[data-index]');if(item){stopAll();state.index=Number(item.dataset.index);render();scrollTo({top:0,behavior:'smooth'})}const act=e.target.closest('[data-action]');if(act?.dataset.action==='session')startContinuous();if(act?.dataset.action==='sessionReplay')replaySession()});
+$('#playBtn').onclick=$('#heroPlay').onclick=()=>playSentence(state.index,state.mode!=='normal');$('#recordBtn').onclick=()=>isRecording?stopRecording():startRecording();$('#replayBtn').onclick=()=>recordingUrl&&new Audio(recordingUrl).play();$('#prevBtn').onclick=()=>{if(state.index){stopAll();state.index--;render()}};$('#nextBtn').onclick=()=>{if(state.index<chunks.length-1){stopAll();state.index++;render()}};$('#favBtn').onclick=()=>{state.favorites.has(state.index)?state.favorites.delete(state.index):state.favorites.add(state.index);render();const t=$('#toast');t.textContent=state.favorites.has(state.index)?'已收藏表达':'已取消收藏';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)};
+$('#openSettings').onclick=()=>$('#drawerMask').classList.add('show');$('#closeSettings').onclick=()=>$('#drawerMask').classList.remove('show');$('#drawerMask').onclick=e=>{if(e.target===$('#drawerMask'))$('#drawerMask').classList.remove('show')};
+render();
+</script>
+</body>
+</html>
