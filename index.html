@@ -93,7 +93,7 @@ function renderLists(){renderTranscript();const html=chunks.map((c,i)=>`<button 
 function status(s){$('#status').textContent=s}
 function stopAll(){runToken++;speechSynthesis.cancel();lessonVideo.pause();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
 function beep(){return new Promise(resolve=>{try{const ac=new (window.AudioContext||window.webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.18);setTimeout(()=>{ac.close();resolve()},240)}catch(e){resolve()}})}
-function playVideoSegment(index,rate,token){return new Promise(resolve=>{const c=chunks[index];let raf=0,finished=false;const finish=()=>{if(finished)return;finished=true;cancelAnimationFrame(raf);lessonVideo.removeEventListener('ended',finish);if(lessonVideo.currentTime>=c.end-.04)lessonVideo.pause();resolve()};const tick=()=>{if(token!==runToken||lessonVideo.currentTime>=c.end-.035)return finish();raf=requestAnimationFrame(tick)};lessonVideo.pause();lessonVideo.playbackRate=rate;lessonVideo.currentTime=c.t+.01;lessonVideo.addEventListener('ended',finish,{once:true});lessonVideo.play().then(()=>{raf=requestAnimationFrame(tick)}).catch(finish)})}
+function playVideoSegment(index,rate,token){return new Promise(resolve=>{const c=chunks[index];let raf=0,finished=false;const finish=()=>{if(finished)return;finished=true;cancelAnimationFrame(raf);lessonVideo.removeEventListener('ended',finish);if(token===runToken&&lessonVideo.currentTime>=c.end-.04)lessonVideo.pause();resolve()};const tick=()=>{if(token!==runToken||lessonVideo.currentTime>=c.end-.035)return finish();raf=requestAnimationFrame(tick)};lessonVideo.pause();lessonVideo.playbackRate=rate;lessonVideo.currentTime=c.t+.01;lessonVideo.addEventListener('ended',finish,{once:true});lessonVideo.play().then(()=>{raf=requestAnimationFrame(tick)}).catch(finish)})}
 function speakOnce(index,token){if(token!==runToken)return Promise.resolve();return playVideoSegment(index,state.rate,token)}
 async function playSubtitleOnce(index=state.index){const token=++runToken;status(`字幕播放 · ${state.subtitleRate.toFixed(1)}×`);await playVideoSegment(index,state.subtitleRate,token);if(token===runToken)status('播放完成')}
 async function playExerciseOnce(index=state.index){const token=++runToken;status('正在播放当前句');await playVideoSegment(index,1,token);if(token===runToken)status('播放完成，请填写答案')}
@@ -106,15 +106,15 @@ async function startContinuous(){stopAll();sessionUrls=[];recordingUrl='';$('#re
 async function replaySession(){for(const url of sessionUrls){await new Promise(resolve=>{const a=new Audio(url);a.onended=resolve;a.onerror=resolve;a.play()})}}
 
 const clozeWords=['muscle','plinky','eyes','happy','wine','right','Richard','glass','Sorry','fine','Use','anything','try','meadow','stars','mistake','questions','moonlight','totally','fine','wagering','working','awake'];
-function updateOverlayVisibility(){const a=state.activity;if(a==='subtitle'||a==='cloze'||a==='dictation'){$('#videoSubtitles').hidden=true;return}$('#videoSubtitles').hidden=false;const display=a==='subtitle'?state.subtitleDisplay:state.subtitle;$('#videoEnglish').hidden=!['bi','en'].includes(display);$('#videoChinese').hidden=!['bi','cn'].includes(display)}
+function updateOverlayVisibility(){$('#videoSubtitles').hidden=true}
 function updateWordHighlight(time){$$('#english .word,#videoEnglish .word,#transcript .active .word').forEach(el=>{const on=time>=Number(el.dataset.start)&&time<Number(el.dataset.end);el.classList.toggle('active',on)})}
 function activeIndexAt(time){let found=0;for(let i=0;i<chunks.length;i++){if(time>=chunks[i].t)found=i;else break}return found}
-function scrollActiveSentence(){
+function scrollActiveSentence(immediate=false){
  const boxes=state.activity==='subtitle'?[$('#transcript')]:[$('#desktopSentenceList'),$('#mobileSentenceList')];
- for(const box of boxes){const el=box?.querySelector('.active');if(el&&box.clientHeight){box.scrollTo({top:box.scrollTop+el.getBoundingClientRect().top-box.getBoundingClientRect().top-8,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
+ for(const box of boxes){const el=box?.querySelector('.active');if(el&&box.clientHeight){box.scrollTo({top:box.scrollTop+el.getBoundingClientRect().top-box.getBoundingClientRect().top-8,behavior:immediate||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
 }
 function syncToVideo(){const time=lessonVideo.currentTime,idx=activeIndexAt(time);if(idx!==state.index){state.index=idx;render();scrollActiveSentence()}updateWordHighlight(time)}
-lessonVideo.addEventListener('timeupdate',syncToVideo);lessonVideo.addEventListener('seeked',syncToVideo);lessonVideo.addEventListener('play',()=>status('视频播放中，字幕将自动同步'));
+lessonVideo.addEventListener('timeupdate',syncToVideo);lessonVideo.addEventListener('seeked',()=>{syncToVideo();scrollActiveSentence(true)});lessonVideo.addEventListener('play',()=>status('视频播放中，字幕将自动同步'));
 function renderActivity(){
   const a=state.activity,c=chunks[state.index];
   document.body.dataset.activity=a;$('#transcript').hidden=a!=='subtitle';
@@ -159,7 +159,17 @@ $('#clozePlay').onclick=()=>playExerciseOnce(state.index);$('#dictationPlay').on
 function playTranscript(){lessonVideo.playbackRate=state.subtitleRate;lessonVideo.play().catch(()=>status('无法播放，请检查视频文件是否可用'))}
 function updatePlayButton(){const playing=!lessonVideo.paused&&!lessonVideo.ended;$('#subtitlePlay').textContent=playing?'❚❚':'▶';$('#subtitlePlay').setAttribute('aria-label',playing?'暂停':'播放')}
 lessonVideo.addEventListener('play',updatePlayButton);lessonVideo.addEventListener('pause',updatePlayButton);lessonVideo.addEventListener('ended',updatePlayButton);
-$('#subtitlePlay').onclick=()=>{if(lessonVideo.paused){if(lessonVideo.ended)lessonVideo.currentTime=0;playTranscript()}else lessonVideo.pause()};function stepSubtitle(delta){const playing=!lessonVideo.paused;stopAll();state.index=Math.max(0,Math.min(chunks.length-1,state.index+delta));lessonVideo.currentTime=chunks[state.index].t;render();scrollActiveSentence();if(playing)playTranscript()}$('#subtitlePrev').onclick=()=>stepSubtitle(-1);$('#subtitleNext').onclick=()=>stepSubtitle(1);
+$('#subtitlePlay').onclick=()=>{if(lessonVideo.paused){if(lessonVideo.ended)lessonVideo.currentTime=0;playTranscript()}else lessonVideo.pause()};function stepSubtitle(delta){
+ const next=Math.max(0,Math.min(chunks.length-1,state.index+delta));
+ // Seeking preserves the media element's playing/paused state.
+ // Invalidate old single-sentence playback without pausing the video.
+ runToken++;
+ state.index=next;
+ lessonVideo.currentTime=chunks[next].t+0.001;
+ render();
+ scrollActiveSentence(true);
+ requestAnimationFrame(()=>scrollActiveSentence(true));
+}$('#subtitlePrev').onclick=()=>stepSubtitle(-1);$('#subtitleNext').onclick=()=>stepSubtitle(1);
 $('#speedMenu').onclick=()=>$('#speedPop').classList.toggle('show');$('#subtitleMenu').onclick=()=>$('#subtitlePop').classList.toggle('show');
 $$('[data-quick-rate]').forEach(b=>b.onclick=()=>{state.subtitleRate=Number(b.dataset.quickRate);lessonVideo.playbackRate=state.subtitleRate;$('#speedPop').classList.remove('show');render()});
 $$('[data-quick-sub]').forEach(b=>b.onclick=()=>{state.subtitleDisplay=b.dataset.quickSub;$('#subtitlePop').classList.remove('show');render()});
