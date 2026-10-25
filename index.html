@@ -43,7 +43,14 @@ body[data-activity="shadow"] #timecode{display:none}
 body[data-activity="shadow"] #inlineShadowControls{display:block!important;margin-top:0;margin-bottom:20px}
 body[data-activity="shadow"] .right{display:none}
 body[data-activity="shadow"] .shell{grid-template-columns:minmax(0,960px);justify-content:center}
-#continuousActions{margin-top:18px}#continuousActions[hidden]{display:none}button:disabled{opacity:.5;cursor:default}</style>
+#continuousActions{margin-top:18px}#continuousActions[hidden]{display:none}button:disabled{opacity:.5;cursor:default}
+body[data-activity="shadow"] #inlineShadowControls{padding:0;border:0;background:transparent;margin:0 0 12px}
+body[data-activity="shadow"] #shadowBar{position:static;margin:0 0 22px;padding:0;border:0;background:transparent;backdrop-filter:none}
+#shadowSettings{margin-top:20px;padding:16px;background:var(--soft);border:1px solid var(--line);border-radius:16px}
+#shadowSettings .setting-grid{margin-top:0;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#shadowSettings select{font-size:13px;padding:9px 4px}
+@media(max-width:820px){body[data-activity="shadow"] .practice{padding-bottom:24px}#shadowSettings{padding:12px 8px}#shadowSettings .setting-grid{gap:6px}}
+</style>
 </head>
 <body>
 <header class="appbar"><div class="brand"><span>Echo</span> English · 情境跟读</div><nav class="toplinks"><span>练习记录</span><span>表达收藏</span><span>设置</span></nav></header>
@@ -53,6 +60,7 @@ body[data-activity="shadow"] .shell{grid-template-columns:minmax(0,960px);justif
   <nav class="feature-tabs" aria-label="练习类型"><button class="feature-tab active" data-activity="subtitle">字幕</button><button class="feature-tab" data-activity="shadow">跟读</button><button class="feature-tab" data-activity="cloze">挖空</button><button class="feature-tab" data-activity="dictation">听写</button></nav>
   <article class="practice card with-tabs">
     <section class="inline-shadow-controls" id="inlineShadowControls" hidden></section>
+    <div class="bar-panel actions" id="shadowBar" hidden><button class="action listen" id="playBtn">▶ 播放</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button></div>
     <div id="transcript" class="transcript" role="region" aria-label="同步滚动字幕" tabindex="0"></div>
     <div class="meta"><span id="counter">第 1 / 8 句</span><span id="timecode">00:00–00:04</span></div>
     <h1 class="english" id="english"></h1><p class="chinese" id="chinese"></p>
@@ -60,10 +68,10 @@ body[data-activity="shadow"] .shell{grid-template-columns:minmax(0,960px);justif
     <section class="exercise-panel" id="dictationPanel" hidden><div class="exercise-box"><button class="exercise-play" id="dictationPlay">▶ 播放当前句</button><label class="translation-toggle"><input id="dictationChinese" type="checkbox" checked> 显示中文提示</label><p class="chinese" id="dictationHint"></p><textarea class="dictation-input" id="dictationInput" placeholder="播放原声后，在这里写出完整英文句子"></textarea><div class="answer-actions"><button class="check-btn" id="checkDictation">检查听写</button><button class="answer-btn" id="showDictation">查看原文</button></div><p class="feedback" id="dictationFeedback"></p></div></section>
     <div class="timer-wrap" id="timerWrap"><div class="timer-text"><span id="timerLabel">准备录音</span><span id="timerValue">9.0s</span></div><div class="timer-line"><i id="timerBar"></i></div></div>
     <div class="bar-panel subtitle-bar" id="subtitleBar"><div class="quick-menu"><button id="speedMenu">1.0×</button><div class="quick-pop" id="speedPop"><button data-quick-rate="0.7">0.7×</button><button data-quick-rate="0.8">0.8×</button><button data-quick-rate="0.9">0.9×</button><button data-quick-rate="1">1.0×</button><button data-quick-rate="1.1">1.1×</button><button data-quick-rate="1.2">1.2×</button></div></div><button id="subtitlePrev">←</button><button class="main-play" id="subtitlePlay">▶</button><button id="subtitleNext">→</button><div class="quick-menu"><button id="subtitleMenu">双语</button><div class="quick-pop" id="subtitlePop"><button data-quick-sub="bi">双语字幕</button><button data-quick-sub="en">英文字幕</button><button data-quick-sub="cn">中文字幕</button><button data-quick-sub="off">无字幕</button></div></div></div>
-    <div class="bar-panel actions" id="shadowBar" hidden><button class="action listen" id="playBtn">▶ 播放</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button></div>
     <section id="continuousActions" hidden><div class="session-buttons"><button class="ghost" id="pauseContinuous" disabled>暂停连续</button><button class="primary" id="endContinuous" disabled>结束连续</button></div><p class="hint">播放：从第一句开始新一轮。录音中提前说完，可点“停止”保存当前句并自动进入下一句。暂停／继续：同步控制原声、录音、倒计时或整轮回放。结束：停止本轮并保存已录内容（含当前句）；回放按顺序播放本轮全部录音。</p></section>
     <div class="secondary-row" id="navRow"><button class="secondary" id="prevBtn">← 上一句</button><button class="secondary" id="nextBtn">下一句 →</button><button class="secondary" id="favBtn">☆ 收藏表达</button></div>
     <div class="status" id="status" role="status">字幕模式：可调整倍速和字幕显示</div>
+    <section id="shadowSettings" aria-label="跟读设置" hidden></section>
   </article>
 </section>
 <aside class="right">
@@ -82,6 +90,8 @@ let mediaRecorder=null,recorded=[],recordingUrl='',sessionUrls=[],timerRAF=0,run
 function fmt(v){const n=Math.max(0,Math.floor(v));return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
 function cloneControls(target){target.append($('#controlsTemplate').content.cloneNode(true))}
 cloneControls($('#desktopControls'));cloneControls($('#mobileControls'));cloneControls($('#inlineShadowControls'));
+$('#shadowSettings').append($('#inlineShadowControls .setting-grid'),$('#inlineShadowControls .hint'));
+$('#inlineShadowControls h2').remove();
 function syncControls(){
   syncContinuousControls();
   $$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
@@ -158,7 +168,7 @@ function renderActivity(){
   document.body.dataset.activity=a;$('#transcript').hidden=a!=='subtitle';
   $$('.feature-tab').forEach(b=>b.classList.toggle('active',b.dataset.activity===a));
   $('#clozePanel').hidden=a!=='cloze';$('#dictationPanel').hidden=a!=='dictation';
-  $('#subtitleBar').hidden=a!=='subtitle';$('#shadowBar').hidden=a!=='shadow';$('#inlineShadowControls').hidden=a!=='shadow';
+  $('#subtitleBar').hidden=a!=='subtitle';$('#shadowBar').hidden=a!=='shadow';$('#inlineShadowControls').hidden=a!=='shadow';$('#shadowSettings').hidden=a!=='shadow';
   $('#navRow').style.display='';
   $('#english').hidden=a==='cloze'||a==='dictation'||(a==='subtitle'&&!['bi','en'].includes(state.subtitleDisplay))||(a==='shadow'&&!['bi','en'].includes(state.subtitle));
   $('#chinese').hidden=a==='cloze'||a==='dictation'||(a==='subtitle'?!['bi','cn'].includes(state.subtitleDisplay):!['bi','cn'].includes(state.subtitle));
