@@ -37,7 +37,13 @@ body[data-activity="subtitle"] .subtitle-bar{margin:14px 16px 0}
  body[data-activity="subtitle"] .subtitle-bar{margin:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-</style>
+body[data-activity="shadow"] #desktopControls{display:none}
+body[data-activity="shadow"] .practice>.meta{display:flex}
+body[data-activity="shadow"] #timecode{display:none}
+body[data-activity="shadow"] #inlineShadowControls{display:block!important;margin-top:0;margin-bottom:20px}
+body[data-activity="shadow"] .right{display:none}
+body[data-activity="shadow"] .shell{grid-template-columns:minmax(0,960px);justify-content:center}
+#continuousActions{margin-top:18px}#continuousActions[hidden]{display:none}button:disabled{opacity:.5;cursor:default}</style>
 </head>
 <body>
 <header class="appbar"><div class="brand"><span>Echo</span> English · 情境跟读</div><nav class="toplinks"><span>练习记录</span><span>表达收藏</span><span>设置</span></nav></header>
@@ -46,6 +52,7 @@ body[data-activity="subtitle"] .subtitle-bar{margin:14px 16px 0}
   <div class="player card" id="player"><video id="lessonVideo" controls playsinline preload="metadata"><source src="shadowing-video-1.mp4" type="video/mp4">当前浏览器不支持 HTML5 视频播放。</video><div class="video-subtitles" id="videoSubtitles"><div class="video-en" id="videoEnglish"></div><div class="video-cn" id="videoChinese"></div></div></div>
   <nav class="feature-tabs" aria-label="练习类型"><button class="feature-tab active" data-activity="subtitle">字幕</button><button class="feature-tab" data-activity="shadow">跟读</button><button class="feature-tab" data-activity="cloze">挖空</button><button class="feature-tab" data-activity="dictation">听写</button></nav>
   <article class="practice card with-tabs">
+    <section class="inline-shadow-controls" id="inlineShadowControls" hidden></section>
     <div id="transcript" class="transcript" role="region" aria-label="同步滚动字幕" tabindex="0"></div>
     <div class="meta"><span id="counter">第 1 / 8 句</span><span id="timecode">00:00–00:04</span></div>
     <h1 class="english" id="english"></h1><p class="chinese" id="chinese"></p>
@@ -53,16 +60,14 @@ body[data-activity="subtitle"] .subtitle-bar{margin:14px 16px 0}
     <section class="exercise-panel" id="dictationPanel" hidden><div class="exercise-box"><button class="exercise-play" id="dictationPlay">▶ 播放当前句</button><label class="translation-toggle"><input id="dictationChinese" type="checkbox" checked> 显示中文提示</label><p class="chinese" id="dictationHint"></p><textarea class="dictation-input" id="dictationInput" placeholder="播放原声后，在这里写出完整英文句子"></textarea><div class="answer-actions"><button class="check-btn" id="checkDictation">检查听写</button><button class="answer-btn" id="showDictation">查看原文</button></div><p class="feedback" id="dictationFeedback"></p></div></section>
     <div class="timer-wrap" id="timerWrap"><div class="timer-text"><span id="timerLabel">准备录音</span><span id="timerValue">9.0s</span></div><div class="timer-line"><i id="timerBar"></i></div></div>
     <div class="bar-panel subtitle-bar" id="subtitleBar"><div class="quick-menu"><button id="speedMenu">1.0×</button><div class="quick-pop" id="speedPop"><button data-quick-rate="0.7">0.7×</button><button data-quick-rate="0.8">0.8×</button><button data-quick-rate="0.9">0.9×</button><button data-quick-rate="1">1.0×</button><button data-quick-rate="1.1">1.1×</button><button data-quick-rate="1.2">1.2×</button></div></div><button id="subtitlePrev">←</button><button class="main-play" id="subtitlePlay">▶</button><button id="subtitleNext">→</button><div class="quick-menu"><button id="subtitleMenu">双语</button><div class="quick-pop" id="subtitlePop"><button data-quick-sub="bi">双语字幕</button><button data-quick-sub="en">英文字幕</button><button data-quick-sub="cn">中文字幕</button><button data-quick-sub="off">无字幕</button></div></div></div>
-    <section class="inline-shadow-controls" id="inlineShadowControls" hidden></section>
     <div class="bar-panel actions" id="shadowBar" hidden><button class="action listen" id="playBtn">▶ 播放</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button></div>
+    <section id="continuousActions" hidden><div class="session-buttons"><button class="ghost" id="pauseContinuous" disabled>暂停连续</button><button class="primary" id="endContinuous" disabled>结束连续</button></div><p class="hint">播放：从第一句开始新一轮。录音中提前说完，可点“停止”保存当前句并自动进入下一句。暂停／继续：同步控制原声、录音、倒计时或整轮回放。结束：停止本轮并保存已录内容（含当前句）；回放按顺序播放本轮全部录音。</p></section>
     <div class="secondary-row" id="navRow"><button class="secondary" id="prevBtn">← 上一句</button><button class="secondary" id="nextBtn">下一句 →</button><button class="secondary" id="favBtn">☆ 收藏表达</button></div>
     <div class="status" id="status" role="status">字幕模式：可调整倍速和字幕显示</div>
   </article>
-  <div class="mobile-list"><section class="sentences card"><h2>全部句段</h2><div class="sentence-list" id="mobileSentenceList"></div></section></div>
 </section>
 <aside class="right">
   <section class="controls card" id="desktopControls"></section>
-  <section class="sentences card"><h2>全部句段</h2><div class="sentence-list" id="desktopSentenceList"></div></section>
 </aside>
 </main>
 <div class="drawer-mask" id="drawerMask"><div class="drawer"><button class="drawer-close" id="closeSettings">×</button><div id="mobileControls"></div></div></div>
@@ -78,6 +83,7 @@ function fmt(v){const n=Math.max(0,Math.floor(v));return String(Math.floor(n/60)
 function cloneControls(target){target.append($('#controlsTemplate').content.cloneNode(true))}
 cloneControls($('#desktopControls'));cloneControls($('#mobileControls'));cloneControls($('#inlineShadowControls'));
 function syncControls(){
+  syncContinuousControls();
   $$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
   $$('[data-setting]').forEach(el=>el.value=String(state[el.dataset.setting]));
 }
@@ -89,31 +95,63 @@ function renderTranscript(){
  box.dataset.display=state.subtitleDisplay;
  [...box.children].forEach((el,i)=>{el.classList.toggle('active',i===state.index);if(i===state.index)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current')});
 }
-function renderLists(){renderTranscript();const html=chunks.map((c,i)=>`<button class="sentence-item ${i===state.index?'active':''}" data-index="${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${c.text}</strong><small>${c.cn}</small></span><span class="duration">${c.dur.toFixed(1)}s</span></button>`).join('');$('#desktopSentenceList').innerHTML=html;$('#mobileSentenceList').innerHTML=html}
+function renderLists(){renderTranscript()}
 function status(s){$('#status').textContent=s}
-function stopAll(){runToken++;speechSynthesis.cancel();lessonVideo.pause();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
-function beep(){return new Promise(resolve=>{try{const ac=new (window.AudioContext||window.webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.setValueAtTime(.12,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.18);setTimeout(()=>{ac.close();resolve()},240)}catch(e){resolve()}})}
+function stopAll(){runToken++;resetContinuous();cancelTimedRecording();stopRecording();speechSynthesis.cancel();lessonVideo.pause();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
+let continuousRunning=false,continuousPaused=false,replaying=false,replayAudio=null,replayDone=null,resumeVideo=false,recordingForSession=false;
+function syncContinuousControls(){
+ $('#continuousActions').hidden=state.activity!=='shadow'||state.mode!=='continuous';
+ $('#pauseContinuous').disabled=!(continuousRunning||replaying);
+ $('#endContinuous').disabled=!(continuousRunning||replaying);
+ $('#pauseContinuous').textContent=continuousPaused?(replaying?'继续回放':'继续连续'):(replaying?'暂停回放':'暂停连续');
+ $('#playBtn').disabled=continuousRunning;
+ $('#recordBtn').disabled=continuousRunning&&!isRecording;
+ $('#replayBtn').disabled=continuousRunning||isRecording||!(state.mode==='continuous'?sessionUrls.length:recordingUrl);
+}
+function resetContinuous(){continuousRunning=false;continuousPaused=false;replaying=false;resumeVideo=false;if(replayAudio)replayAudio.pause();replayAudio=null;replayDone?.();replayDone=null;if(cueContext?.state==='suspended')cueContext.resume();syncContinuousControls()}
+function toggleContinuousPause(){if(!continuousRunning&&!replaying)return;continuousPaused=!continuousPaused;if(continuousPaused){resumeVideo=!lessonVideo.paused;lessonVideo.pause();if(mediaRecorder?.state==='recording')mediaRecorder.pause();replayAudio?.pause();if(cueContext?.state==='running')cueContext.suspend()}else{if(resumeVideo)lessonVideo.play().catch(()=>{});if(mediaRecorder?.state==='paused')mediaRecorder.resume();replayAudio?.play().catch(()=>{});if(cueContext?.state==='suspended')cueContext.resume()}syncContinuousControls();status(continuousPaused?'已暂停，点击继续恢复':'已继续')}
+async function waitContinuous(token){while(continuousPaused&&token===runToken)await new Promise(r=>setTimeout(r,40));return token===runToken}
+async function endContinuous(){stopAll();await recordingStopped;syncContinuousControls();status(`本轮已结束，已保存 ${sessionUrls.length} 段录音；点击回放收听，点击播放从第一句重新开始`)}
+let cueContext=null;
+async function prepareCue(){try{cueContext ||= new (window.AudioContext||window.webkitAudioContext)();await cueContext.resume()}catch(e){}}
+async function beep(){await prepareCue();if(!cueContext)return;return new Promise(resolve=>{const ac=cueContext,o=ac.createOscillator(),g=ac.createGain(),now=ac.currentTime;o.frequency.value=880;g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.35,now+.025);g.gain.setValueAtTime(.35,now+.6);g.gain.linearRampToValueAtTime(0,now+.7);o.connect(g);g.connect(ac.destination);o.onended=()=>{o.disconnect();g.disconnect();resolve()};o.start(now);o.stop(now+.7)})}
+
 function playVideoSegment(index,rate,token){return new Promise(resolve=>{const c=chunks[index];let raf=0,finished=false;const finish=()=>{if(finished)return;finished=true;cancelAnimationFrame(raf);lessonVideo.removeEventListener('ended',finish);if(token===runToken&&lessonVideo.currentTime>=c.end-.04)lessonVideo.pause();resolve()};const tick=()=>{if(token!==runToken||lessonVideo.currentTime>=c.end-.035)return finish();raf=requestAnimationFrame(tick)};lessonVideo.pause();lessonVideo.playbackRate=rate;lessonVideo.currentTime=c.t+.01;lessonVideo.addEventListener('ended',finish,{once:true});lessonVideo.play().then(()=>{raf=requestAnimationFrame(tick)}).catch(finish)})}
 function speakOnce(index,token){if(token!==runToken)return Promise.resolve();return playVideoSegment(index,state.rate,token)}
 async function playSubtitleOnce(index=state.index){const token=++runToken;status(`字幕播放 · ${state.subtitleRate.toFixed(1)}×`);await playVideoSegment(index,state.subtitleRate,token);if(token===runToken)status('播放完成')}
 async function playExerciseOnce(index=state.index){const token=++runToken;status('正在播放当前句');await playVideoSegment(index,1,token);if(token===runToken)status('播放完成，请填写答案')}
-async function playSentence(index=state.index,forTimed=false){const token=++runToken;speechSynthesis.cancel();let n=0,max=state.repeat===0?999:state.repeat;status(`正在播放 · ${state.rate}×`);while(token===runToken&&n<max){await speakOnce(index,token);n++;if(token!==runToken)break;if(n<max)await new Promise(r=>setTimeout(r,450));}if(token!==runToken)return;if(forTimed||state.mode!=='normal')await timedRecord(index,token);else status('播放完成，可以开始录音')}
-async function setupRecorder(){if(mediaRecorder)return true;if(!navigator.mediaDevices?.getUserMedia){status('当前浏览器不支持录音');return false}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=e=>{if(e.data.size)recorded.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recorded,{type:mediaRecorder.mimeType||'audio/webm'});recorded=[];if(recordingUrl)URL.revokeObjectURL(recordingUrl);recordingUrl=URL.createObjectURL(blob);$('#replayBtn').disabled=false;if(state.mode==='continuous'){sessionUrls.push(recordingUrl);syncControls()}status('录音已完成，可以回放')};return true}catch(e){status('需要允许麦克风权限才能录音');return false}}
-async function startRecording(auto=false){if(isRecording)return;const ok=await setupRecorder();if(!ok)return;recorded=[];mediaRecorder.start();isRecording=true;$('#recordBtn').textContent='■ 停止';status(auto?'限时录音中…':'正在录音…')}
-function stopRecording(){if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();isRecording=false;$('#recordBtn').textContent='● 录音'}
-async function timedRecord(index,token){await beep();if(token!==runToken)return;const total=chunks[index].dur+Number(state.extra);const ok=await setupRecorder();if(!ok)return;await startRecording(true);$('#timerWrap').classList.add('show');const start=performance.now();return new Promise(resolve=>{function frame(now){if(token!==runToken){stopRecording();return resolve()}const left=Math.max(0,total-(now-start)/1000);$('#timerValue').textContent=left.toFixed(1)+'s';$('#timerLabel').textContent='请跟读';$('#timerBar').style.transform=`scaleX(${left/total})`;if(left<=0){stopRecording();$('#timerWrap').classList.remove('show');return resolve()}timerRAF=requestAnimationFrame(frame)}timerRAF=requestAnimationFrame(frame)})}
-async function startContinuous(){stopAll();sessionUrls=[];recordingUrl='';$('#replayBtn').disabled=true;syncControls();const token=runToken;status('连续练习开始');for(let i=state.index;i<chunks.length&&token===runToken;i++){state.index=i;render();await speakOnce(i,token);if(token!==runToken)break;await timedRecord(i,token);await new Promise(r=>setTimeout(r,500))}if(token===runToken)status(`本轮完成，共练习 ${sessionUrls.length} 句`)}
-async function replaySession(){for(const url of sessionUrls){await new Promise(resolve=>{const a=new Audio(url);a.onended=resolve;a.onerror=resolve;a.play()})}}
+async function playSentence(index=state.index,forTimed=false){stopAll();const token=runToken;speechSynthesis.cancel();if(forTimed){await prepareCue();if(!await setupRecorder()||token!==runToken)return}let n=0,max=state.repeat===0?999:state.repeat;status(`正在播放 · ${state.rate}×`);while(token===runToken&&n<max){await speakOnce(index,token);n++;if(token!==runToken)break;if(n<max)await new Promise(r=>setTimeout(r,450));}if(token!==runToken)return;if(forTimed||state.mode!=='normal')await timedRecord(index,token);else status('播放完成，可以开始录音')}
+let recordingStopped=Promise.resolve(),resolveRecordingStopped=null,timedEndTimer=0,finishTimed=null;
+function cancelTimedRecording(){if(finishTimed)finishTimed();clearTimeout(timedEndTimer);cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
+async function setupRecorder(){if(mediaRecorder)return true;if(!navigator.mediaDevices?.getUserMedia){status('当前浏览器不支持录音');return false}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});mediaRecorder=new MediaRecorder(stream);mediaRecorder.ondataavailable=e=>{if(e.data.size)recorded.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recorded,{type:mediaRecorder.mimeType||'audio/webm'});recorded=[];if(recordingUrl&&!sessionUrls.includes(recordingUrl))URL.revokeObjectURL(recordingUrl);recordingUrl=blob.size?URL.createObjectURL(blob):'';$('#replayBtn').disabled=!recordingUrl;$('#replayBtn').textContent='↻ 回放';if(recordingForSession&&recordingUrl)sessionUrls.push(recordingUrl);syncContinuousControls();status(recordingUrl?'录音已完成，可以回放':'未收到录音，请重试');resolveRecordingStopped?.();resolveRecordingStopped=null};return true}catch(e){status('需要允许麦克风权限才能录音');return false}}
+async function startRecording(auto=false){if(isRecording)return true;if(!await setupRecorder())return false;await recordingStopped;recorded=[];recordingForSession=continuousRunning;try{mediaRecorder.start()}catch(e){status('录音启动失败，请重试');return false}recordingStopped=new Promise(resolve=>resolveRecordingStopped=resolve);isRecording=true;$('#replayBtn').disabled=true;$('#recordBtn').textContent='■ 停止';syncContinuousControls();status(auto?'限时录音中…':'正在录音…');return true}
+function stopRecording(){if(mediaRecorder&&['recording','paused'].includes(mediaRecorder.state)){mediaRecorder.stop();$('#replayBtn').disabled=true;$('#replayBtn').textContent='正在生成…'}isRecording=false;$('#recordBtn').textContent='● 录音';$('#recordBtn').disabled=continuousRunning;return recordingStopped}
+async function waitRecordingGap(token){let remaining=400,last=performance.now();while(remaining>0){if(token!==runToken)return false;await new Promise(resolve=>setTimeout(resolve,20));const now=performance.now();if(!continuousPaused)remaining-=now-last;last=now}return await waitContinuous(token)}
+async function timedRecord(index,token){if(!await setupRecorder()||!await waitContinuous(token))return;status('准备录音 · 0.4 秒后提示');if(!await waitRecordingGap(token))return;status('提示音后开始录音');await beep();if(!await waitContinuous(token))return;if(!await startRecording(true))return;if(token!==runToken){await stopRecording();return}const total=chunks[index].dur+Number(state.extra);let elapsed=0,last=performance.now();$('#timerWrap').classList.add('show');$('#timerLabel').textContent='正在录音 · 请跟读';return new Promise(resolve=>{let done=false;const finish=()=>{if(done)return;done=true;finishTimed=null;clearTimeout(timedEndTimer);$('#timerWrap').classList.remove('show');stopRecording().then(resolve)};finishTimed=finish;function tick(){if(token!==runToken||!isRecording)return finish();const now=performance.now();if(!continuousPaused)elapsed+=(now-last)/1000;last=now;const left=Math.max(0,total-elapsed);$('#timerValue').textContent=left.toFixed(1)+'s';$('#timerBar').style.transform=`scaleX(${left/total})`;if(left<=0)return finish();timedEndTimer=setTimeout(tick,40)}tick()})}
+async function startContinuous(){stopAll();const token=runToken;await recordingStopped;if(token!==runToken)return;await prepareCue();if(!await setupRecorder()||token!==runToken)return;for(const url of sessionUrls)URL.revokeObjectURL(url);sessionUrls=[];recordingUrl='';continuousRunning=true;state.index=0;render();syncContinuousControls();status('连续练习开始');for(let i=0;i<chunks.length&&token===runToken;i++){if(!await waitContinuous(token))break;state.index=i;render();await speakOnce(i,token);if(!await waitContinuous(token))break;await timedRecord(i,token);if(token!==runToken)break;await new Promise(r=>setTimeout(r,300))}if(token===runToken){continuousRunning=false;continuousPaused=false;syncContinuousControls();status(`本轮完成，共录制 ${sessionUrls.length} 段，可回放整轮录音`)}}
+async function replaySession(){if(continuousRunning||!sessionUrls.length)return;stopAll();const token=runToken;replaying=true;syncContinuousControls();for(const url of [...sessionUrls]){if(!await waitContinuous(token))break;await new Promise(resolve=>{const a=new Audio(url);replayAudio=a;replayDone=resolve;a.onended=resolve;a.onerror=resolve;a.play().catch(resolve)});if(token!==runToken)break}if(token===runToken){replaying=false;continuousPaused=false;replayAudio=null;replayDone=null;syncContinuousControls();status('本轮录音回放完成')}}
+$('#pauseContinuous').onclick=toggleContinuousPause;
+$('#endContinuous').onclick=endContinuous;
 
 const clozeWords=['muscle','plinky','eyes','happy','wine','right','Richard','glass','Sorry','fine','Use','anything','try','meadow','stars','mistake','questions','moonlight','totally','fine','wagering','working','awake'];
 function updateOverlayVisibility(){$('#videoSubtitles').hidden=true}
-function updateWordHighlight(time){$$('#english .word,#videoEnglish .word,#transcript .active .word').forEach(el=>{const on=time>=Number(el.dataset.start)&&time<Number(el.dataset.end);el.classList.toggle('active',on)})}
+function updateWordHighlight(time){$$('#english .word,#videoEnglish .word,#transcript .word').forEach(el=>{const on=time>=Number(el.dataset.start)&&time<Number(el.dataset.end);el.classList.toggle('active',on)})}
 function activeIndexAt(time){let found=0;for(let i=0;i<chunks.length;i++){if(time>=chunks[i].t)found=i;else break}return found}
 function scrollActiveSentence(immediate=false){
  const boxes=state.activity==='subtitle'?[$('#transcript')]:[$('#desktopSentenceList'),$('#mobileSentenceList')];
- for(const box of boxes){const el=box?.querySelector('.active');if(el&&box.clientHeight){box.scrollTo({top:box.scrollTop+el.getBoundingClientRect().top-box.getBoundingClientRect().top-8,behavior:immediate||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
+ for(const box of boxes){const el=box?.querySelector(state.activity==='subtitle'?'.transcript-item.active':'.sentence-item.active');if(el&&box.clientHeight){box.scrollTo({top:box.scrollTop+el.getBoundingClientRect().top-box.getBoundingClientRect().top-8,behavior:immediate||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
 }
-function syncToVideo(){const time=lessonVideo.currentTime,idx=activeIndexAt(time);if(idx!==state.index){state.index=idx;render();scrollActiveSentence()}updateWordHighlight(time)}
+let lastFollowedIndex=-1;
+function syncToVideo(){
+ const time=lessonVideo.currentTime,idx=activeIndexAt(time);
+ if(idx!==state.index){state.index=idx;render()}
+ if(state.activity==='subtitle'&&lastFollowedIndex!==idx){scrollActiveSentence(true);lastFollowedIndex=idx}
+ updateWordHighlight(time);
+}
+let subtitleSyncFrame=0;
+function followVideoFrame(){syncToVideo();if(!lessonVideo.paused&&!lessonVideo.ended)subtitleSyncFrame=requestAnimationFrame(followVideoFrame)}
+lessonVideo.addEventListener('play',()=>{cancelAnimationFrame(subtitleSyncFrame);lastFollowedIndex=-1;followVideoFrame()});
+lessonVideo.addEventListener('pause',()=>{cancelAnimationFrame(subtitleSyncFrame);syncToVideo()});
 lessonVideo.addEventListener('timeupdate',syncToVideo);lessonVideo.addEventListener('seeked',()=>{syncToVideo();scrollActiveSentence(true)});lessonVideo.addEventListener('play',()=>status('视频播放中，字幕将自动同步'));
 function renderActivity(){
   const a=state.activity,c=chunks[state.index];
@@ -128,7 +166,7 @@ function renderActivity(){
   $('#subtitleMenu').textContent=({bi:'双语',en:'英文',cn:'中文',off:'无字幕'})[state.subtitleDisplay];
   if(a==='cloze')renderCloze();
   if(a==='dictation'){$('#chinese').hidden=true;$('#english').hidden=true;$('#dictationHint').textContent=$('#dictationChinese').checked?c.cn:'';}
-  updateOverlayVisibility();
+  updateOverlayVisibility();syncContinuousControls();
 }
 function renderCloze(){
   const c=chunks[state.index],word=clozeWords[state.index];
@@ -145,7 +183,7 @@ function chooseActivity(a){stopAll();state.activity=a;$('#clozeInput').value='';
 $$('[data-mode]').forEach(b=>b.onclick=()=>{stopAll();state.mode=b.dataset.mode;const msg=state.mode==='normal'?'普通跟读：播放和录音由你手动控制':state.mode==='timed'?'限时单句：播放结束后自动提示并开始限时录音':'限时连读：从当前句开始，自动完成播放、录音并进入下一句';status(msg);$$('[data-mode-hint]').forEach(x=>x.textContent=msg);syncControls()});
 $$('[data-setting]').forEach(el=>el.onchange=()=>{state[el.dataset.setting]=el.dataset.setting==='subtitle'?el.value:Number(el.value);render()});
 document.addEventListener('click',e=>{const item=e.target.closest('[data-index]');if(item){stopAll();state.index=Number(item.dataset.index);lessonVideo.currentTime=chunks[state.index].t;render();scrollActiveSentence();if(state.activity==='subtitle')playTranscript()}});
-$('#playBtn').onclick=()=>state.mode==='continuous'?startContinuous():playSentence(state.index,state.mode==='timed');$('#recordBtn').onclick=()=>isRecording?stopRecording():startRecording();$('#replayBtn').onclick=()=>recordingUrl&&new Audio(recordingUrl).play();$('#prevBtn').onclick=()=>{if(state.index){stopAll();state.index--;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#nextBtn').onclick=()=>{if(state.index<chunks.length-1){stopAll();state.index++;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#favBtn').onclick=()=>{state.favorites.has(state.index)?state.favorites.delete(state.index):state.favorites.add(state.index);render();const t=$('#toast');t.textContent=state.favorites.has(state.index)?'已收藏表达':'已取消收藏';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)};
+$('#playBtn').onclick=()=>state.mode==='continuous'?startContinuous():playSentence(state.index,state.mode==='timed');$('#recordBtn').onclick=()=>{if(isRecording){if(finishTimed)finishTimed();else stopRecording()}else if(!continuousRunning)startRecording()};$('#replayBtn').onclick=()=>state.mode==='continuous'?replaySession():recordingUrl&&new Audio(recordingUrl).play();$('#prevBtn').onclick=()=>{if(state.index){stopAll();state.index--;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#nextBtn').onclick=()=>{if(state.index<chunks.length-1){stopAll();state.index++;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#favBtn').onclick=()=>{state.favorites.has(state.index)?state.favorites.delete(state.index):state.favorites.add(state.index);render();const t=$('#toast');t.textContent=state.favorites.has(state.index)?'已收藏表达':'已取消收藏';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)};
 $('#closeSettings').onclick=()=>$('#drawerMask').classList.remove('show');$('#drawerMask').onclick=e=>{if(e.target===$('#drawerMask'))$('#drawerMask').classList.remove('show')};
 
 $$('[data-activity]').forEach(b=>b.onclick=()=>chooseActivity(b.dataset.activity));
