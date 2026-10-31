@@ -92,6 +92,30 @@ body[data-activity="shadow"] #shadowSettings{padding:6px 10px calc(7px + env(saf
 .mode-tabs button{padding:9px 5px;gap:3px;border-radius:10px}
 .mode-title{font-size:14px;line-height:1.4}
 .mode-description{font-size:11px;line-height:1.45}
+
+#shadowSettings .setting-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+#modeExplanation{margin:0;padding:8px 0 10px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
+#shadowSettings .mode-picker .setting-symbol{font-size:17px;color:var(--violet)}
+@media(max-width:380px){#shadowSettings .setting-caption{font-size:11px}}
+
+body[data-activity="shadow"] #shadowBar{display:flex;justify-content:center;align-items:center;gap:5px;max-width:560px;margin:16px auto 12px;flex-wrap:nowrap}
+body[data-activity="shadow"] #shadowBar button{flex:0 1 auto;white-space:nowrap;font-size:12px;min-height:36px;padding:7px 9px;border-radius:10px}
+body[data-activity="shadow"] #shadowBar #prevBtn,body[data-activity="shadow"] #shadowBar #nextBtn{font-size:23px;line-height:20px;min-width:28px;padding:5px}
+#shadowSettings .setting-symbol{display:flex;align-items:center;justify-content:center;height:26px}
+#sentencePicker{width:min(92vw,600px);max-height:78dvh;border:1px solid var(--line);border-radius:20px;padding:18px;color:var(--ink);box-sizing:border-box}
+#sentencePicker::backdrop{background:rgba(25,31,45,.4)}
+.picker-heading{display:flex;align-items:center;justify-content:space-between}.picker-heading button{border:0;background:var(--soft);border-radius:50%;width:32px;height:32px;font-size:22px}
+#sentenceNumbers{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:14px}
+#sentenceNumbers button{min-height:40px;border:1px solid var(--line);background:white;border-radius:10px}
+#sentenceChoices{margin-top:14px;max-height:42dvh;overflow:auto}
+#sentenceChoices button{width:100%;display:flex;gap:12px;text-align:left;padding:12px;border:1px solid var(--line);background:white;border-radius:10px;margin-bottom:7px}
+#sentenceChoices small{display:block;color:var(--muted);margin-top:5px}
+#sentencePicker button.selected{border-color:var(--violet);background:var(--violet2);color:#4d43cd}
+@media(max-width:380px){body[data-activity="shadow"] #shadowBar{gap:3px}body[data-activity="shadow"] #shadowBar button{padding-left:6px;padding-right:6px;font-size:11px}}
+
+body[data-activity="shadow"] #inlineShadowControls{margin:8px 0 14px}
+#modeExplanation{margin:0;padding:0;text-align:left;color:var(--muted);font-size:13px;line-height:1.7;overflow-wrap:break-word}
+body[data-activity="shadow"] #shadowBar #playBtn{font-size:19px;line-height:20px;min-width:38px;padding:7px 10px}
 </style>
 </head>
 <body>
@@ -101,11 +125,11 @@ body[data-activity="shadow"] #shadowSettings{padding:6px 10px calc(7px + env(saf
   <div class="player card" id="player"><video id="lessonVideo" controls playsinline preload="metadata"><source src="shadowing-video-1.mp4" type="video/mp4">当前浏览器不支持 HTML5 视频播放。</video><div class="video-subtitles" id="videoSubtitles"><div class="video-en" id="videoEnglish"></div><div class="video-cn" id="videoChinese"></div></div></div>
   <nav class="feature-tabs" aria-label="练习类型"><button class="feature-tab active" data-activity="subtitle">字幕</button><button class="feature-tab" data-activity="shadow">跟读</button><button class="feature-tab" data-activity="cloze">挖空</button><button class="feature-tab" data-activity="dictation">听写</button></nav>
   <article class="practice card with-tabs">
-    <section class="inline-shadow-controls" id="inlineShadowControls" hidden></section>
-    <div class="bar-panel actions" id="shadowBar" hidden><button class="action listen" id="playBtn">▶ 播放</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button></div>
     <div id="transcript" class="transcript" role="region" aria-label="同步滚动字幕" tabindex="0"></div>
     <div class="meta"><span id="counter">第 1 / 8 句</span><span id="timecode">00:00–00:04</span></div>
+    <section class="inline-shadow-controls" id="inlineShadowControls" hidden></section>
     <h1 class="english" id="english"></h1><p class="chinese" id="chinese"></p>
+    <div class="bar-panel actions" id="shadowBar" hidden><button class="action listen" id="playBtn" aria-label="播放" title="播放">▶</button><button class="action record" id="recordBtn">● 录音</button><button class="action replay" id="replayBtn" disabled>↻ 回放</button><button class="secondary" id="pickSentence">选句</button></div>
     <section class="exercise-panel" id="clozePanel" hidden><div class="exercise-box"><button class="exercise-play" id="clozePlay">▶ 播放当前句</button><label class="translation-toggle"><input id="clozeChinese" type="checkbox" checked> 显示中文提示</label><div class="cloze-sentence" id="clozeSentence"></div><input class="answer-input" id="clozeInput" placeholder="输入缺少的原词"><div class="answer-actions"><button class="check-btn" id="checkCloze">检查答案</button><button class="answer-btn" id="showCloze">查看答案</button></div><p class="feedback" id="clozeFeedback"></p></div></section>
     <section class="exercise-panel" id="dictationPanel" hidden><div class="exercise-box"><button class="exercise-play" id="dictationPlay">▶ 播放当前句</button><label class="translation-toggle"><input id="dictationChinese" type="checkbox" checked> 显示中文提示</label><p class="chinese" id="dictationHint"></p><textarea class="dictation-input" id="dictationInput" placeholder="播放原声后，在这里写出完整英文句子"></textarea><div class="answer-actions"><button class="check-btn" id="checkDictation">检查听写</button><button class="answer-btn" id="showDictation">查看原文</button></div><p class="feedback" id="dictationFeedback"></p></div></section>
     <div class="timer-wrap" id="timerWrap"><div class="timer-text"><span id="timerLabel">准备录音</span><span id="timerValue">9.0s</span></div><div class="timer-line"><i id="timerBar"></i></div></div>
@@ -121,6 +145,7 @@ body[data-activity="shadow"] #shadowSettings{padding:6px 10px calc(7px + env(saf
 </aside>
 </main>
 <div class="drawer-mask" id="drawerMask"><div class="drawer"><button class="drawer-close" id="closeSettings">×</button><div id="mobileControls"></div></div></div>
+<dialog id="sentencePicker"><div class="picker-heading"><strong>选择句段</strong><button id="closeSentencePicker" aria-label="关闭选句">×</button></div><p class="hint">点编号查看句段，点句子跳转练习。</p><div id="sentenceNumbers"></div><div id="sentenceChoices" hidden></div></dialog>
 <div class="toast" id="toast">已收藏</div>
 <template id="controlsTemplate"><div class="controls-inner"><h2>跟读模式与设置</h2><div class="mode-tabs"><button data-mode="normal"><span class="mode-title">自由跟练</span><small class="mode-description">手动播放与录音</small></button><button data-mode="timed"><span class="mode-title">单句跟练</span><small class="mode-description">自动单句听录</small></button><button data-mode="continuous"><span class="mode-title">连续跟练</span><small class="mode-description">自动逐句听录</small></button></div><div class="setting-grid"><label class="field">字幕<select data-setting="subtitle"><option value="bi">中英双语</option><option value="en">仅英文</option><option value="cn">仅中文</option><option value="off">隐藏字幕</option></select></label><label class="field">播放速度<select data-setting="rate"><option value="0.7">0.7×</option><option value="0.8">0.8×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.1">1.1×</option><option value="1.2">1.2×</option></select></label><label class="field">播放方式<select data-setting="repeat"><option value="1">单次播放</option><option value="3">循环 3 次</option><option value="5">循环 5 次</option><option value="0">持续循环</option></select></label><label class="field">录音余量<select data-setting="extra"><option value="0">等于原句时长</option><option value="3" selected>原句 + 3 秒</option><option value="5">原句 + 5 秒</option><option value="8">原句 + 8 秒</option></select></label></div><p class="hint" data-mode-hint>自由跟练：手动播放与录音。</p></div></template>
 <script>
@@ -133,7 +158,7 @@ function fmt(v){const n=Math.max(0,Math.floor(v));return String(Math.floor(n/60)
 function cloneControls(target){target.append($('#controlsTemplate').content.cloneNode(true))}
 cloneControls($('#desktopControls'));cloneControls($('#mobileControls'));cloneControls($('#inlineShadowControls'));
 $('#shadowSettings').append($('#inlineShadowControls .setting-grid'),$('#inlineShadowControls .hint'));
-$('#inlineShadowControls h2').remove();
+$('#inlineShadowControls').innerHTML='<p id="modeExplanation" role="status">手动播放与录音</p>';
 const settingSymbols={subtitle:'文/A',rate:'1×',repeat:'↻',extra:'+3s'};
 $('#shadowSettings').querySelectorAll('.field').forEach(label=>{
  const select=label.querySelector('select'),name=label.firstChild.textContent.trim();
@@ -142,9 +167,21 @@ $('#shadowSettings').querySelectorAll('.field').forEach(label=>{
  const caption=document.createElement('span');caption.className='setting-caption';caption.textContent=name;
  label.prepend(icon,caption);select.setAttribute('aria-label',name);
 });
+const modeNames={normal:'自由',timed:'单句',continuous:'连续'};
+const modeDescriptions={normal:'自由跟练：手动控制播放与录音，按自己的节奏练习。',timed:'单句跟练：原声结束后自动录音，倒计时结束自动停止，也可提前点停止。',continuous:'连续跟练：自动逐句播放与录音，录完进入下一句，可随时暂停或结束。'};
+const modeField=document.createElement('label');
+modeField.className='field mode-picker';
+modeField.innerHTML='<span class="setting-symbol" id="modeValue" aria-hidden="true">自由</span><span class="setting-caption">跟读模式</span><select id="shadowModeSelect" aria-label="跟读模式"><option value="normal">自由跟练</option><option value="timed">单句跟练</option><option value="continuous">连续跟练</option></select>';
+$('#shadowSettings .setting-grid').prepend(modeField);
+const toolbarPaths={
+ mode:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="8" cy="18" r="2" fill="currentColor"/>',
+ subtitle:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M6 10h5m-5 4h3m4 0h5m-3-4h3"/>',
+ rate:'<path d="M4 18a9 9 0 1 1 16 0M12 13l5-5M5 18h14"/><circle cx="12" cy="13" r="1"/>',
+ repeat:'<path d="M4 8h13l-3-3m3 3-3 3M20 16H7l3 3m-3-3 3-3"/>',
+ extra:'<circle cx="12" cy="13" r="8"/><path d="M9 2h6m-3 3V2m0 7v4l3 2"/>'};
+function toolbarIcon(key){return '<svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+toolbarPaths[key]+'</svg>'}
 function updateSettingSymbols(){
- const values={subtitle:({bi:'文/A',en:'EN',cn:'中文',off:'—'})[state.subtitle],rate:state.rate+'×',repeat:state.repeat===0?'∞':state.repeat===1?'↻':'↻ '+state.repeat,extra:'+'+state.extra+'s'};
- $('#shadowSettings').querySelectorAll('.field').forEach(label=>{const select=label.querySelector('select');label.querySelector('.setting-symbol').textContent=values[select.dataset.setting];label.title=select.options[select.selectedIndex].text});
+ $('#shadowSettings').querySelectorAll('.field').forEach(label=>{const select=label.querySelector('select');label.querySelector('.setting-symbol').innerHTML=toolbarIcon(select.dataset.setting||'mode');label.title=select.options[select.selectedIndex].text});
 }
 
 function syncControls(){
@@ -152,9 +189,12 @@ function syncControls(){
   $$('[data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
   $$('[data-setting]').forEach(el=>el.value=String(state[el.dataset.setting]));
   updateSettingSymbols();
+  $('#shadowModeSelect').value=state.mode;
+
+  $('#modeExplanation').textContent=modeDescriptions[state.mode];
 }
 function wordHtml(c){return c.words.map((w,i)=>`<span class="word" data-word-index="${i}" data-start="${w.start}" data-end="${w.end}">${w.word}</span>`).join(' ')}
-function render(){const c=chunks[state.index];const words=wordHtml(c);$('#english').innerHTML=words;$('#chinese').textContent=c.cn;$('#videoEnglish').innerHTML=words;$('#videoChinese').textContent=c.cn;$('#counter').textContent=`第 ${state.index+1} / ${chunks.length} 句`;$('#timecode').textContent=`${fmt(c.t)}–${fmt(c.end)}`;$('#english').hidden=!['bi','en'].includes(state.subtitle);$('#chinese').hidden=!['bi','cn'].includes(state.subtitle);$('#prevBtn').disabled=state.index===0;$('#nextBtn').disabled=state.index===chunks.length-1;$('#favBtn').textContent=state.favorites.has(state.index)?'★ 已收藏':'☆ 收藏表达';renderLists();syncControls();renderActivity();updateWordHighlight(lessonVideo.currentTime)}
+function render(){const c=chunks[state.index];const words=wordHtml(c);$('#english').innerHTML=words;$('#chinese').textContent=c.cn;$('#videoEnglish').innerHTML=words;$('#videoChinese').textContent=c.cn;$('#counter').textContent=`第 ${state.index+1} / ${chunks.length} 句`;$('#timecode').textContent=`${fmt(c.t)}–${fmt(c.end)}`;$('#english').hidden=!['bi','en'].includes(state.subtitle);$('#chinese').hidden=!['bi','cn'].includes(state.subtitle);$('#prevBtn').disabled=state.index===0;$('#nextBtn').disabled=state.index===chunks.length-1;$('#favBtn').textContent=state.favorites.has(state.index)?'★ 已收藏':'☆ 收藏';renderLists();syncControls();renderActivity();updateWordHighlight(lessonVideo.currentTime)}
 function renderTranscript(){
  const box=$('#transcript');
  if(!box.children.length)box.innerHTML=chunks.map((c,i)=>`<button class="transcript-item" data-index="${i}" aria-label="播放第 ${i+1} 句"><span class="transcript-time">${fmt(c.t)}</span><span class="transcript-en">${wordHtml(c)}</span><span class="transcript-cn">${c.cn}</span></button>`).join('');
@@ -163,14 +203,14 @@ function renderTranscript(){
 }
 function renderLists(){renderTranscript()}
 function status(s){$('#status').textContent=s}
-function stopAll(){runToken++;resetContinuous();cancelTimedRecording();stopRecording();speechSynthesis.cancel();lessonVideo.pause();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
+function stopAll(){shadowPlaybackPaused=false;runToken++;resetContinuous();cancelTimedRecording();stopRecording();speechSynthesis.cancel();lessonVideo.pause();cancelAnimationFrame(timerRAF);$('#timerWrap').classList.remove('show')}
 let continuousRunning=false,continuousPaused=false,replaying=false,replayAudio=null,replayDone=null,resumeVideo=false,recordingForSession=false;
 function syncContinuousControls(){
  $('#continuousActions').hidden=state.activity!=='shadow'||state.mode!=='continuous';
  $('#pauseContinuous').disabled=!(continuousRunning||replaying);
  $('#endContinuous').disabled=!(continuousRunning||replaying);
  $('#pauseContinuous').textContent=continuousPaused?(replaying?'继续回放':'继续连续'):(replaying?'暂停回放':'暂停连续');
- $('#playBtn').disabled=continuousRunning;
+ $('#playBtn').disabled=false;updateShadowPlayButton();
  $('#recordBtn').disabled=continuousRunning&&!isRecording;
  $('#replayBtn').disabled=continuousRunning||isRecording||!(state.mode==='continuous'?sessionUrls.length:recordingUrl);
 }
@@ -210,6 +250,18 @@ function createRecordingPlayback(url){
  return audio;
 }
 async function replaySession(){if(continuousRunning||!sessionUrls.length)return;stopAll();const token=runToken;replaying=true;syncContinuousControls();for(const url of [...sessionUrls]){if(!await waitContinuous(token))break;await new Promise(resolve=>{const a=createRecordingPlayback(url);replayAudio=a;replayDone=resolve;a.onended=resolve;a.onerror=resolve;a.play().catch(resolve)});if(token!==runToken)break}if(token===runToken){replaying=false;continuousPaused=false;replayAudio=null;replayDone=null;syncContinuousControls();status('本轮录音回放完成')}}
+$('#pickSentence').onclick=()=>{
+ $('#sentenceNumbers').innerHTML=chunks.map((c,i)=>`<button data-preview="${i}" class="${i===state.index?'selected':''}">${i+1}</button>`).join('');
+ $('#sentenceChoices').hidden=true;
+ $('#sentencePicker').showModal();
+};
+$('#closeSentencePicker').onclick=()=>$('#sentencePicker').close();
+$('#sentenceNumbers').onclick=e=>{const button=e.target.closest('[data-preview]');if(!button)return;
+ $('#sentenceChoices').innerHTML=chunks.map((c,i)=>`<button data-jump="${i}" class="${i===Number(button.dataset.preview)?'selected':''}"><b>${i+1}</b><span>${c.text}<small>${c.cn}</small></span></button>`).join('');
+ $('#sentenceChoices').hidden=false;
+ $('#sentenceChoices .selected').scrollIntoView({block:'nearest'});
+};
+$('#sentenceChoices').onclick=e=>{const button=e.target.closest('[data-jump]');if(!button)return;stopAll();state.index=Number(button.dataset.jump);lessonVideo.currentTime=chunks[state.index].t;render();$('#sentencePicker').close()};
 $('#pauseContinuous').onclick=toggleContinuousPause;
 $('#endContinuous').onclick=endContinuous;
 
@@ -239,7 +291,15 @@ function renderActivity(){
   $$('.feature-tab').forEach(b=>b.classList.toggle('active',b.dataset.activity===a));
   $('#clozePanel').hidden=a!=='cloze';$('#dictationPanel').hidden=a!=='dictation';
   $('#subtitleBar').hidden=a!=='subtitle';$('#shadowBar').hidden=a!=='shadow';$('#inlineShadowControls').hidden=a!=='shadow';$('#shadowSettings').hidden=a!=='shadow';
-  $('#navRow').style.display='';
+  if(a==='shadow'){
+   for(const id of ['recordBtn','replayBtn','prevBtn','playBtn','nextBtn','favBtn','pickSentence'])$('#shadowBar').append($('#'+id));
+   $('#prevBtn').textContent='‹';$('#nextBtn').textContent='›';
+  }else{
+   for(const id of ['prevBtn','nextBtn','favBtn'])$('#navRow').append($('#'+id));
+   $('#prevBtn').textContent='← 上一句';$('#nextBtn').textContent='下一句 →';
+  }
+  $('#prevBtn').setAttribute('aria-label','上一句');$('#nextBtn').setAttribute('aria-label','下一句');
+  $('#navRow').style.display=a==='shadow'?'none':'';
   $('#english').hidden=a==='cloze'||a==='dictation'||(a==='subtitle'&&!['bi','en'].includes(state.subtitleDisplay))||(a==='shadow'&&!['bi','en'].includes(state.subtitle));
   $('#chinese').hidden=a==='cloze'||a==='dictation'||(a==='subtitle'?!['bi','cn'].includes(state.subtitleDisplay):!['bi','cn'].includes(state.subtitle));
   $('#speedMenu').textContent=state.subtitleRate.toFixed(1)+'×';
@@ -260,10 +320,22 @@ function renderCloze(){
 function norm(s){return s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]/g,'').replace(/\s+/g,' ').trim()}
 function chooseActivity(a){stopAll();state.activity=a;$('#clozeInput').value='';$('#dictationInput').value='';$('#clozeFeedback').textContent='';$('#dictationFeedback').textContent='';status(({subtitle:'字幕模式：可调整倍速和字幕显示',shadow:'跟读模式：选择自由跟练、单句跟练或连续跟练',cloze:'挖空模式：播放当前句后填写缺少的原词',dictation:'听写模式：播放后写出完整句子'})[a]);render()}
 
-$$('[data-mode]').forEach(b=>b.onclick=()=>{stopAll();state.mode=b.dataset.mode;const msg=state.mode==='normal'?'自由跟练：手动播放与录音':state.mode==='timed'?'单句跟练：自动单句听录':'连续跟练：从第一句开始，自动逐句听录';status(msg);$$('[data-mode-hint]').forEach(x=>x.textContent=msg);syncControls()});
+function chooseShadowMode(mode){stopAll();state.mode=mode;const msg=state.mode==='normal'?'自由跟练：手动播放与录音':state.mode==='timed'?'单句跟练：自动单句听录':'连续跟练：从第一句开始，自动逐句听录';status(msg);$$('[data-mode-hint]').forEach(x=>x.textContent=msg);syncControls()}
+$$('[data-mode]').forEach(b=>b.onclick=()=>chooseShadowMode(b.dataset.mode));
+$('#shadowModeSelect').onchange=e=>chooseShadowMode(e.target.value);
 $$('[data-setting]').forEach(el=>el.onchange=()=>{state[el.dataset.setting]=el.dataset.setting==='subtitle'?el.value:Number(el.value);render()});
 document.addEventListener('click',e=>{const item=e.target.closest('[data-index]');if(item){stopAll();state.index=Number(item.dataset.index);lessonVideo.currentTime=chunks[state.index].t;render();scrollActiveSentence();if(state.activity==='subtitle')playTranscript()}});
-$('#playBtn').onclick=()=>state.mode==='continuous'?startContinuous():playSentence(state.index,state.mode==='timed');$('#recordBtn').onclick=()=>{if(isRecording){if(finishTimed)finishTimed();else stopRecording()}else if(!continuousRunning)startRecording()};$('#replayBtn').onclick=()=>state.mode==='continuous'?replaySession():recordingUrl&&createRecordingPlayback(recordingUrl).play();$('#prevBtn').onclick=()=>{if(state.index){stopAll();state.index--;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#nextBtn').onclick=()=>{if(state.index<chunks.length-1){stopAll();state.index++;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#favBtn').onclick=()=>{state.favorites.has(state.index)?state.favorites.delete(state.index):state.favorites.add(state.index);render();const t=$('#toast');t.textContent=state.favorites.has(state.index)?'已收藏表达':'已取消收藏';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)};
+let shadowPlaybackPaused=false;
+function updateShadowPlayButton(){const playing=continuousRunning?!continuousPaused:!lessonVideo.paused&&!lessonVideo.ended;$('#playBtn').textContent=playing?'⏸':'▶';$('#playBtn').setAttribute('aria-label',playing?'暂停':'播放');$('#playBtn').title=playing?'暂停':'播放'}
+lessonVideo.addEventListener('play',updateShadowPlayButton);
+lessonVideo.addEventListener('pause',updateShadowPlayButton);
+lessonVideo.addEventListener('ended',()=>{shadowPlaybackPaused=false;updateShadowPlayButton()});
+$('#playBtn').onclick=()=>{
+ if(continuousRunning){toggleContinuousPause();return}
+ if(!lessonVideo.paused){shadowPlaybackPaused=true;lessonVideo.pause();return}
+ if(shadowPlaybackPaused){shadowPlaybackPaused=false;lessonVideo.play().catch(()=>status('播放失败，请重试'));return}
+ if(state.mode==='continuous')startContinuous();else playSentence(state.index,state.mode==='timed');
+};$('#recordBtn').onclick=()=>{if(isRecording){if(finishTimed)finishTimed();else stopRecording()}else if(!continuousRunning)startRecording()};$('#replayBtn').onclick=()=>state.mode==='continuous'?replaySession():recordingUrl&&createRecordingPlayback(recordingUrl).play();$('#prevBtn').onclick=()=>{if(state.index){stopAll();state.index--;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#nextBtn').onclick=()=>{if(state.index<chunks.length-1){stopAll();state.index++;lessonVideo.currentTime=chunks[state.index].t;render()}};$('#favBtn').onclick=()=>{state.favorites.has(state.index)?state.favorites.delete(state.index):state.favorites.add(state.index);render();const t=$('#toast');t.textContent=state.favorites.has(state.index)?'已收藏表达':'已取消收藏';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)};
 $('#closeSettings').onclick=()=>$('#drawerMask').classList.remove('show');$('#drawerMask').onclick=e=>{if(e.target===$('#drawerMask'))$('#drawerMask').classList.remove('show')};
 
 $$('[data-activity]').forEach(b=>b.onclick=()=>chooseActivity(b.dataset.activity));
